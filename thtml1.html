@@ -1,0 +1,94 @@
+  <!DOCTYPE HTML>  
+  <html>
+  <META name='viewport' content='width=device-width, initial-scale=1'>
+        <title>Termostat</title>
+  <SCRIPT>
+  xmlHttp=createXmlHttpObject();
+
+  function createXmlHttpObject(){
+    if(window.XMLHttpRequest){
+      xmlHttp=new XMLHttpRequest();
+    }else{
+      xmlHttp=new ActiveXObject('Microsoft.XMLHTTP');
+    }
+    return xmlHttp;
+  }
+  
+  function process(){  
+    if(xmlHttp.readyState==0||xmlHttp.readyState==4){
+      xmlHttp.onreadystatechange=function(){
+        if(xmlHttp.readyState==4&&xmlHttp.status==200){
+          xmlDoc=xmlHttp.responseXML;
+          xmlmsg=xmlDoc.getElementsByTagName('millistime')[0].firstChild.nodeValue;
+          document.getElementById('runtime').innerHTML=xmlmsg;          
+          xmlmsg=xmlDoc.getElementsByTagName('sliderval0')[0].firstChild.nodeValue;
+          document.getElementById('slider0').value=xmlmsg;
+          document.getElementById('Sliderval0').innerHTML=xmlmsg;
+          xmlmsg=xmlDoc.getElementsByTagName('ESPval0')[0].firstChild.nodeValue;
+          document.getElementById('ESPval0').innerHTML=xmlmsg;          
+        }
+      }
+      xmlHttp.open('PUT','xml',true);
+      xmlHttp.send(null);
+    }
+    setTimeout('process()',1000);
+  }
+
+  function Slider(cnt){
+    sliderVal=document.getElementById('slider'+cnt).value;
+    document.getElementById('Sliderval'+cnt).innerHTML=sliderVal;
+    document.getElementById('ESPval'+cnt).innerHTML=9*(100-sliderVal)+100;
+    if(xmlHttp.readyState==0||xmlHttp.readyState==4){
+      xmlHttp.open('PUT','setESPval?cnt='+cnt+'&val='+sliderVal,true);
+      xmlHttp.send(null);
+    }
+  }
+  
+  function myFunction(){
+	  var myNode = document.getElementById("list");
+	  var text = "l"+myNode.childNodes.length;
+	  var li = document.createElement("LI");
+	  var att = document.createAttribute("onclick");
+      att.value = "myFunction()";
+	  li.setAttributeNode(att);     
+	  var node = document.createTextNode(text+"***");
+	  li.appendChild(node);
+ 
+	  myNode.appendChild(li);
+
+	}
+  
+  function myFunctionClear(){	  
+	  var myNode = document.getElementById("list");
+	  while (myNode.firstChild) {
+	      myNode.removeChild(myNode.firstChild);
+	  }	    
+
+	}
+
+  </SCRIPT>
+
+  <BODY onload='process()'>
+  <BR>Change slider0 to control LED blink...<BR>
+  Runtime = <A ID='runtime'></A><BR><BR>
+  <TABLE BORDER=1 style='text-align:center;border-collapse:collapse'>  
+    <TR>
+    <TD><BR><INPUT ID='slider0' TYPE='range' ONCHANGE='Slider(0)'></TD>
+    <TD>Slidervalue0= <A ID='Sliderval0'></A><BR>
+    ESPval0 = <A ID='ESPval0'></A> milliseconds</TD>
+    </TR>  
+  </TABLE>
+<form id="check_LEDs" name="LED_form">
+	<input type="checkbox" name="chk_group[]" value="value1" />Value 1<br />
+	<input type="checkbox" name="chk_group[]" value="value2" />Value 2<br />
+	<input type="checkbox" name="chk_group[]" value="value3" />Value 3<br />
+</form>
+
+	Wifi networks list <button onclick="myFunction()">refresh</button>
+<div id="container">
+  <ul id="list"></ul>
+</div>
+	<button onclick="myFunctionClear()">clear </button><BR/>
+	Selected= <A ID='Selected'></A><BR/>
+  </BODY>
+  </HTML>

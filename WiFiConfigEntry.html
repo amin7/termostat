@@ -1,0 +1,82 @@
+  <!DOCTYPE HTML>  
+  <html>
+  <META name='viewport' content='width=device-width, initial-scale=1'>
+        <title>network</title>
+  <SCRIPT>
+  xmlHttp=createXmlHttpObject();
+
+  function createXmlHttpObject(){
+    if(window.XMLHttpRequest){
+      xmlHttp=new XMLHttpRequest();
+    }else{
+      xmlHttp=new ActiveXObject('Microsoft.XMLHTTP');
+    }
+    return xmlHttp;
+  }
+
+  function selectSSID(SSID) {
+	    var ssid=document.getElementById("Selected");
+	    ssid.value=SSID;
+	}
+  
+  function refreshSSIDs(){
+	  var myNode = document.getElementById("list");	  
+	  var li = document.createElement("LI");	      
+	  var node = document.createTextNode("scanning...");
+	  li.appendChild(node);
+ 
+	  myNode.appendChild(li);
+	if(xmlHttp.readyState==0||xmlHttp.readyState==4){
+	    xmlHttp.onreadystatechange=function(){
+	      if(xmlHttp.readyState==4&&xmlHttp.status==200){  
+   	  
+	    	  while (myNode.firstChild) {
+	    	      myNode.removeChild(myNode.firstChild);
+	    	  }	   
+
+	    	  wifiList= xmlDoc.getElementsByTagName("wifi");
+	    	  li = document.createElement("LI");	      
+	    	  node = document.createTextNode("len");
+	    	  li.appendChild(node);
+	    	  
+	    	  for (i = 0; i < wifiList.length; i++) {			  	  
+			      var text = "l"+myNode.childNodes.length;
+				  var li = document.createElement("LI");
+				  var att = document.createAttribute("onclick");
+				  var cmd="selectSSID('"+text+"');";
+			      att.value = cmd;
+				  li.setAttributeNode(att);     
+				  var node = document.createTextNode(text+"***");
+				  li.appendChild(node);
+			 
+				  myNode.appendChild(li);
+	    	  }
+	      }
+	    }
+	    xmlHttp.open('PUT','xmlScanWifi',true);
+	    xmlHttp.send(null);
+	  }	  
+	}
+  
+  function myFunctionClear(){	  
+	  var myNode = document.getElementById("list");
+	  while (myNode.firstChild) {
+	      myNode.removeChild(myNode.firstChild);
+	  }	    
+
+	}
+
+  </SCRIPT>
+
+ <BODY onload='refreshSSIDs()'>  
+  
+	Wifi networks list <button onclick="refreshSSIDs()">refresh</button>
+<div id="container">
+  <ul id="list"></ul>
+</div>
+	<button onclick="myFunctionClear()">clear </button><BR/>
+	Selected=<input id="Selected" type="text" name="Selected" value="sdf"><BR/>
+	PWD=<input type="password" name="PDW" value=""><BR/>
+	<button onclick="myFunctionClear()">Connect </button><BR/>
+  </BODY>
+  </HTML>
