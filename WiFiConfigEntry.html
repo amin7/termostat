@@ -19,6 +19,15 @@
 	    ssid.value=SSID;
 	}
   
+  function connectSSID(){
+	  if(xmlHttp.readyState==0||xmlHttp.readyState==4){
+	      xmlHttp.open('PUT','ConnectToWifi?SSCID=\"'+document.getElementById("Selected").value
+	    		  +'\"&PWD=\"'+ document.getElementById("PWD").value
+	    		  +'\"',true);
+	      xmlHttp.send(null);
+	    }
+  }
+  
   function refreshSSIDs(){
 	  var myNode = document.getElementById("list");	  
 	  var li = document.createElement("LI");	      
@@ -34,26 +43,46 @@
 	    	      myNode.removeChild(myNode.firstChild);
 	    	  }	   
 
-	    	  wifiList= xmlDoc.getElementsByTagName("wifi");
+	    	  wifiList= this.responseXML.getElementsByTagName("wifi");
 	    	  li = document.createElement("LI");	      
 	    	  node = document.createTextNode("len");
 	    	  li.appendChild(node);
 	    	  
-	    	  for (var i = 0; i < wifiList.length; i++) {			  	  
-			      var text = "l"+myNode.childNodes.length;
-				  var li = document.createElement("LI");
+	    	  for (var i=0;i<wifiList.length; i++) {	
+	    		  var line=wifiList[i];
+			      var SSID = line.getAttributeNode("SSID").value;
+			      var RSSI = parseInt(line.getAttributeNode("RSSI").value);
+			      var RSSIverb="---";
+			      if(-30<=RSSI){
+			    	  RSSIverb="Amazing";
+			      }else if(-67<=RSSI){
+			    	  RSSIverb="Very Good";
+			      }else if(-70<=RSSI){
+			    	  RSSIverb="Okay";
+			      }else if(-80<=RSSI){
+			    	  RSSIverb="Not Good";			      
+		    	  }else if(-90<=RSSI){
+			    	  RSSIverb="Unusable";
+			      }
+			      
+			      var encryptted="";
+			      if(parseInt(line.getAttributeNode("encryptionType").value)!=7){
+			    	  encryptted="#";
+			      }
+				  
+			      var li = document.createElement("LI");
 				  var att = document.createAttribute("onclick");
-				  var cmd="selectSSID('"+text+"');";
+				  var cmd="selectSSID('"+SSID+"');";
 			      att.value = cmd;
 				  li.setAttributeNode(att);     
-				  var node = document.createTextNode(text+"***");
+				  var node = document.createTextNode(SSID+"  "+RSSI+'dBm('+RSSIverb+')'+encryptted);
 				  li.appendChild(node);
 			 
 				  myNode.appendChild(li);
 	    	  }
 	      }
 	    }
-	    xmlHttp.open('PUT','xmlScanWifi',true);
+	    xmlHttp.open('GET','ScanWifi',true);
 	    xmlHttp.send(null);
 	  }	  
 	}
@@ -76,7 +105,7 @@
 </div>
 	<button onclick="myFunctionClear()">clear </button><BR/>
 	Selected=<input id="Selected" type="text" name="Selected" value="sdf"><BR/>
-	PWD=<input type="password" name="PDW" value=""><BR/>
-	<button onclick="myFunctionClear()">Connect </button><BR/>
+	PWD=<input id="PWD" type="password" name="PDW" value=""><BR/>
+	<button onclick="connectSSID()">Connect </button><BR/>
   </BODY>
   </HTML>

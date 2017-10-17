@@ -28,7 +28,7 @@ void WebFaceWiFiConfig::xmlScanWifi() {
 	 XML +=WiFi.RSSI(i);
 	 XML +="' encryptionType= '";
 	 XML +=WiFi.encryptionType(i);
-	 XML +=">";
+	 XML +="/>";
    }
   XML+=XML_END;
   Serial.println(XML);
