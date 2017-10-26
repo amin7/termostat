@@ -3,7 +3,7 @@
   <META name='viewport' content='width=device-width, initial-scale=1'>
         <title>network</title>
   <SCRIPT>
-  xmlHttp=createXmlHttpObject();
+  		xmlHttp=createXmlHttpObject();
 
   function createXmlHttpObject(){
     if(window.XMLHttpRequest){
@@ -27,8 +27,15 @@
 	      xmlHttp.send(null);
 	    }
   }
+  function clearSSIDList(){
+	  var myNode = document.getElementById("list");
+	  while (myNode.firstChild) {
+	      myNode.removeChild(myNode.firstChild);
+	  }
+  }
   
   function refreshSSIDs(){
+	  clearSSIDList();
 	  var myNode = document.getElementById("list");	  
 	  var li = document.createElement("LI");	      
 	  var node = document.createTextNode("scanning...");
@@ -38,11 +45,8 @@
 	if(xmlHttp.readyState==0||xmlHttp.readyState==4){
 	    xmlHttp.onreadystatechange=function(){
 	      if(xmlHttp.readyState==4&&xmlHttp.status==200){  
-   	  
-	    	  while (myNode.firstChild) {
-	    	      myNode.removeChild(myNode.firstChild);
-	    	  }	   
-
+	    	  clearSSIDList();
+	    	  	   
 	    	  wifiList= this.responseXML.getElementsByTagName("wifi");
 	    	  li = document.createElement("LI");	      
 	    	  node = document.createTextNode("len");

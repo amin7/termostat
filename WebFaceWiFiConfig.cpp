@@ -28,7 +28,7 @@ void WebFaceWiFiConfig::xmlScanWifi() {
 	 XML +=WiFi.RSSI(i);
 	 XML +="' encryptionType= '";
 	 XML +=WiFi.encryptionType(i);
-	 XML +="/>";
+	 XML +="'/>";
    }
   XML+=XML_END;
   Serial.println(XML);
@@ -37,5 +37,5 @@ void WebFaceWiFiConfig::xmlScanWifi() {
 
 void WebFaceWiFiConfig::setup(const char *entryPoint){
 	server.on(entryPoint, std::bind(&WebFaceWiFiConfig::htmlEntryPage, this));
-	server.on("/xmlScanWifi", std::bind(&WebFaceWiFiConfig::xmlScanWifi, this));
+	server.on("/ScanWifi", std::bind(&WebFaceWiFiConfig::xmlScanWifi, this));
 }

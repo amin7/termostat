@@ -19,17 +19,24 @@ for line in fo:
     writedsz+=len(line)
     converted_str=""
     for char in line:
-        if(char==' '):
+        if char==' ':
             converted_str+=' ';
+        elif '\t' == char:
+            converted_str += "    "  # tab => 4 space
         else:
             break;
 
-    line=line.rstrip('\r\n').replace('"','\\\"').strip()
-    converted_str+='"'
-    if len(line) :
-        converted_str+=line+'\\n'
-    converted_str += '"\\'
-    print(converted_str)
+    line=line.strip()
+    if len(line):
+        converted_str+='"';
+        for char in line:
+            if(("\""==char) or ("\\"==char) or ("\'"==char) ):
+                converted_str+="\\"+char
+            else:
+                converted_str += char
+        converted_str+='\\n"'
+        print(converted_str, end="")
+    print('\\')
 
 print( "};")
 print( "// End",FileName,"writedsz",writedsz)

@@ -72,12 +72,12 @@ void setup() {
 	Serial.println(myIP);
 #endif
 
-  server.on("/wifi", std::bind(&WiFiManager::handleWifi, &wiFiManager, true));
+//  server.on("/wifi", std::bind(&WiFiManager::handleWifi, &wiFiManager, true));
   //server.on("/", std::bind(&WiFiManager::handleRoot, &wiFiManager));
   //server.on("/",          handleWebsite);
   WiFiConfig.setup("/");
-  server.on("/xml",       handleXML);
-  server.on("/setESPval", handleESPval);
+//  server.on("/xml",       handleXML);
+//  server.on("/setESPval", handleESPval);
   server.begin();
 }
 
