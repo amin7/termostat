@@ -2,9 +2,10 @@
 <html>
     <head>
         <title>Termostat</title>
-        <script src="term_main.js"></script>  
+        <script src="term_main.js"></script>
+        <link rel="stylesheet" href="term_main.css"> 
     <style>
-  .button {    
+  #button_schedule_hour{    
     border: 0px solid black;
     color: black;       
     text-align: center;
@@ -36,10 +37,12 @@
     height:14px        
 }
 
+
     </style>
     </head>
     <body onload="init()">
         <h1>state</h1>    
+        <p id="date"></p>
         <div id="temper_cur" >25.1</div>
         <div >
 	        <div id="temper_present" >27.1</div>
@@ -47,10 +50,20 @@
 	        <div id="temper_ansent" >24.1</div>
         </div>                
 
-		
+        <div id="Presets" >
+	        <h2>Presets</h2>
+	        <hr>
+	        <!-- Rounded switch -->
+			<label class="switch">
+			  <input type="checkbox">
+			  <span class="slider round"></span>
+			</label>
+			<br/>
+	        <button class="button">Add</button>
+        </div>                        				
         <div id="weekSchedule" >
-        <h2>week schedule</h2>
-        <hr>
+	        <h2>week schedule</h2>
+	        <hr>
         </div>                        		
     </body>
 </html>

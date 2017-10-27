@@ -81,6 +81,7 @@ function daySchedule(parent){
        	 let button=document.createElement("button")
        	 button.innerHTML = i;
        	 button.setAttribute("class", "button");
+       	 button.setAttribute("id", "button_schedule_hour");       	
        	 button.addEventListener("mousedown", function(){ obj.keyDown(button); });
          button.addEventListener("mouseenter", function(){ obj.moveState(button);});
        	 button.value= false;
@@ -88,8 +89,17 @@ function daySchedule(parent){
    	}		   	 		   		
    	window.addEventListener('mouseup', function(event){obj.keyUp();});   	
 }
-
+function updateCurrDateTime(){
+	var options = {  
+		    weekday: "long", year: "numeric", month: "short",  
+		    day: "numeric", hour: "2-digit", minute: "2-digit",hour12: false  
+		};  
+	var date=new Date();
+	document.getElementById("date").innerHTML = date.toLocaleTimeString([], options);
+}
 function init(){
+	updateCurrDateTime();
+	setInterval('updateCurrDateTime()', 1000);
 	let myNode = document.getElementById("weekSchedule");
 	for(let i=0;i<7;i++){
 		let item=document.createElement("DIV")
