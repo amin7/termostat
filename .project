@@ -62,14 +62,19 @@
 			<locationURI>ECLIPSE_HOME/arduinoPlugin/packages/esp8266/hardware/esp8266/2.3.0/libraries/ESP8266mDNS</locationURI>
 		</link>
 		<link>
-			<name>libraries/Streaming</name>
+			<name>libraries/SPI</name>
 			<type>2</type>
-			<location>/home/ominenko/personal/hobby/libraries/Streaming</location>
+			<locationURI>ECLIPSE_HOME/arduinoPlugin/packages/esp8266/hardware/esp8266/2.3.0/libraries/SPI</locationURI>
 		</link>
 		<link>
-			<name>libraries/WiFiManager</name>
+			<name>libraries/U8g2_Arduino</name>
 			<type>2</type>
-			<location>/home/ominenko/personal/hobby/libraries/WiFiManager</location>
+			<location>D:/user/hobby/git/libraries/U8g2_Arduino</location>
+		</link>
+		<link>
+			<name>libraries/Wire</name>
+			<type>2</type>
+			<locationURI>ECLIPSE_HOME/arduinoPlugin/packages/esp8266/hardware/esp8266/2.3.0/libraries/Wire</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

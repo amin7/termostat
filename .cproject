@@ -26,10 +26,12 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/termostat/libraries/ESP8266WebServer/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/termostat/libraries/ESP8266WiFi}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/termostat/libraries/ESP8266WiFi/src}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/termostat/libraries/Streaming}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/termostat/libraries/WiFiManager}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/termostat/libraries/DNSServer}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/termostat/libraries/DNSServer/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/termostat/libraries/U8g2_Arduino}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/termostat/libraries/U8g2_Arduino/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/termostat/libraries/Wire}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/termostat/libraries/SPI}&quot;"/>
 								</option>
 								<inputType id="io.sloeber.compiler.cpp.sketch.input.267094200" name="CPP source files" superClass="io.sloeber.compiler.cpp.sketch.input"/>
 							</tool>
@@ -42,10 +44,12 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/termostat/libraries/ESP8266WebServer/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/termostat/libraries/ESP8266WiFi}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/termostat/libraries/ESP8266WiFi/src}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/termostat/libraries/Streaming}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/termostat/libraries/WiFiManager}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/termostat/libraries/DNSServer}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/termostat/libraries/DNSServer/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/termostat/libraries/U8g2_Arduino}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/termostat/libraries/U8g2_Arduino/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/termostat/libraries/Wire}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/termostat/libraries/SPI}&quot;"/>
 								</option>
 								<inputType id="io.sloeber.compiler.c.sketch.input.1890842092" name="C Source Files" superClass="io.sloeber.compiler.c.sketch.input"/>
 							</tool>
@@ -58,10 +62,12 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/termostat/libraries/ESP8266WebServer/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/termostat/libraries/ESP8266WiFi}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/termostat/libraries/ESP8266WiFi/src}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/termostat/libraries/Streaming}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/termostat/libraries/WiFiManager}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/termostat/libraries/DNSServer}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/termostat/libraries/DNSServer/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/termostat/libraries/U8g2_Arduino}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/termostat/libraries/U8g2_Arduino/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/termostat/libraries/Wire}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/termostat/libraries/SPI}&quot;"/>
 								</option>
 								<inputType id="io.sloeber.compiler.S.sketch.input.1782419603" name="Assembly source files" superClass="io.sloeber.compiler.S.sketch.input"/>
 							</tool>
