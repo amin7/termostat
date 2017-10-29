@@ -35,8 +35,8 @@
 #include <ESP8266mDNS.h>
 #include "functions.h"
 #include <Wire.h>
-U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
-
+//U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
+U8G2_SSD1306_64X48_ER_F_HW_I2C  u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);   // EastRising 0.66" OLED breakout board, Uno: A4=SDA, A5=SCL, 5V powered
 
 #include "WebFaceWiFiConfig.h"
 
@@ -55,6 +55,8 @@ void setup() {
     u8g2.clearBuffer();                  // clear the internal memory
     u8g2.setFont(u8g2_font_ncenB08_tr);   // choose a suitable font
     u8g2.drawStr(0,10,"termostat booting");    // write something to the internal memory
+    u8g2.drawStr(0,30,"termostat booting");
+    u8g2.drawFrame(0, 0, 63, 27);
     u8g2.sendBuffer();                    // transfer internal memory to the display
 #if false //cliend
   WiFi.begin(ssid, password);
