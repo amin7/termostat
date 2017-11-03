@@ -1,7 +1,7 @@
-function dayOfWeekAsString(dayIndex) {
-  return ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"][dayIndex];
-}
-function daySchedule(parent){
+let dayOfWeekStr=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+
+function selectionList(parent,valList){
+	this.Value=[];
 	const colorSelected="#fc6400";
 	const colorSelection="#fc0000";
 	const colorNotSelected="#00a3fc";        	
@@ -9,15 +9,10 @@ function daySchedule(parent){
     var isPressed=false;
     var isSelected=false;
     var selBeg,selEnd;
-    let myNode = parent;
+    let myNode =document.createElement("div");
+    parent.appendChild(myNode);
     if(myNode==null)
     	return;
-	this.setVal=function(val){
-		
-	}
-	this.getVal=function(){
-		return 128;        		
-	}
     function dispaySelection(selBeg,selEnd,isSelected){	        	
     	childNodes=myNode.childNodes;
         i = childNodes.length;
@@ -25,7 +20,7 @@ function daySchedule(parent){
         while (i--) {
             if (childNodes[i].getAttribute("class") == "button") {
             	var button=childNodes[i];	                	
-            	var cur=parseInt(button.innerHTML);
+            	var cur=parseInt(button.name);
             	if((cur>=selBeg)&&(cur<=selEnd)){	                		
             		button.style.backgroundColor = isSelected?colorSelection:colorNotSelection;
             	}else{ //show default state
@@ -35,20 +30,21 @@ function daySchedule(parent){
             }
         }
     }	    
-   	 function doSelection(selBeg,selEnd,isSelected){	 		 	
+   	 this.doSelection= function(selBeg,selEnd,isSelected){	 		 	
      	childNodes=myNode.childNodes
          i = childNodes.length;                    
          while (i--) {    
          	var button=childNodes[i];                    	
-         	var cur=parseInt(button.innerHTML);
+         	var cur=parseInt(button.name);
         	if((cur>=selBeg)&&(cur<=selEnd))
         		button.value=isSelected;
         	button.style.backgroundColor = (button.value=="true")?colorSelected:colorNotSelected;
+        	this.Value[i]=button.value=="true";
          }	         		 
  		}
     this.moveState=function(button) {
     	if(isPressed){        		
-    		selEnd=parseInt(button.innerHTML);;
+    		selEnd=parseInt(button.name);
     		if(selBeg<=selEnd)
     			dispaySelection(selBeg,selEnd,isSelected);
     		else
@@ -63,25 +59,28 @@ function daySchedule(parent){
          else {            	  
        	  isSelected=false;
          }
-         selBeg=selEnd=parseInt(button.innerHTML);;
+         selBeg=selEnd=parseInt(button.name);
          dispaySelection(selBeg,selEnd,isSelected);
    	};
     this.keyUp=function () {
     	 if(isPressed){
 			 if(selBeg<=selEnd)
-			   doSelection(selBeg,selEnd,isSelected);
+			   this.doSelection(selBeg,selEnd,isSelected);
 			 else
-			   doSelection(selEnd,selBeg,isSelected);
+				 this.doSelection(selEnd,selBeg,isSelected);
 		 }
 		 isPressed=false;
     };
     
     var obj = this;
-   	for(var i=0;i<24;i++){
+   	for(var i=0;i<valList.length;i++){
+   		 this.Value.push(false);
        	 let button=document.createElement("button")
-       	 button.innerHTML = i;
+       	 button.innerHTML = valList[i];
+       	 button.setAttribute("name", i);
        	 button.setAttribute("class", "button");
-       	 button.setAttribute("id", "button_schedule_hour");       	
+       	 button.setAttribute("id", "button_schedule_hour");
+       	
        	 button.addEventListener("mousedown", function(){ obj.keyDown(button); });
          button.addEventListener("mouseenter", function(){ obj.moveState(button);});
        	 button.value= false;
@@ -97,19 +96,72 @@ function updateCurrDateTime(){
 	var date=new Date();
 	document.getElementById("date").innerHTML = date.toLocaleTimeString([], options);
 }
+function htmlObj(html){
+	let el = document.createElement("span");
+	el.innerHTML = html;
+	return el;
+}
+function presetControl(placement,payload){	
+
+	//<active><up>><down><clone><delete> <payload>
+	let myNode = placement;
+	let main=document.createElement("div");
+	let obj=this;
+	
+	this.isActive=false;
+	
+	let input = document.createElement("INPUT");
+	input.setAttribute("type", "checkbox");
+	input.addEventListener("change", function(){obj.isActive=input.checked;	});
+	main.appendChild(input);
+	
+	main.appendChild(htmlObj('<button >Up</button>'+
+	'<button >Down</button>'+
+	'<button >clone</button>'))
+	var bdel = document.createElement("button");
+	bdel.innerHTML="delete";
+	bdel.type= "button";
+	bdel.addEventListener("mousedown", function(){ myNode.parentNode.removeChild(myNode); });
+	main.appendChild(bdel);
+	myNode.appendChild(main);
+	this.data=new payload(placement);
+	
+}
+
+
+function byWeekday(placement){			 		
+	this.type="WeekDay";
+	this.weekDay=new selectionList(placement,dayOfWeekStr);
+	placement.appendChild(document.createElement("BR"));
+	var valArray=[24];
+	for(var i=0;i<24;i++){
+		valArray[i]=""+i;
+	}	
+	this.hours= new selectionList(placement,valArray);
+	placement.appendChild(document.createElement("BR"));
+}
+
+function add_byWeekday(){
+	let presetsList = document.getElementById("PresetsList");
+	let listItem=document.createElement("LI");
+	listItem.controlData =new presetControl(listItem,byWeekday);
+	presetsList.insertBefore(listItem,presetsList.childNodes[0]);	
+}
+
+function listSerialize(){
+	var cache = [];
+	var doc = document.getElementById("PresetsList");
+	for (i = 0; i < doc.children.length; i++) {
+		let obj=doc.children[i].controlData;
+		let myJSON = JSON.stringify(obj);				
+		cache.push(myJSON);
+	}
+	console.log(cache);
+}
+
 function init(){
 	updateCurrDateTime();
-	setInterval('updateCurrDateTime()', 1000);
-	let myNode = document.getElementById("weekSchedule");
-	for(let i=0;i<7;i++){
-		let item=document.createElement("DIV")
-		let weekday=document.createTextNode(dayOfWeekAsString(i));
-		myNode.appendChild(weekday);
-		new daySchedule(item);
-		myNode.appendChild(item);
-		let br=document.createElement("BR")
-		myNode.appendChild(br);
-		br=document.createElement("BR")
-		myNode.appendChild(br);
-	}	
+	setInterval('updateCurrDateTime()', 1000);	
+	add_byWeekday();//for test
+	
 }    	

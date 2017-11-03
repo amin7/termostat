@@ -4,41 +4,6 @@
         <title>Termostat</title>
         <script src="term_main.js"></script>
         <link rel="stylesheet" href="term_main.css"> 
-    <style>
-  #button_schedule_hour{    
-    border: 0px solid black;
-    color: black;       
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 14px;
-    cursor: pointer;
-    float: left;
-    width:32px
-}
-  #temper_cur {    
-    display: inline-block;
-    font-size: 32px;    
-    float: left;    
-    height:32px
-}
-  #temper_present {
-   color: green;   
-   display: inline-block;     
-    font-size: 14px;    
-    float: left;    
-    height:14px
-}
-#temper_ansent {
-	color: gray;	
-	display: inline-block;
-    font-size: 14px;    
-    float: left;    
-    height:14px        
-}
-
-
-    </style>
     </head>
     <body onload="init()">
         <h1>state</h1>    
@@ -51,19 +16,15 @@
         </div>                
 
         <div id="Presets" >
-	        <h2>Presets</h2>
+	        <h2>Presets</h2>	        
 	        <hr>
-	        <!-- Rounded switch -->
-			<label class="switch">
-			  <input type="checkbox">
-			  <span class="slider round"></span>
-			</label>
-			<br/>
-	        <button class="button">Add</button>
-        </div>                        				
-        <div id="weekSchedule" >
-	        <h2>week schedule</h2>
-	        <hr>
-        </div>                        		
+	        <div>
+			  <button onclick=add_byWeekday()>by Weekday</button>
+			  <button >Out till</button>
+			  <button >today</button>			 
+			</div>
+			<ul id=PresetsList> </ul>
+        </div>
+        <button onclick=listSerialize()>Serialize</button>                   				                       	
     </body>
 </html>

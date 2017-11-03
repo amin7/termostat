@@ -32,6 +32,11 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>include</name>
+			<type>2</type>
+			<location>/home/ominenko/personal/hobby/libraries/googletest/googletest/include</location>
+		</link>
+		<link>
 			<name>core/core</name>
 			<type>2</type>
 			<locationURI>ECLIPSE_HOME/arduinoPlugin/packages/esp8266/hardware/esp8266/2.3.0/cores/esp8266</locationURI>
@@ -42,9 +47,9 @@
 			<locationURI>ECLIPSE_HOME/arduinoPlugin/packages/esp8266/hardware/esp8266/2.3.0/variants/d1_mini</locationURI>
 		</link>
 		<link>
-			<name>libraries/DNSServer</name>
+			<name>libraries/ArduinoJson</name>
 			<type>2</type>
-			<locationURI>ECLIPSE_HOME/arduinoPlugin/packages/esp8266/hardware/esp8266/2.3.0/libraries/DNSServer</locationURI>
+			<location>/home/ominenko/personal/hobby/libraries/ArduinoJson</location>
 		</link>
 		<link>
 			<name>libraries/ESP8266WebServer</name>
@@ -69,7 +74,7 @@
 		<link>
 			<name>libraries/U8g2_Arduino</name>
 			<type>2</type>
-			<location>D:/user/hobby/git/libraries/U8g2_Arduino</location>
+			<location>/home/ominenko/personal/hobby/libraries/U8g2_Arduino</location>
 		</link>
 		<link>
 			<name>libraries/Wire</name>
