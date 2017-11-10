@@ -9,6 +9,7 @@ from urllib.parse import urlparse
 from urllib.parse import parse_qs
 from urllib.parse import urlencode
 import json
+import argparse
 
 fileExt={
     "html"  :"text/html",
@@ -27,63 +28,44 @@ class Route(object):
     def toString(self):
         return "File Name="+self.file+", content_type="+self.content_type
 
-class RouteDef(Route):#get type from file extention
-    def __init__(self, file):
-        extension = os.path.splitext(file)[1][1:]
-        try:
-            content_type = fileExt[extension]
-            print(content_type)
-            super(RouteDef, self).__init__(content_type, file)
-        except:
-            print(' unknowFileTypeERROR')
+handler ={}
+def printHandlers():
+    print("Handler list:");
+    for rule in handler:
+        if handler[rule] == None:
+            print ("'" + rule + "'<None>")
+        else:
+            print ("'" + rule + "'<" + handler[rule].toString() + ">")
 
-
-
-handler = {
-#   "/"             : Route("text/html", "WiFiConfigEntry.html"),
-   "/"             : RouteDef("term_main.html"),
-   "/ScanWifi"     : RouteDef("xmlScanWifi.xml"),
-   "/ConnectWifi"  : Route("text/xml", "xmlConnectWifi.xml"),
-   "/saveSchedule"  : Route("", ""),
-}
-
-
-PORT=8081 
+PORT=8081
+workPatch=""
 # HTTPRequestHandler class
 class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
     def do_Reply(self):
         o = urlparse(self.path)
         print(o)
         print(parse_qs(o.query))
-        content_type = ""
-        file = o.path
-        if file in handler:
-            rule=handler[file];
-            print("rule="+rule.toString())
-            if rule.file == "":#stub
-                self.do_HEAD()
-                return
-            content_type=rule.content_type
-            file=rule.file
-        else: #get data from extention
-            extension = os.path.splitext(file)[1][1:]
-            file=file.strip("/")
-            try:
-                content_type=fileExt[extension]
-            except:
-                print('unknowFileTypeERROR')
-                self.send_response(404)
-                return
-        print("file="+file+" type="+content_type)
+        uir = o.path
+        if uir not in handler:
+            print('unknowFileTypeERROR')
+            self.send_response(404)
+            return
+
+        rule=handler[uir];
+        if rule == None:#stub
+            self.do_HEAD()
+            return
+
+        print("rule="+rule.toString())
         try:
-            fo = open(file, "r")
+            fo = open(rule.file, "r")
         except:
             # doesn't exist
             print('FileNotFoundError')
             self.send_response(404)
         else:
             self.send_response(200)
-            self.send_header("Content-type", content_type)
+            self.send_header("Content-type", rule.content_type)
             self.end_headers()
             for line in fo:
                 self.wfile.write(bytes(line, "utf8"))
@@ -101,17 +83,57 @@ def run():
     print('starting server...')
     server_address = ('127.0.0.1', PORT)
     httpd = HTTPServer(server_address, testHTTPServer_RequestHandler)
+    printHandlers()
+
     print('running server... ')
     print('http://localhost:',PORT,sep='')
-    print("Handler list:");
-    for key in handler:
-        rule = handler[key];
-        print(key+"(" + rule.toString()+")")
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
         pass
     httpd.server_close()
- 
+
+
+parser = argparse.ArgumentParser(description='no')
+parser.add_argument('-c', dest='configFile', help='patch to config File',  required=True)
+args = parser.parse_args()
+configDir=os.path.dirname(args.configFile)+"/"
+print("configDir="+configDir)
+print("parce config file" )
+with open(args.configFile) as data_file:
+    data_item = json.load(data_file)
+print(data_item)
+for rule in data_item["handler"]:
+    print(rule)
+    if "entry" not in rule:
+        print("error no entry" )
+        exit(1)
+    if "file" not in rule:
+        handler.update({rule["entry"]:None})
+        continue
+    filename=configDir+rule["file"];
+    content_type=""
+    if "type" in rule:
+        content_type=rule["type"]
+    else:
+        extension = os.path.splitext(filename)[1][1:]
+        try:
+            content_type = fileExt[extension]
+        except:
+            print(' unknowFileTypeERROR')
+            exit(1)
+    handler.update({rule["entry"]: Route(content_type, filename)})
+
+wwwSourceDir=configDir+data_item["wwwSourceDir"]+"/"
+ignoredFiles=[];
+print("wwwSourceDir="+wwwSourceDir)
+for filename in os.listdir(wwwSourceDir):
+    extension = os.path.splitext(filename)[1][1:]
+    if extension in fileExt:
+        handler.update({"/"+filename: Route(fileExt[extension], wwwSourceDir+filename)})
+    else:
+        ignoredFiles.append(file)
+
+#printHandlers()
 run()
 
