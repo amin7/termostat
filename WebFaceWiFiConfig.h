@@ -9,14 +9,14 @@
 #define WEBFACEWIFICONFIG_H_
 
 #include <ESP8266WebServer.h>
+#include "CFrontendFS.h"
+
 class WebFaceWiFiConfig {
 	ESP8266WebServer &server;
 	String XML;
-	void htmlEntryPage();
 	void xmlScanWifi();
 public:
-	WebFaceWiFiConfig(ESP8266WebServer &_server):server(_server){};
-	void setup(const char *entryPoint);//link on page
+	WebFaceWiFiConfig(ESP8266WebServer &_server,const char *entryPoint);
 	virtual ~WebFaceWiFiConfig(){};
 };
 

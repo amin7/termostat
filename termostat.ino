@@ -48,7 +48,7 @@ U8G2_SSD1306_64X48_ER_F_HW_I2C  u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);   // E
 const char *ssid = "ITPwifi";
 const char *password = "_RESTRICTED3db@ea";
 
-WebFaceWiFiConfig WiFiConfig(server);
+WebFaceWiFiConfig WiFiConfig(server,"/");
 
 void setup() {
     WiFi.persistent(false);
@@ -85,7 +85,6 @@ void setup() {
 //  server.on("/wifi", std::bind(&WiFiManager::handleWifi, &wiFiManager, true));
   //server.on("/", std::bind(&WiFiManager::handleRoot, &wiFiManager));
   //server.on("/",          handleWebsite);
-  WiFiConfig.setup("/");
 //  server.on("/xml",       handleXML);
 //  server.on("/setESPval", handleESPval);
   server.begin();

@@ -1,5 +1,37 @@
 let dayOfWeekStr=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
 
+xmlHttp=createXmlHttpObject();
+
+  function createXmlHttpObject(){
+    if(window.XMLHttpRequest){
+      xmlHttp=new XMLHttpRequest();
+    }else{
+      xmlHttp=new ActiveXObject('Microsoft.XMLHTTP');
+    }
+    return xmlHttp;
+  }
+function saveSchedule(){
+  if(xmlHttp.readyState==0||xmlHttp.readyState==4){
+	    xmlHttp.onreadystatechange=function(){
+	      if(xmlHttp.readyState==4&&xmlHttp.status==200){  
+	    	  console.log("saved ok");
+	      }
+	    }
+	var doc = document.getElementById("PresetsList");
+	let myJSON=null;
+	if(doc.children.length){
+		let obj=doc.children[0].controlData;
+		myJSON = JSON.stringify(obj);
+	}
+	 var url = "saveSchedule?data=" + encodeURIComponent(myJSON);
+			 
+	 xmlHttp.open('GET',url,true); //POST is more safely but ... harder to suuport from esp side
+	 xmlHttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");				
+	 console.log(url);
+	 xmlHttp.send(null);
+  }
+}
+	      
 function selectionList(parent,valList){
 	this.Value=[];
 	const colorSelected="#fc6400";
@@ -153,10 +185,13 @@ function listSerialize(){
 	var doc = document.getElementById("PresetsList");
 	for (i = 0; i < doc.children.length; i++) {
 		let obj=doc.children[i].controlData;
-		let myJSON = JSON.stringify(obj);				
+		let myJSON = JSON.stringify(obj);
+		
 		cache.push(myJSON);
 	}
 	console.log(cache);
+	
+	
 }
 
 function init(){

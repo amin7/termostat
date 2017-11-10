@@ -67,5 +67,5 @@ void handleESPval() {
   Serial.println(sliderVal[0]);
 }
 
+#endif // _functions_h_
 
-#endif _functions_h_

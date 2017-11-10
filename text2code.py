@@ -1,42 +1,85 @@
 #!/usr/bin/python3
 import os
 import sys
+import datetime
+import argparse
 
-if 2!= len(sys.argv):
-    print("no file name")
-    os._exit(1)
+fileExt={
+    "html"  :"text/html",
+    "xml"   :"text/xml",
+    "js"    :"application/javascript",
+    "css"   :"text/css",
+    "json"  :"application/json"
+}
 
-FileName=sys.argv[1];
+def convertFileName(fileName):
+    return fileName.replace('.','_').replace('/','_')
 
-fo = open(FileName, "r")
-filesize=os.path.getsize(FileName);
-print("//converted from ",FileName," getsize=",filesize)
+def convertFile(fileName):
+    fo = open(fileName, "r")
+    filesize=os.path.getsize(fileName);
+    print( "const char* _",convertFileName(fileName),'_ PROGMEM ={\\',sep='')
 
-print( "const char* _",FileName.replace('.','_'),'_ PROGMEM ={\\',sep='')
-
-writedsz=0;
-for line in fo:
-    writedsz+=len(line)
-    converted_str=""
-    for char in line:
-        if char==' ':
-            converted_str+=' ';
-        elif '\t' == char:
-            converted_str += "    "  # tab => 4 space
-        else:
-            break;
-
-    line=line.strip()
-    if len(line):
-        converted_str+='"';
+    writedsz=0;
+    for line in fo:
+        writedsz+=len(line)
+        converted_str=""
         for char in line:
-            if(("\""==char) or ("\\"==char) or ("\'"==char) ):
-                converted_str+="\\"+char
+            if char==' ':
+                converted_str+=' ';
+            elif '\t' == char:
+                converted_str += "    "  # tab => 4 space
             else:
-                converted_str += char
-        converted_str+='\\n"'
-        print(converted_str, end="")
-    print('\\')
+                break;
 
-print( "};")
-print( "// End",FileName,"writedsz",writedsz)
+        line=line.strip()
+        if len(line):
+            converted_str+='"';
+            for char in line:
+                if(("\""==char) or ("\\"==char) or ("\'"==char) ):
+                    converted_str+="\\"+char
+                else:
+                    converted_str += char
+            converted_str+='\\n"'
+            print(converted_str, end="")
+        print('\\')
+
+    print( "};")
+
+#convertFile(FileName);
+
+parser = argparse.ArgumentParser(description='no')
+parser.add_argument('files', nargs='*', help='files to convert')
+parser.add_argument('-D', dest='dir',   help='directory')
+
+args = parser.parse_args()
+#print(args)
+fileList=[]
+ignoredFiles=[]
+for file in args.files:
+    fileList.append(file)
+
+if(args.dir!="None"):
+    for file in os.listdir(args.dir):
+        extension = os.path.splitext(file)[1][1:]
+        if extension in fileExt:
+            fileList.append(args.dir+file)
+        else:
+            ignoredFiles.append(args.dir + file)
+
+
+
+print("//converted  date time=", datetime.datetime.now())
+for file in fileList:
+    convertFile(file)
+print("\n//converted list")
+for file in fileList:
+    extension = os.path.splitext(file)[1][1:]
+    # file = file.strip("/")
+    # try:
+    #     content_type = fileExt[extension]
+    # except:
+    print ("// ct_"+extension+","+convertFileName(file))
+for file in ignoredFiles:
+    print ("//file ignored "+file)
+print("//EOF")

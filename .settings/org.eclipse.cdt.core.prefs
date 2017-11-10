@@ -187,10 +187,10 @@ environment/project/io.sloeber.core.toolChain.release.1902137961.1135764797/A.EX
 environment/project/io.sloeber.core.toolChain.release.1902137961.1135764797/A.EXTRA.TIME.DTS/value=0
 environment/project/io.sloeber.core.toolChain.release.1902137961.1135764797/A.EXTRA.TIME.LOCAL/delimiter=\:
 environment/project/io.sloeber.core.toolChain.release.1902137961.1135764797/A.EXTRA.TIME.LOCAL/operation=replace
-environment/project/io.sloeber.core.toolChain.release.1902137961.1135764797/A.EXTRA.TIME.LOCAL/value=1509720899
+environment/project/io.sloeber.core.toolChain.release.1902137961.1135764797/A.EXTRA.TIME.LOCAL/value=1510160323
 environment/project/io.sloeber.core.toolChain.release.1902137961.1135764797/A.EXTRA.TIME.UTC/delimiter=\:
 environment/project/io.sloeber.core.toolChain.release.1902137961.1135764797/A.EXTRA.TIME.UTC/operation=replace
-environment/project/io.sloeber.core.toolChain.release.1902137961.1135764797/A.EXTRA.TIME.UTC/value=1509713699
+environment/project/io.sloeber.core.toolChain.release.1902137961.1135764797/A.EXTRA.TIME.UTC/value=1510153123
 environment/project/io.sloeber.core.toolChain.release.1902137961.1135764797/A.EXTRA.TIME.ZONE/delimiter=\:
 environment/project/io.sloeber.core.toolChain.release.1902137961.1135764797/A.EXTRA.TIME.ZONE/operation=replace
 environment/project/io.sloeber.core.toolChain.release.1902137961.1135764797/A.EXTRA.TIME.ZONE/value=7200
@@ -717,10 +717,10 @@ environment/project/io.sloeber.core.toolChain.release.1902137961/A.EXTRA.TIME.DT
 environment/project/io.sloeber.core.toolChain.release.1902137961/A.EXTRA.TIME.DTS/value=0
 environment/project/io.sloeber.core.toolChain.release.1902137961/A.EXTRA.TIME.LOCAL/delimiter=\:
 environment/project/io.sloeber.core.toolChain.release.1902137961/A.EXTRA.TIME.LOCAL/operation=replace
-environment/project/io.sloeber.core.toolChain.release.1902137961/A.EXTRA.TIME.LOCAL/value=1509641172
+environment/project/io.sloeber.core.toolChain.release.1902137961/A.EXTRA.TIME.LOCAL/value=1510228331
 environment/project/io.sloeber.core.toolChain.release.1902137961/A.EXTRA.TIME.UTC/delimiter=\:
 environment/project/io.sloeber.core.toolChain.release.1902137961/A.EXTRA.TIME.UTC/operation=replace
-environment/project/io.sloeber.core.toolChain.release.1902137961/A.EXTRA.TIME.UTC/value=1509633972
+environment/project/io.sloeber.core.toolChain.release.1902137961/A.EXTRA.TIME.UTC/value=1510221131
 environment/project/io.sloeber.core.toolChain.release.1902137961/A.EXTRA.TIME.ZONE/delimiter=\:
 environment/project/io.sloeber.core.toolChain.release.1902137961/A.EXTRA.TIME.ZONE/operation=replace
 environment/project/io.sloeber.core.toolChain.release.1902137961/A.EXTRA.TIME.ZONE/value=7200
@@ -999,7 +999,7 @@ environment/project/io.sloeber.core.toolChain.release.1902137961/JANTJE.BOARD_NA
 environment/project/io.sloeber.core.toolChain.release.1902137961/JANTJE.BOARD_NAME/value=WeMos D1 R2 & mini
 environment/project/io.sloeber.core.toolChain.release.1902137961/JANTJE.COM_PORT/delimiter=\:
 environment/project/io.sloeber.core.toolChain.release.1902137961/JANTJE.COM_PORT/operation=replace
-environment/project/io.sloeber.core.toolChain.release.1902137961/JANTJE.COM_PORT/value=COM4
+environment/project/io.sloeber.core.toolChain.release.1902137961/JANTJE.COM_PORT/value=/dev/ttyUSB2
 environment/project/io.sloeber.core.toolChain.release.1902137961/JANTJE.ECLIPSE_LOCATION/delimiter=\:
 environment/project/io.sloeber.core.toolChain.release.1902137961/JANTJE.ECLIPSE_LOCATION/operation=replace
 environment/project/io.sloeber.core.toolChain.release.1902137961/JANTJE.ECLIPSE_LOCATION/value=D\:\\user\\hobby\\sloeber\\//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -7,13 +7,14 @@
 
 #include "WebFaceWiFiConfig.h"
 #include "WiFiConfigEntry.h"
-
 const char* XML_BEGIN PROGMEM ="<?xml version='1.0'?>\n<xml>";
 const char* XML_END PROGMEM ="</xml>";
 
-void WebFaceWiFiConfig::htmlEntryPage() {
-  server.send(200, "text/html", _WiFiConfigEntry_html_);
-}
+WebFaceWiFiConfig::WebFaceWiFiConfig(ESP8266WebServer &_server,const char *entryPoint):
+		server(_server){
+	CFrontendFS::add(server, entryPoint, ct_html, _WiFiConfigEntry_html_);
+	server.on("/ScanWifi", std::bind(&WebFaceWiFiConfig::xmlScanWifi, this));
+	};
 
 void WebFaceWiFiConfig::xmlScanWifi() {
  Serial.println("scan begin");
@@ -35,7 +36,3 @@ void WebFaceWiFiConfig::xmlScanWifi() {
   server.send(200, "text/xml", XML);
 }
 
-void WebFaceWiFiConfig::setup(const char *entryPoint){
-	server.on(entryPoint, std::bind(&WebFaceWiFiConfig::htmlEntryPage, this));
-	server.on("/ScanWifi", std::bind(&WebFaceWiFiConfig::xmlScanWifi, this));
-}
