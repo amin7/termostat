@@ -1,6 +1,6 @@
 #ifndef _FRONT_END_
 #define _FRONT_END_
-//converted  date time= 2017-11-10 13:24:09.592791
+//converted  date time= 2017-11-10 17:25:04.099929
 const char* _frontend_thtml1_html_ PROGMEM ={\
   "<!DOCTYPE HTML>\n"\
   "<html>\n"\
@@ -123,7 +123,7 @@ const char* _frontend_term_main_js_ PROGMEM ={\
         "let obj=doc.children[0].controlData;\n"\
         "myJSON = JSON.stringify(obj);\n"\
     "}\n"\
-     "var url = \"saveSchedule?data=\" + encodeURIComponent(myJSON);\n"\
+     "var url = \"PresetAdd?data=\" + encodeURIComponent(myJSON);\n"\
 \
      "xmlHttp.open(\'GET\',url,true); //POST is more safely but ... harder to suuport from esp side\n"\
      "xmlHttp.setRequestHeader(\"Content-Type\", \"application/json;charset=UTF-8\");\n"\

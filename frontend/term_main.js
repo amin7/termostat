@@ -23,7 +23,7 @@ function saveSchedule(){
 		let obj=doc.children[0].controlData;
 		myJSON = JSON.stringify(obj);
 	}
-	 var url = "saveSchedule?data=" + encodeURIComponent(myJSON);
+	 var url = "PresetAdd?data=" + encodeURIComponent(myJSON);
 			 
 	 xmlHttp.open('GET',url,true); //POST is more safely but ... harder to suuport from esp side
 	 xmlHttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");				

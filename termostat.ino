@@ -51,6 +51,7 @@ const char *ssid = "ITPwifi";
 const char *password = "_RESTRICTED3db@ea";
 
 WebFaceWiFiConfig WiFiConfig(server);
+CPresetsServer presetsServer(server);
 
 void setup() {
     WiFi.persistent(false);
@@ -95,6 +96,10 @@ void setup() {
 	CFrontendFS::add(server, "/term_main.css", ct_css,_frontend_term_main_css_);
 	CFrontendFS::add(server, "/", ct_html,_frontend_term_main_html_);
 	CFrontendFS::add(server, "/WiFiConfigEntry.html", ct_html,_frontend_WiFiConfigEntry_html_);
+	server.onNotFound([]{
+			Serial.println("Error no handler");
+			Serial.println(server.uri());
+	});
 
 	server.begin();
 	Serial.println("setup done");
