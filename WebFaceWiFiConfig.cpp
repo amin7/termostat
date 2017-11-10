@@ -10,9 +10,8 @@
 const char* XML_BEGIN PROGMEM ="<?xml version='1.0'?>\n<xml>";
 const char* XML_END PROGMEM ="</xml>";
 
-WebFaceWiFiConfig::WebFaceWiFiConfig(ESP8266WebServer &_server,const char *entryPoint):
+WebFaceWiFiConfig::WebFaceWiFiConfig(ESP8266WebServer &_server):
 		server(_server){
-	CFrontendFS::add(server, entryPoint, ct_html, _WiFiConfigEntry_html_);
 	server.on("/ScanWifi", std::bind(&WebFaceWiFiConfig::xmlScanWifi, this));
 	};
 

@@ -13,12 +13,12 @@ fileExt={
 }
 
 def convertFileName(fileName):
-    return fileName.replace('.','_').replace('/','_')
+    return "_"+fileName.replace('.','_').replace('/','_')+"_"
 
 def convertFile(fileName):
     fo = open(fileName, "r")
     filesize=os.path.getsize(fileName);
-    print( "const char* _",convertFileName(fileName),'_ PROGMEM ={\\',sep='')
+    print( "const char* ",convertFileName(fileName),' PROGMEM ={\\',sep='')
 
     writedsz=0;
     for line in fo:
@@ -68,7 +68,8 @@ if(args.dir!="None"):
             ignoredFiles.append(args.dir + file)
 
 
-
+print("#ifndef _FRONT_END_")
+print("#define _FRONT_END_")
 print("//converted  date time=", datetime.datetime.now())
 for file in fileList:
     convertFile(file)
@@ -79,7 +80,9 @@ for file in fileList:
     # try:
     #     content_type = fileExt[extension]
     # except:
-    print ("// ct_"+extension+","+convertFileName(file))
+    print ('//  CFrontendFS::add(server, "/'+os.path.split(file)[1]+ '", ct_'+extension+","+convertFileName(file)+");")
+
 for file in ignoredFiles:
     print ("//file ignored "+file)
+print("#endif")
 print("//EOF")

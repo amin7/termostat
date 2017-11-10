@@ -43,12 +43,14 @@
 U8G2_SSD1306_64X48_ER_F_HW_I2C  u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);   // EastRising 0.66" OLED breakout board, Uno: A4=SDA, A5=SCL, 5V powered
 
 #include "WebFaceWiFiConfig.h"
+#include "CFrontendFS.h"
+#include "frontend.h"
 
 
 const char *ssid = "ITPwifi";
 const char *password = "_RESTRICTED3db@ea";
 
-WebFaceWiFiConfig WiFiConfig(server,"/");
+WebFaceWiFiConfig WiFiConfig(server);
 
 void setup() {
     WiFi.persistent(false);
@@ -87,8 +89,15 @@ void setup() {
   //server.on("/",          handleWebsite);
 //  server.on("/xml",       handleXML);
 //  server.on("/setESPval", handleESPval);
-  server.begin();
-  Serial.println("setup done");
+
+	CFrontendFS::add(server, "/thtml1.html", ct_html,_frontend_thtml1_html_);
+	CFrontendFS::add(server, "/term_main.js", ct_js,_frontend_term_main_js_);
+	CFrontendFS::add(server, "/term_main.css", ct_css,_frontend_term_main_css_);
+	CFrontendFS::add(server, "/", ct_html,_frontend_term_main_html_);
+	CFrontendFS::add(server, "/WiFiConfigEntry.html", ct_html,_frontend_WiFiConfigEntry_html_);
+
+	server.begin();
+	Serial.println("setup done");
 }
 
 void loop() {

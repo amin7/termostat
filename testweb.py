@@ -1,6 +1,4 @@
 #!/usr/bin/python3
-#TODO move handler to setarate file
-#TODO start directory config
 
 import os
 import sys
@@ -37,7 +35,6 @@ def printHandlers():
         else:
             print ("'" + rule + "'<" + handler[rule].toString() + ">")
 
-PORT=8081
 workPatch=""
 # HTTPRequestHandler class
 class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
@@ -79,7 +76,7 @@ class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
     def do_PUT(self):
         self.do_Reply()
 
-def run():
+def run(PORT):
     print('starting server...')
     server_address = ('127.0.0.1', PORT)
     httpd = HTTPServer(server_address, testHTTPServer_RequestHandler)
@@ -96,22 +93,37 @@ def run():
 
 parser = argparse.ArgumentParser(description='no')
 parser.add_argument('-c', dest='configFile', help='patch to config File',  required=True)
+parser.add_argument('-p', dest='port',type=int,default=8081, help='server port', )
 args = parser.parse_args()
 configDir=os.path.dirname(args.configFile)+"/"
 print("configDir="+configDir)
 print("parce config file" )
 with open(args.configFile) as data_file:
     data_item = json.load(data_file)
-print(data_item)
+
+#add rules from wwwSourceDir
+wwwSourceDir=configDir+data_item["wwwSourceDir"]+"/"
+ignoredFiles=[];
+print("wwwSourceDir="+wwwSourceDir)
+for filename in os.listdir(wwwSourceDir):
+    normFileName=os.path.normpath(wwwSourceDir + filename)
+    extension = os.path.splitext(filename)[1][1:]
+    if extension in fileExt:
+        handler.update({"/"+filename: Route(fileExt[extension], normFileName)})
+    else:
+        ignoredFiles.append(normFileName)
+for ignore in ignoredFiles:
+    print ("file ignored "+ignore);
+
+#add rules from json (rewrite wwwSourceDir)
 for rule in data_item["handler"]:
-    print(rule)
     if "entry" not in rule:
         print("error no entry" )
         exit(1)
     if "file" not in rule:
         handler.update({rule["entry"]:None})
         continue
-    filename=configDir+rule["file"];
+    filename=os.path.normpath(configDir+rule["file"]);
     content_type=""
     if "type" in rule:
         content_type=rule["type"]
@@ -124,16 +136,7 @@ for rule in data_item["handler"]:
             exit(1)
     handler.update({rule["entry"]: Route(content_type, filename)})
 
-wwwSourceDir=configDir+data_item["wwwSourceDir"]+"/"
-ignoredFiles=[];
-print("wwwSourceDir="+wwwSourceDir)
-for filename in os.listdir(wwwSourceDir):
-    extension = os.path.splitext(filename)[1][1:]
-    if extension in fileExt:
-        handler.update({"/"+filename: Route(fileExt[extension], wwwSourceDir+filename)})
-    else:
-        ignoredFiles.append(file)
 
 #printHandlers()
-run()
+run(args.port)
 

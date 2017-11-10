@@ -16,7 +16,7 @@ class WebFaceWiFiConfig {
 	String XML;
 	void xmlScanWifi();
 public:
-	WebFaceWiFiConfig(ESP8266WebServer &_server,const char *entryPoint);
+	WebFaceWiFiConfig(ESP8266WebServer &_server);
 	virtual ~WebFaceWiFiConfig(){};
 };
 
