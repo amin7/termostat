@@ -13,7 +13,14 @@
 #include <ArduinoJson.h>//https://github.com/bblanchon/ArduinoJson.git
 						//https://bblanchon.github.io/ArduinoJson/assistant/
 using namespace std ;
-class CPresetItem:public Printable{
+
+class CPItem:public Printable{
+public:
+    virtual bool deSerialize(JsonObject& root)=0;
+    virtual ~CPItem(){};
+};
+
+class CPIIsActive:public CPItem{
 	bool isActive;
 public:
 	bool isIsActive() const {
@@ -23,15 +30,33 @@ public:
 	virtual size_t printTo(Print& p) const;
 };
 
-class CPresetItem_byWeekDay:public CPresetItem{
+class CPI_BitField:public CPItem{
+    uint32_t bitField;
+    const uint8_t size;
+public:
+    CPI_BitField(uint8_t size):bitField(0),size(size){};
+    void setBit(uint8_t index,bool value);
+    bool isSet(uint8_t index)const {  return (bitField&(((uint32_t)1)<<index))?true:false;}
+    uint32_t getBitField() const {    return bitField;   }
+    void setBitField(uint32_t bitField) {   this->bitField = bitField; }
+    virtual bool deSerialize(JsonObject& root);
+    virtual size_t printTo(Print& p) const;
+};
 
+class CPI_byWeekDay:public CPIIsActive{
+public:
+    CPI_BitField weekDay;
+    CPI_BitField hours;
+    CPI_byWeekDay(): weekDay(7),hours(24){};
+    virtual bool deSerialize(JsonObject& root);
+    virtual size_t printTo(Print& p) const;
 };
 class CPresets :public Printable{
-	vector<CPresetItem*> items;
+	vector<CPItem*> items;
 public:
-	CPresets();
-	virtual ~CPresets();
-	void reset();
+	CPresets(){};
+	virtual ~CPresets(){};
+	void clear();
 	void addFromJSON(const String  &json);
 	void getFirstJSON(char* json);
 	void getNextJSON(char* json);

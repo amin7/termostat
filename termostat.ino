@@ -28,6 +28,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 //https://github.com/google/googletest.git
+/***
+ * Screen
+ * U8G2_SH1106_128X64_NONAME_F_HW_I2C
+ * SCL - D1
+ * SDA - D2
+ */
 #include <Arduino.h>
 #include <U8g2lib.h> //https://github.com/olikraus/U8g2_Arduino.git
 #include <ESP8266WiFi.h>
@@ -36,12 +42,14 @@
 #include <ESP8266mDNS.h>
 #include "functions.h"
 #include <Wire.h>
+#include <FS.h>
 
 #include "CPresets.h"
-
-//U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
-U8G2_SSD1306_64X48_ER_F_HW_I2C  u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);   // EastRising 0.66" OLED breakout board, Uno: A4=SDA, A5=SCL, 5V powered
-
+#define _DISPLAY_
+#ifdef _DISPLAY_
+U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R2, /* reset=*/ U8X8_PIN_NONE);
+//U8G2_SSD1306_64X48_ER_F_HW_I2C  u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);   // EastRising 0.66" OLED breakout board, Uno: A4=SDA, A5=SCL, 5V powered
+#endif
 #include "WebFaceWiFiConfig.h"
 #include "CFrontendFS.h"
 #include "frontend.h"
@@ -58,6 +66,7 @@ void setup() {
     pinMode(LED_BUILTIN, OUTPUT);
     Serial.begin(115200); delay(100);
     Serial.println("\n\nBOOTING ESP8266 ...");
+#ifdef _DISPLAY_
     u8g2.begin();
     u8g2.clearBuffer();                  // clear the internal memory
     u8g2.setFont(u8g2_font_ncenB08_tr);   // choose a suitable font
@@ -65,6 +74,7 @@ void setup() {
     u8g2.drawStr(0,30,"termostat booting");
     u8g2.drawFrame(0, 0, 63, 27);
     u8g2.sendBuffer();                    // transfer internal memory to the display
+#endif
 #if false //cliend
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) delay(500);
@@ -102,6 +112,20 @@ void setup() {
 	});
 
 	server.begin();
+    bool result = SPIFFS.begin();
+    Serial.print("SPIFFS opened: ");Serial.println(result);
+
+    result=SPIFFS.format();
+    Serial.print("SPIFFS format: ");Serial.println(result);
+    FSInfo fsInfo;
+    SPIFFS.info(fsInfo);
+    Serial.print( "totalBytes=");Serial.println( fsInfo.totalBytes);
+    Serial.print( "usedBytes=");Serial.println( fsInfo.usedBytes);
+    Serial.print( "blockSize=");Serial.println( fsInfo.blockSize);
+    Serial.print( "pageSize=");Serial.println( fsInfo.pageSize);
+    Serial.print( "maxOpenFiles=");Serial.println( fsInfo.maxOpenFiles);
+    Serial.print( "maxPathLength=");Serial.println( fsInfo.maxPathLength);
+
 	Serial.println("setup done");
 }
 
