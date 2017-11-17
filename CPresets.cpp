@@ -106,13 +106,13 @@ size_t CPresets::printTo(Print& p) const{
  *
  */
 
-void CPresetsServer::onAdd(){
+void CPresetsConfig::onAdd(){
 	Serial.println(__FUNCTION__);
 	addFromJSON(server.arg("data"));
 
 
 }
-CPresetsServer::CPresetsServer(ESP8266WebServer &server):server(server){
-	server.on("/PresetClear", std::bind(&CPresetsServer::onClear, this));
-	server.on("/PresetAdd", std::bind(&CPresetsServer::onAdd, this));
+CPresetsConfig::CPresetsConfig(ESP8266WebServer &server):server(server){
+	server.on("/PresetClear", std::bind(&CPresetsConfig::onClear, this));
+	server.on("/PresetAdd", std::bind(&CPresetsConfig::onAdd, this));
 }

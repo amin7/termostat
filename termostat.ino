@@ -40,11 +40,10 @@
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
-#include "functions.h"
 #include <Wire.h>
 #include <FS.h>
 
-#include "CPresets.h"
+#include "CMainConfig.h"
 #define _DISPLAY_
 #ifdef _DISPLAY_
 U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R2, /* reset=*/ U8X8_PIN_NONE);
@@ -57,9 +56,10 @@ U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R2, /* reset=*/ U8X8_PIN_NONE);
 
 const char *ssid = "ITPwifi";
 const char *password = "_RESTRICTED3db@ea";
-
+ESP8266WebServer server(80);
 WebFaceWiFiConfig WiFiConfig(server);
-CPresetsServer presetsServer(server);
+CMainConfig mainConfig(server);
+
 
 void setup() {
     WiFi.persistent(false);
@@ -111,28 +111,21 @@ void setup() {
 			Serial.println(server.uri());
 	});
 
+	bool result = SPIFFS.begin();
+	Serial.print("SPIFFS opened: ");Serial.println(result);
+	if(result)
+		mainConfig.begin();
+	FSInfo fsInfo;
+		SPIFFS.info(fsInfo);
+		Serial.print( "totalBytes=");Serial.println( fsInfo.totalBytes);
+		Serial.print( "usedBytes=");Serial.println( fsInfo.usedBytes);
+		Serial.print( "blockSize=");Serial.println( fsInfo.blockSize);
+		Serial.print( "pageSize=");Serial.println( fsInfo.pageSize);
+		Serial.print( "maxOpenFiles=");Serial.println( fsInfo.maxOpenFiles);
+		Serial.print( "maxPathLength=");Serial.println( fsInfo.maxPathLength);
 	server.begin();
-    bool result = SPIFFS.begin();
-    Serial.print("SPIFFS opened: ");Serial.println(result);
-
-    result=SPIFFS.format();
-    Serial.print("SPIFFS format: ");Serial.println(result);
-    FSInfo fsInfo;
-    SPIFFS.info(fsInfo);
-    Serial.print( "totalBytes=");Serial.println( fsInfo.totalBytes);
-    Serial.print( "usedBytes=");Serial.println( fsInfo.usedBytes);
-    Serial.print( "blockSize=");Serial.println( fsInfo.blockSize);
-    Serial.print( "pageSize=");Serial.println( fsInfo.pageSize);
-    Serial.print( "maxOpenFiles=");Serial.println( fsInfo.maxOpenFiles);
-    Serial.print( "maxPathLength=");Serial.println( fsInfo.maxPathLength);
-
-	Serial.println("setup done");
 }
 
 void loop() {
   server.handleClient();
-  if (millis() > wait001) {             // slider0 controls LED blink rate
-    digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
-    wait001 = millis() + ESPval[0];
-  }
 }

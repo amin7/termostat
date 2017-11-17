@@ -64,12 +64,13 @@ public:
 	friend class presetsTest_deserialize_Test;
 };
 
-class CPresetsServer:private CPresets{
+class CPresetsConfig:private CPresets{
 ESP8266WebServer &server;
 void onClear(){};
 void onAdd();
 public:
-	CPresetsServer(ESP8266WebServer &server);
+	CPresetsConfig(ESP8266WebServer &server);
+	void begin(){};
 };
 
 #endif /* CPRESETS_H_ */
