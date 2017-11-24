@@ -19,12 +19,12 @@ TEST_F (presetsTest, deserialize) {
 
 	EXPECT_EQ(pr.items.size(), 1);
 
-	EXPECT_EQ(pr.items.back()->isIsActive(), false);
+	EXPECT_EQ(((CPIIsActive*)pr.items.back())->isIsActive(), false);
 
 
 	pr.addFromJSON("{\"isActive\":true,\"data\":{\"type\":\"WeekDay\",\"weekDay\":{\"Value\":[false,false,false,false,false,false,false]},\"hours\":{\"Value\":[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false]}}}");
 
 	EXPECT_EQ(pr.items.size(), 2);
-	EXPECT_EQ(pr.items.back()->isIsActive(), true);
+	EXPECT_EQ(((CPIIsActive*)pr.items.back())->isIsActive(), true);
 }
 

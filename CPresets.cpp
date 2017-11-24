@@ -6,20 +6,31 @@
  */
 
 #include "CPresets.h"
+/***
+ *
+ */
+size_t CPItem::printTo(Print& p) const {
+	return serialize().prettyPrintTo(p);
+}
+/***
+ *
+ */
 
 bool CPIIsActive::deSerialize(JsonObject& root){
+	//const size_t bufferSizeIn = JSON_OBJECT_SIZE(1) + 20;
 	isActive=root["isActive"];
 	return 0;
 }
 
-size_t CPIIsActive::printTo(Print& p) const{
-	size_t sz=0;
-	sz+=p.print("{");
-	sz+=p.print("isActive=");
-	sz+=p.print(isActive);
-	sz+=p.print("}");
-	return sz;
+JsonObject& CPIIsActive::serialize() const{
+	const size_t bufferSize = JSON_OBJECT_SIZE(1);
+	DynamicJsonBuffer jsonBuffer(bufferSize);
+	JsonObject& root = jsonBuffer.createObject();
+	root["isActive"]=isActive;
+	return root;
 }
+
+
 /***
  *
  */
@@ -40,17 +51,19 @@ bool CPI_BitField::deSerialize(JsonObject& root){
     }
     return 0;
 }
-size_t CPI_BitField::printTo(Print& p) const{
-    size_t sz=0;
-    sz+=p.print("{");
+
+JsonObject& CPI_BitField::serialize() const{
+	const size_t bufferSize = JSON_ARRAY_SIZE(size)+ JSON_OBJECT_SIZE(1);
+	DynamicJsonBuffer jsonBuffer(bufferSize);
+	JsonObject& root = jsonBuffer.createObject();
+
+	JsonArray& bits = root.createNestedArray("bits");
     for(uint8_t index=0;index<size;index++){
-        if(isSet(index))
-            sz+=p.print(index);
-        sz+=p.print(",");
+    	bits.add(isSet(index));
     }
-    sz+=p.print("}");
-    return sz;
+	return root;
 }
+
 /***
  *
  */
@@ -78,6 +91,10 @@ void CPresets::clear(){
 	items.clear();
 }
 
+void CPresets::add(CPItem &item){
+	items.push_back(&item);
+}
+
 void CPresets::addFromJSON(const String  &json){
 	Serial.println(json);
 	const size_t bufferSize = JSON_ARRAY_SIZE(7) + JSON_ARRAY_SIZE(24) + 4*JSON_OBJECT_SIZE(1) + JSON_OBJECT_SIZE(4) + 290;
@@ -102,6 +119,7 @@ size_t CPresets::printTo(Print& p) const{
 	sz+=p.print("}");
 	return sz;
 }
+#ifndef TEST
 /***
  *
  */
@@ -116,3 +134,4 @@ CPresetsConfig::CPresetsConfig(ESP8266WebServer &server):server(server){
 	server.on("/PresetClear", std::bind(&CPresetsConfig::onClear, this));
 	server.on("/PresetAdd", std::bind(&CPresetsConfig::onAdd, this));
 }
+#endif

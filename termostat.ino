@@ -113,8 +113,9 @@ void setup() {
 
 	bool result = SPIFFS.begin();
 	Serial.print("SPIFFS opened: ");Serial.println(result);
-	if(result)
-		mainConfig.begin();
+//	if(result)
+	//	mainConfig.begin();
+	Serial.println(mainConfig);
 	FSInfo fsInfo;
 		SPIFFS.info(fsInfo);
 		Serial.print( "totalBytes=");Serial.println( fsInfo.totalBytes);

@@ -9,7 +9,12 @@
 #define CPRESETS_H_
 #include <stdint.h>
 #include <vector>
-#include <ESP8266WebServer.h>
+#ifndef TEST
+	#include <ESP8266WebServer.h>
+#else
+#include <WString.h>
+#include <Printable.h>
+#endif
 #include <ArduinoJson.h>//https://github.com/bblanchon/ArduinoJson.git
 						//https://bblanchon.github.io/ArduinoJson/assistant/
 using namespace std ;
@@ -17,6 +22,8 @@ using namespace std ;
 class CPItem:public Printable{
 public:
     virtual bool deSerialize(JsonObject& root)=0;
+    virtual JsonObject& serialize() const=0;
+    size_t printTo(Print& p) const;
     virtual ~CPItem(){};
 };
 
@@ -26,8 +33,8 @@ public:
 	bool isIsActive() const {
 		return isActive;
 	}
-	virtual bool deSerialize(JsonObject& root);
-	virtual size_t printTo(Print& p) const;
+	bool deSerialize(JsonObject& root);
+	JsonObject& serialize() const;
 };
 
 class CPI_BitField:public CPItem{
@@ -39,8 +46,9 @@ public:
     bool isSet(uint8_t index)const {  return (bitField&(((uint32_t)1)<<index))?true:false;}
     uint32_t getBitField() const {    return bitField;   }
     void setBitField(uint32_t bitField) {   this->bitField = bitField; }
-    virtual bool deSerialize(JsonObject& root);
-    virtual size_t printTo(Print& p) const;
+    bool deSerialize(JsonObject& root);
+    JsonObject& serialize() const;
+
 };
 
 class CPI_byWeekDay:public CPIIsActive{
@@ -51,12 +59,15 @@ public:
     virtual bool deSerialize(JsonObject& root);
     virtual size_t printTo(Print& p) const;
 };
+
+
 class CPresets :public Printable{
 	vector<CPItem*> items;
 public:
 	CPresets(){};
 	virtual ~CPresets(){};
 	void clear();
+	void add(CPItem &item);
 	void addFromJSON(const String  &json);
 	void getFirstJSON(char* json);
 	void getNextJSON(char* json);
@@ -64,7 +75,8 @@ public:
 	friend class presetsTest_deserialize_Test;
 };
 
-class CPresetsConfig:private CPresets{
+#ifndef TEST
+class CPresetsConfig:public CPresets{
 ESP8266WebServer &server;
 void onClear(){};
 void onAdd();
@@ -72,5 +84,6 @@ public:
 	CPresetsConfig(ESP8266WebServer &server);
 	void begin(){};
 };
+#endif
 
 #endif /* CPRESETS_H_ */
