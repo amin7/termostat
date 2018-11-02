@@ -11,78 +11,99 @@
 #include <vector>
 #ifndef TEST
 	#include <ESP8266WebServer.h>
-#else
-#include <WString.h>
-#include <Printable.h>
 #endif
+
 #include <ArduinoJson.h>//https://github.com/bblanchon/ArduinoJson.git
-						//https://bblanchon.github.io/ArduinoJson/assistant/
+//https://arduinojson.org
 using namespace std ;
 
-class CPItem:public Printable{
+class CPItem {
+private:
 public:
-    virtual bool deSerialize(JsonObject& root)=0;
-    virtual JsonObject& serialize() const=0;
-    size_t printTo(Print& p) const;
-    virtual ~CPItem(){};
+  virtual bool deSerialize(const JsonObject& root)=0;
+  virtual bool serialize(JsonObject& root)=0;
 };
 
-class CPIIsActive:public CPItem{
-	bool isActive;
+template<size_t _size>
+class CPI_BitField: public CPItem {
+  bool bitField[_size + 1];
+  const char *_name;
 public:
-	bool isIsActive() const {
-		return isActive;
-	}
-	bool deSerialize(JsonObject& root);
-	JsonObject& serialize() const;
+  CPI_BitField(const char *name) :
+      _name(name) {
+  }
+  ;
+  bool &operator[](int index) {
+    if (_size <= index) //to prevent mem error
+      index = _size;
+    return bitField[index];
+  }
+  bool &operator[](int index) const {
+    if (_size <= index) //to prevent mem error
+      index = _size;
+    return bitField[index];
+  }
+
+  bool deSerialize(const JsonObject& root) override {
+    const JsonArray& Value = root[_name];
+    for (auto index = 0; index < _size; index++) {
+      this->operator [](index) = Value[index];
+    }
+    return 0;
+  }
+
+  bool serialize(JsonObject& root) override {
+    uint32_t bits = 0;
+    for (auto index = 0; index < _size; index++) {
+      if (this->operator [](index)) {
+        bits |= (1 << index);
+      }
+    }
+    root[_name] = bits;
+    return true;
+  }
 };
 
-class CPI_BitField:public CPItem{
-    uint32_t bitField;
-    const uint8_t size;
+class CPI_byWeekDay: public CPItem {
 public:
-    CPI_BitField(uint8_t size):bitField(0),size(size){};
-    void setBit(uint8_t index,bool value);
-    bool isSet(uint8_t index)const {  return (bitField&(((uint32_t)1)<<index))?true:false;}
-    uint32_t getBitField() const {    return bitField;   }
-    void setBitField(uint32_t bitField) {   this->bitField = bitField; }
-    bool deSerialize(JsonObject& root);
-    JsonObject& serialize() const;
-
-};
-
-class CPI_byWeekDay:public CPIIsActive{
-public:
-    CPI_BitField weekDay;
-    CPI_BitField hours;
-    CPI_byWeekDay(): weekDay(7),hours(24){};
-    virtual bool deSerialize(JsonObject& root);
-    virtual size_t printTo(Print& p) const;
+  CPI_BitField<7> weekDay;
+  CPI_BitField<24> hours;
+  virtual bool serialize(JsonObject& root) override;
+  virtual bool deSerialize(const JsonObject& root) override;
+  CPI_byWeekDay() :
+      weekDay("weekDay"), hours("hours") {
+  }
+  ;
 };
 
 
-class CPresets :public Printable{
-	vector<CPItem*> items;
+class CPresets: public CPItem {
+  vector<CPI_byWeekDay> items;
 public:
-	CPresets(){};
-	virtual ~CPresets(){};
-	void clear();
-	void add(CPItem &item);
-	void addFromJSON(const String  &json);
-	void getFirstJSON(char* json);
-	void getNextJSON(char* json);
-	virtual size_t printTo(Print& p) const;
+  enum {
+    preset_count = 5
+  };
+  CPresets() :
+      items(preset_count) {
+  }
+  ;
+  void init();
+  virtual bool serialize(JsonObject& root) override;
+  virtual bool deSerialize(const JsonObject& root) override;
 	friend class presetsTest_deserialize_Test;
 };
 
 #ifndef TEST
 class CPresetsConfig:public CPresets{
 ESP8266WebServer &server;
-void onClear(){};
-void onAdd();
+  void onLoad();
+  void onSave();
 public:
 	CPresetsConfig(ESP8266WebServer &server);
-	void begin(){};
+  void begin() {
+    onLoad();
+  }
+  ;
 };
 #endif
 

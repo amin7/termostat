@@ -8,7 +8,7 @@ INCLUDE_PATH_= ../../libraries/ArduinoJson/src \
 			 $(SLOEBER_PATH)
 
 INCLUDE_PATH =  $(addprefix -I ,$(INCLUDE_PATH_))
-GTEST_DIR=../../libraries/googletest/googletest/
+GTEST_DIR=/cygdrive/d/work/test/googletest/googletest/
 GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h \
                 $(GTEST_DIR)/include/gtest/internal/*.h
 GTEST_SRCS_ = $(GTEST_DIR)/src/*.cc $(GTEST_DIR)/src/*.h $(GTEST_HEADERS)

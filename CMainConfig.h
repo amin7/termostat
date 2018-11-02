@@ -8,12 +8,12 @@
 #ifndef CMAINCONFIG_H_
 #define CMAINCONFIG_H_
 #include <stdint.h>
-#include <ArduinoJson.h>//https://github.com/bblanchon/ArduinoJson.git
+#include <ArduinoJson.h>
+//https://github.com/bblanchon/ArduinoJson.git
 						//https://bblanchon.github.io/ArduinoJson/assistant/
 #include "CPresets.h"
 
 class CMainConfig: public CPItem {
-	CPresetsConfig presetsConfig;
 	ESP8266WebServer &server;
 	const float def_tempAirMin=18;
 	const float def_tempAirMax=23;
@@ -30,12 +30,11 @@ class CMainConfig: public CPItem {
 
 	void onFactoryReset();
 public:
-	bool deSerialize(JsonObject& root){return 0;};
-	JsonObject& serialize() const;
+  virtual bool serialize(JsonObject& root) override;
+  virtual bool deSerialize(const JsonObject& root) override;
 	CMainConfig(ESP8266WebServer &server);
 	virtual ~CMainConfig();
-	bool begin();
-	size_t printTo(Print& p) const;
+  bool begin();
 };
 
 #endif /* CMAINCONFIG_H_ */

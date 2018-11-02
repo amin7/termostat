@@ -4,7 +4,7 @@
  *  Created on: Nov 2, 2017
  *      Author: ominenko
  */
-
+#ifdef TEST
 #include "../CPresets.h"
 #include "gtest/gtest.h"
 
@@ -28,3 +28,4 @@ TEST_F (presetsTest, deserialize) {
 	EXPECT_EQ(((CPIIsActive*)pr.items.back())->isIsActive(), true);
 }
 
+#endif

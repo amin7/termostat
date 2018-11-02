@@ -7,10 +7,10 @@
 
 #include "CMainConfig.h"
 #include <FS.h>
-
 const char* configFile PROGMEM ={"//mainconfig.json"};
 
-CMainConfig::CMainConfig(ESP8266WebServer &server):presetsConfig(server),server(server),
+CMainConfig::CMainConfig(ESP8266WebServer &_server) :
+    server(_server),
 tempAirMin(def_tempAirMin),
 tempAirMax(def_tempAirMax),
 tempFlour(def_tempFlour),
@@ -25,8 +25,7 @@ CMainConfig::~CMainConfig() {
 }
 
 bool CMainConfig::begin(){
-	auto item=new CPI_byWeekDay();
-	presetsConfig.add(*item);
+
 //	if(SPIFFS.begin())return 1;
 //
 //	File f = SPIFFS.open(configFile, "r");
@@ -50,25 +49,22 @@ void CMainConfig::onFactoryReset(){
 	Serial.println(result);
 	delay(1000);
 }
+
+bool CMainConfig::serialize(JsonObject& root) {
+  return true;
+}
+
 const size_t bufferSize = JSON_ARRAY_SIZE(2) + JSON_OBJECT_SIZE(3);
-JsonObject& CMainConfig::serialize()const{
-	DynamicJsonBuffer jsonBuffer(bufferSize);
-	JsonObject& root = jsonBuffer.createObject();
-	root["tempAirMin"]=tempAirMin;
-	root["tempAirMax"]=tempAirMax;
-	root["tempFlour"]=tempFlour;
-	root["tempHisteresis"]=tempHisteresis;
-	root["PWM"]=PWM;
-	return root;
+bool CMainConfig::deSerialize(const JsonObject& root) {
+  root["tempAirMin"] = tempAirMin;
+  root["tempAirMax"] = tempAirMax;
+  root["tempFlour"] = tempFlour;
+  root["tempHisteresis"] = tempHisteresis;
+  root["PWM"] = PWM;
+  return true;
 }
 
-size_t CMainConfig::printTo(Print& p) const{
-	size_t sz=0;
-	sz+=p.print("{");
-	sz+=p.print("\"CMainConfig\":");
-	sz+=serialize().prettyPrintTo(p);
 
-	sz+=p.print("}");
-	return sz;
-}
+
+
 
