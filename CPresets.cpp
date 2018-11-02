@@ -65,6 +65,12 @@ void CPresetsConfig::onLoad() {
   Serial.println();
   Serial.print("memoryUsage=");
   Serial.println(doc.memoryUsage());
+  server.setContentLength(CONTENT_LENGTH_UNKNOWN);
+  server.send(200, "text/json", "");
+  server.client().stop();
+  serializeJson(root, server.client());
+
+
 }
 
 CPresetsConfig::CPresetsConfig(ESP8266WebServer &server):server(server){

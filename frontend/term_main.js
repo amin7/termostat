@@ -10,7 +10,28 @@ xmlHttp=createXmlHttpObject();
     }
     return xmlHttp;
   }
-function saveSchedule(){
+  
+  function PresetLoad(){
+	  let presetsList = document.getElementById("PresetsList");
+	    while (presetsList.firstChild) {
+	    	presetsList.removeChild(presetsList.firstChild);
+	      }
+	  
+      var xh = new XMLHttpRequest();
+      xh.onreadystatechange = function(){
+        if (xh.readyState == 4){
+          if(xh.status == 200) {
+            var res = JSON.parse(xh.responseText);
+            console.log(res);
+          }
+        }
+      };
+      xh.open("GET", "/PresetLoad", true);
+      xh.send(null);
+	}
+
+  
+function PresetSave(){
 	listSerialize();
 //  if(xmlHttp.readyState==0||xmlHttp.readyState==4){
 //	    xmlHttp.onreadystatechange=function(){
@@ -177,5 +198,5 @@ function init(){
 	updateCurrDateTime();
 	setInterval('updateCurrDateTime()', 1000);	
 	add_byWeekday();//for test
-	
+	//PresetLoad();
 }    	
