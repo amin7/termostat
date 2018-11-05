@@ -64,6 +64,7 @@ void setup() {
 #else
 	Serial.print("Configuring access point...");
 	/* You can remove the password parameter if you want the AP to be open. */
+  WiFi.softAP("test", "esp12345");
 	WiFi.mode(WIFI_AP);
 #endif
   cli_ifconfig(0, NULL);

@@ -23,6 +23,7 @@ xmlHttp=createXmlHttpObject();
           if(xh.status == 200) {
             var res = JSON.parse(xh.responseText);
             console.log(res);
+            add_Presets(res);
           }
         }
       };
@@ -30,32 +31,30 @@ xmlHttp=createXmlHttpObject();
       xh.send(null);
 	}
 
-  
 function PresetSave(){
-	listSerialize();
-//  if(xmlHttp.readyState==0||xmlHttp.readyState==4){
-//	    xmlHttp.onreadystatechange=function(){
-//	      if(xmlHttp.readyState==4&&xmlHttp.status==200){  
-//	    	  console.log("saved ok");
-//	      }
-//	    }
-//	var doc = document.getElementById("PresetsList");
-//	let myJSON=null;
-//	if(doc.children.length){
-//		let obj=doc.children[0].controlData;
-//		myJSON = JSON.stringify(obj);
-//	}
-//	 var url = "PresetAdd?data=" + encodeURIComponent(myJSON);
-//			 
-//	 xmlHttp.open('GET',url,true); //POST is more safely but ... harder to suuport from esp side
-//	 xmlHttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");				
-//	 console.log(url);
-//	 xmlHttp.send(null);
-//  }
+  if(xmlHttp.readyState==0||xmlHttp.readyState==4){
+	xmlHttp.onreadystatechange=function(){
+	  if(xmlHttp.readyState==4&&xmlHttp.status==200){  
+		  console.log("saved ok");
+	  }
+	}
+	let myJSON = new Object;
+	myJSON.Presets=[];
+	var doc = document.getElementById("PresetsList");
+	for (i = 0; i < doc.children.length; i++) {
+		let preset = new Object;	
+		preset.weekDay=doc.children[i].preset.weekDay.getValue();
+		preset.hours=doc.children[i].preset.hours.getValue();
+		myJSON.Presets.push(preset);
+	}	
+	xmlHttp.open('PUT',"/PresetSave",true); 
+	xmlHttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");				
+	xmlHttp.send(myJSON);
+	console.log(myJSON);
+  }
 }
       
-function selectionList(parent,valList,initial){
-	this.Value=[];
+function selectionList(parent,valList,initial){	
 	const colorSelected="#fc6400";
 	const colorSelection="#fc0000";
 	const colorNotSelected="#00a3fc";        	
@@ -67,6 +66,15 @@ function selectionList(parent,valList,initial){
     parent.appendChild(myNode);
     if(myNode==null)
     	return;
+    this.getValue= function() {
+    	let bitmap=0;
+    	for (var index in myNode.childNodes) {    	
+    		if(myNode.childNodes[index].value=="true"){
+    			bitmap+=(1<<index);
+    		}
+       	}
+    	return bitmap;
+    }
     function dispaySelection(selBeg,selEnd,isSelected){	        	
     	childNodes=myNode.childNodes;
         i = childNodes.length;
@@ -93,7 +101,6 @@ function selectionList(parent,valList,initial){
         	if((cur>=selBeg)&&(cur<=selEnd))
         		button.value=isSelected;
         	button.style.backgroundColor = (button.value=="true")?colorSelected:colorNotSelected;
-        	this.Value[i]=(button.value=="true")?1:0;
          }	         		 
  		}
     this.moveState=function(button) {
@@ -127,8 +134,9 @@ function selectionList(parent,valList,initial){
     };
     
     var obj = this;
-   	for(var i=0;i<valList.length;i++){
-   		 this.Value.push(initial[i]);
+   	for(var i=0;i<valList.length;i++)
+   	{
+   		let isSet=initial&(1<<i)?true:false;
        	 let button=document.createElement("button")
        	 button.innerHTML = valList[i];
        	 button.setAttribute("name", i);
@@ -138,7 +146,7 @@ function selectionList(parent,valList,initial){
        	 button.addEventListener("mousedown", function(){ obj.keyDown(button); });
          button.addEventListener("mouseenter", function(){ obj.moveState(button);});
          
-         button.value=initial[i]?true:false;         
+         button.value=isSet;         
          button.style.backgroundColor = (button.value=="true")?colorSelected:colorNotSelected;               
        	 myNode.appendChild(button);
    	}		   	 		   		
@@ -158,45 +166,58 @@ function htmlObj(html){
 	return el;
 }
 
-function byWeekday(placement){
-	let div=document.createElement("div");	
-	let initw=[0,0,0,0,0,1,1];
-	this.weekDay=new selectionList(div,dayOfWeekStr,initw);
+function preset(placement,initVal){
+	let div=document.createElement("div");		
+	this.weekDay=new selectionList(div,dayOfWeekStr,initVal.weekDay);
 	div.appendChild(document.createElement("BR"));
 	var valArray=[24];	
 	for(var i=0;i<24;i++){
 		valArray[i]=""+i;
-	}	
-	let inith=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-	this.hours= new selectionList(div,valArray,inith);
+	}		
+	this.hours= new selectionList(div,valArray,initVal.hours);
 	div.appendChild(document.createElement("BR"));
 	placement.appendChild(div);
 }
 
-function add_byWeekday(){
+function add_Presets(config){	
 	let presetsList = document.getElementById("PresetsList");
-	let listItem=document.createElement("LI");
-	listItem.weekday =new byWeekday(listItem);
-	listItem.appendChild(document.createElement("BR"));
-	presetsList.insertBefore(listItem,presetsList.childNodes[0]);	
-}
-
-function listSerialize(){
-	var cache = [];
-	var doc = document.getElementById("PresetsList");
-	for (i = 0; i < doc.children.length; i++) {
-		let obj=doc.children[i].weekday;
-		let myJSON = JSON.stringify(obj);		
-		cache.push(myJSON);
+	for (var key in config.Presets) {
+		let listItem=document.createElement("LI");		
+		listItem.preset =new preset(listItem,config.Presets[key]);
+		listItem.appendChild(document.createElement("BR"));
+		presetsList.appendChild(listItem);	
 	}
-	console.log(cache);
-	
-	
 }
 
 function init(){
 	updateCurrDateTime();
-	setInterval('updateCurrDateTime()', 1000);	
-	add_byWeekday();//for test
+	setInterval('updateCurrDateTime()', 1000);
+	let val=new Object;
+	val={
+			  "Presets": [
+				    {
+				      "weekDay": 1,
+				      "hours": 2
+				    },
+				    {
+				      "weekDay": 3,
+				      "hours": 0
+				    },
+				    {
+				      "weekDay": 7,
+				      "hours": 0
+				    },
+				    {
+				      "weekDay": 0,
+				      "hours": 0
+				    },
+				    {
+				      "weekDay": 0,
+				      "hours": 0
+				    }
+				  ]
+				}
+
+	add_Presets(val);//for test
 	//PresetLoad();
 }    	
