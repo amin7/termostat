@@ -1,5 +1,5 @@
 //https://github.com/google/googletest.git
-
+#define ARDUINOJSON_ENABLE_ARDUINO_STRING 1
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>

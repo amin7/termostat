@@ -6,14 +6,6 @@
  */
 
 #include "CPresets.h"
-/***
- *
- */
-
-
-/***
- *
- */
 bool CPI_byWeekDay::serialize(JsonObject& root) {
   weekDay.serialize(root);
   hours.serialize(root);
@@ -54,23 +46,21 @@ bool CPresets::deSerialize(const JsonObject& root) {
 
 void CPresetsConfig::onSave() {
   Serial.println(__FUNCTION__);
-
+  Serial.print("Payload=");
+  Serial.println(server.arg("plain"));
 }
 void CPresetsConfig::onLoad() {
   Serial.println(__FUNCTION__);
-  StaticJsonDocument<1024> doc;
+  StaticJsonDocument<512> doc;
   JsonObject root = doc.to<JsonObject>();
   serialize(root);
-  serializeJsonPretty(root, Serial);
-  Serial.println();
   Serial.print("memoryUsage=");
-  Serial.println(doc.memoryUsage());
-  server.setContentLength(CONTENT_LENGTH_UNKNOWN);
-  server.send(200, "text/json", "");
-  server.client().stop();
-  //serializeJson(root, server.client());
-
-
+  auto memuse = doc.memoryUsage();
+  Serial.println(memuse);
+  String tt;
+  serializeJson(root, tt);
+  server.send(200, "text/json", tt);
+  Serial.println(tt);
 }
 
 CPresetsConfig::CPresetsConfig(ESP8266WebServer &server):server(server){

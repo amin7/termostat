@@ -39,16 +39,17 @@ function PresetSave(){
 	  }
 	}
 	let myJSON = new Object;
+	myJSON.test="test";
 	myJSON.Presets=[];
-	var doc = document.getElementById("PresetsList");
-	for (i = 0; i < doc.children.length; i++) {
-		let preset = new Object;	
-		preset.weekDay=doc.children[i].preset.weekDay.getValue();
-		preset.hours=doc.children[i].preset.hours.getValue();
-		myJSON.Presets.push(preset);
-	}	
+//	var doc = document.getElementById("PresetsList");
+//	for (i = 0; i < doc.children.length; i++) {
+//		let preset = new Object;	
+//		preset.weekDay=doc.children[i].preset.weekDay.getValue();
+//		preset.hours=doc.children[i].preset.hours.getValue();
+//		myJSON.Presets.push(preset);
+//	}	
 	xmlHttp.open('PUT',"/PresetSave",true); 
-	xmlHttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");				
+	xmlHttp.setRequestHeader("Content-Type", "application/json");				
 	xmlHttp.send(myJSON);
 	console.log(myJSON);
   }
@@ -193,31 +194,18 @@ function init(){
 	updateCurrDateTime();
 	setInterval('updateCurrDateTime()', 1000);
 	let val=new Object;
-	val={
-			  "Presets": [
-				    {
-				      "weekDay": 1,
-				      "hours": 2
-				    },
-				    {
-				      "weekDay": 3,
-				      "hours": 0
-				    },
-				    {
-				      "weekDay": 7,
-				      "hours": 0
-				    },
-				    {
-				      "weekDay": 0,
-				      "hours": 0
-				    },
-				    {
-				      "weekDay": 0,
-				      "hours": 0
-				    }
-				  ]
-				}
-
-	add_Presets(val);//for test
-	//PresetLoad();
+//	val={
+//			  "Presets": [
+//				    {
+//				      "weekDay": 1,
+//				      "hours": 2
+//				    },
+//				    {
+//				      "weekDay": 3,
+//				      "hours": 0
+//				    }
+//				  ]
+//				}
+//	add_Presets(val);//for test
+	PresetLoad();
 }    	

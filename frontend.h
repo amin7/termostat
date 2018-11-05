@@ -1,6 +1,7 @@
 #ifndef _FRONT_END_
 #define _FRONT_END_
-//converted  date time= 2018-11-05 14:07:18.534744
+//converted  date time= 2018-11-05 18:02:29.468407
+//cmd gen: D:\personal\git\termostat\text2code.py -D frontend/
 const char* _frontend_term_main_css_ PROGMEM ={\
   "#button_schedule_hour{\n"\
     "border: 0px solid black;\n"\
@@ -92,6 +93,7 @@ const char* _frontend_term_main_js_ PROGMEM ={\
           "if(xh.status == 200) {\n"\
             "var res = JSON.parse(xh.responseText);\n"\
             "console.log(res);\n"\
+            "add_Presets(res);\n"\
           "}\n"\
         "}\n"\
       "};\n"\
@@ -99,32 +101,31 @@ const char* _frontend_term_main_js_ PROGMEM ={\
       "xh.send(null);\n"\
     "}\n"\
 \
-\
 "function PresetSave(){\n"\
-    "listSerialize();\n"\
-"//  if(xmlHttp.readyState==0||xmlHttp.readyState==4){\n"\
-"//	    xmlHttp.onreadystatechange=function(){\n"\
-"//	      if(xmlHttp.readyState==4&&xmlHttp.status==200){\n"\
-"//	    	  console.log(\"saved ok\");\n"\
-"//	      }\n"\
-"//	    }\n"\
+  "if(xmlHttp.readyState==0||xmlHttp.readyState==4){\n"\
+    "xmlHttp.onreadystatechange=function(){\n"\
+      "if(xmlHttp.readyState==4&&xmlHttp.status==200){\n"\
+          "console.log(\"saved ok\");\n"\
+      "}\n"\
+    "}\n"\
+    "let myJSON = new Object;\n"\
+    "myJSON.test=\"test\";\n"\
+    "myJSON.Presets=[];\n"\
 "//	var doc = document.getElementById(\"PresetsList\");\n"\
-"//	let myJSON=null;\n"\
-"//	if(doc.children.length){\n"\
-"//		let obj=doc.children[0].controlData;\n"\
-"//		myJSON = JSON.stringify(obj);\n"\
+"//	for (i = 0; i < doc.children.length; i++) {\n"\
+"//		let preset = new Object;\n"\
+"//		preset.weekDay=doc.children[i].preset.weekDay.getValue();\n"\
+"//		preset.hours=doc.children[i].preset.hours.getValue();\n"\
+"//		myJSON.Presets.push(preset);\n"\
 "//	}\n"\
-"//	 var url = \"PresetAdd?data=\" + encodeURIComponent(myJSON);\n"\
-"//\n"\
-"//	 xmlHttp.open(\'GET\',url,true); //POST is more safely but ... harder to suuport from esp side\n"\
-"//	 xmlHttp.setRequestHeader(\"Content-Type\", \"application/json;charset=UTF-8\");\n"\
-"//	 console.log(url);\n"\
-"//	 xmlHttp.send(null);\n"\
-"//  }\n"\
+    "xmlHttp.open(\'PUT\',\"/PresetSave\",true);\n"\
+    "xmlHttp.setRequestHeader(\"Content-Type\", \"application/json\");\n"\
+    "xmlHttp.send(myJSON);\n"\
+    "console.log(myJSON);\n"\
+  "}\n"\
 "}\n"\
 \
 "function selectionList(parent,valList,initial){\n"\
-    "this.Value=[];\n"\
     "const colorSelected=\"#fc6400\";\n"\
     "const colorSelection=\"#fc0000\";\n"\
     "const colorNotSelected=\"#00a3fc\";\n"\
@@ -136,6 +137,15 @@ const char* _frontend_term_main_js_ PROGMEM ={\
     "parent.appendChild(myNode);\n"\
     "if(myNode==null)\n"\
         "return;\n"\
+    "this.getValue= function() {\n"\
+        "let bitmap=0;\n"\
+        "for (var index in myNode.childNodes) {\n"\
+            "if(myNode.childNodes[index].value==\"true\"){\n"\
+                "bitmap+=(1<<index);\n"\
+            "}\n"\
+           "}\n"\
+        "return bitmap;\n"\
+    "}\n"\
     "function dispaySelection(selBeg,selEnd,isSelected){\n"\
         "childNodes=myNode.childNodes;\n"\
         "i = childNodes.length;\n"\
@@ -162,7 +172,6 @@ const char* _frontend_term_main_js_ PROGMEM ={\
             "if((cur>=selBeg)&&(cur<=selEnd))\n"\
                 "button.value=isSelected;\n"\
             "button.style.backgroundColor = (button.value==\"true\")?colorSelected:colorNotSelected;\n"\
-            "this.Value[i]=(button.value==\"true\")?1:0;\n"\
          "}\n"\
          "}\n"\
     "this.moveState=function(button) {\n"\
@@ -196,8 +205,9 @@ const char* _frontend_term_main_js_ PROGMEM ={\
     "};\n"\
 \
     "var obj = this;\n"\
-       "for(var i=0;i<valList.length;i++){\n"\
-            "this.Value.push(initial[i]);\n"\
+       "for(var i=0;i<valList.length;i++)\n"\
+       "{\n"\
+           "let isSet=initial&(1<<i)?true:false;\n"\
             "let button=document.createElement(\"button\")\n"\
             "button.innerHTML = valList[i];\n"\
             "button.setAttribute(\"name\", i);\n"\
@@ -207,7 +217,7 @@ const char* _frontend_term_main_js_ PROGMEM ={\
             "button.addEventListener(\"mousedown\", function(){ obj.keyDown(button); });\n"\
          "button.addEventListener(\"mouseenter\", function(){ obj.moveState(button);});\n"\
 \
-         "button.value=initial[i]?true:false;\n"\
+         "button.value=isSet;\n"\
          "button.style.backgroundColor = (button.value==\"true\")?colorSelected:colorNotSelected;\n"\
             "myNode.appendChild(button);\n"\
        "}\n"\
@@ -227,47 +237,47 @@ const char* _frontend_term_main_js_ PROGMEM ={\
     "return el;\n"\
 "}\n"\
 \
-"function byWeekday(placement){\n"\
+"function preset(placement,initVal){\n"\
     "let div=document.createElement(\"div\");\n"\
-    "let initw=[0,0,0,0,0,1,1];\n"\
-    "this.weekDay=new selectionList(div,dayOfWeekStr,initw);\n"\
+    "this.weekDay=new selectionList(div,dayOfWeekStr,initVal.weekDay);\n"\
     "div.appendChild(document.createElement(\"BR\"));\n"\
     "var valArray=[24];\n"\
     "for(var i=0;i<24;i++){\n"\
         "valArray[i]=\"\"+i;\n"\
     "}\n"\
-    "let inith=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];\n"\
-    "this.hours= new selectionList(div,valArray,inith);\n"\
+    "this.hours= new selectionList(div,valArray,initVal.hours);\n"\
     "div.appendChild(document.createElement(\"BR\"));\n"\
     "placement.appendChild(div);\n"\
 "}\n"\
 \
-"function add_byWeekday(){\n"\
+"function add_Presets(config){\n"\
     "let presetsList = document.getElementById(\"PresetsList\");\n"\
-    "let listItem=document.createElement(\"LI\");\n"\
-    "listItem.weekday =new byWeekday(listItem);\n"\
-    "listItem.appendChild(document.createElement(\"BR\"));\n"\
-    "presetsList.insertBefore(listItem,presetsList.childNodes[0]);\n"\
-"}\n"\
-\
-"function listSerialize(){\n"\
-    "var cache = [];\n"\
-    "var doc = document.getElementById(\"PresetsList\");\n"\
-    "for (i = 0; i < doc.children.length; i++) {\n"\
-        "let obj=doc.children[i].weekday;\n"\
-        "let myJSON = JSON.stringify(obj);\n"\
-        "cache.push(myJSON);\n"\
+    "for (var key in config.Presets) {\n"\
+        "let listItem=document.createElement(\"LI\");\n"\
+        "listItem.preset =new preset(listItem,config.Presets[key]);\n"\
+        "listItem.appendChild(document.createElement(\"BR\"));\n"\
+        "presetsList.appendChild(listItem);\n"\
     "}\n"\
-    "console.log(cache);\n"\
-\
-\
 "}\n"\
 \
 "function init(){\n"\
     "updateCurrDateTime();\n"\
     "setInterval(\'updateCurrDateTime()\', 1000);\n"\
-    "add_byWeekday();//for test\n"\
-    "//PresetLoad();\n"\
+    "let val=new Object;\n"\
+"//	val={\n"\
+"//			  \"Presets\": [\n"\
+"//				    {\n"\
+"//				      \"weekDay\": 1,\n"\
+"//				      \"hours\": 2\n"\
+"//				    },\n"\
+"//				    {\n"\
+"//				      \"weekDay\": 3,\n"\
+"//				      \"hours\": 0\n"\
+"//				    }\n"\
+"//				  ]\n"\
+"//				}\n"\
+"//	add_Presets(val);//for test\n"\
+    "PresetLoad();\n"\
 "}\n"\
 };
 const char* _frontend_thtml1_html_ PROGMEM ={\

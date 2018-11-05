@@ -71,6 +71,11 @@ if(args.dir!="None"):
 print("#ifndef _FRONT_END_")
 print("#define _FRONT_END_")
 print("//converted  date time=", datetime.datetime.now())
+cmdline='//cmd gen:'
+for par in sys.argv:
+    cmdline+=' '+str(par)
+print (cmdline)
+
 for file in fileList:
     convertFile(file)
 print("\n//converted list")
