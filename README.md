@@ -25,7 +25,7 @@ D2  |	IO, SDA   |	GPIO4|
 D3  |	IO, 10k Pull-up|	GPIO0|
 D4  |	IO, 10k Pull-up, BUILTIN_LED|	GPIO2| dht
 D5  |	IO, SCK   |	GPIO14|
-D6  |	IO, MISO  |	GPIO12|
+D6  |	IO, MISO  |	GPIO12|relay
 D7  |	IO, MOSI  |	GPIO13|
 D8  |	IO, 10k Pull-down, SS|	GPIO15|
 G   |	Ground    |	GND|
@@ -43,4 +43,4 @@ RST |	Reset |	RST|
 4 GND (G)
 
 #relay
-? 
+d6

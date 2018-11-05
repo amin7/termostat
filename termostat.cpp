@@ -1,5 +1,6 @@
 //https://github.com/google/googletest.git
 #define ARDUINOJSON_ENABLE_ARDUINO_STRING 1
+//libs
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
@@ -7,7 +8,9 @@
 #include <ESP8266mDNS.h>
 #include <Wire.h>
 #include <FS.h>
+#include "DHTesp.h"
 
+//user libs
 #include "CMainConfig.h"
 #include "WebFaceWiFiConfig.h"
 #include "CFrontendFS.h"
@@ -15,12 +18,16 @@
 #include "cmd.h"
 
 #define WIFI_SERVER
+const auto PIN_RELAY = D6;
+const auto DHTPIN = D4;
+
 const char *ssid = "ITPwifi";
 const char *password = "_RESTRICTED3db@ea";
 ESP8266WebServer server(80);
 WebFaceWiFiConfig WiFiConfig(server);
 CMainConfig mainConfig(server);
 CPresetsConfig presetsConfig(server);
+DHTesp dht;
 
 void cli_info(int argc, char **argv) {
   Serial.println("FSInfo");
@@ -52,11 +59,36 @@ void cli_ifconfig(int argc, char **argv) {
 #endif
 }
 
+void cli_relay(int argc, char **argv) {
+  if (2 == argc) {
+    switch (*argv[1]) {
+      case '0':
+        digitalWrite(PIN_RELAY, 0);
+        break;
+      case '1':
+        digitalWrite(PIN_RELAY, 1);
+        break;
+    }
+  }
+}
+
+void cli_dht(int argc, char **argv) {
+  Serial.print("dht status:");
+  Serial.println(dht.getStatusString());
+}
+
+void cli_termistor(int argc, char **argv) {
+
+}
 void setup() {
     WiFi.persistent(false);
     pinMode(LED_BUILTIN, OUTPUT);
-    Serial.begin(115200); delay(100);
-    Serial.println("\n\nBOOTING ESP8266 ...");
+  pinMode(PIN_RELAY, OUTPUT | WAKEUP_PULLUP);
+  digitalWrite(PIN_RELAY, 0); //off
+  Serial.begin(115200);
+  delay(100);
+  Serial.println("\n\nBOOTING ESP8266 ...");
+  dht.setup(DHTPIN, DHTesp::DHT22);
 #ifndef WIFI_SERVER //cliend
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) delay(500);
@@ -97,6 +129,10 @@ void setup() {
   cmdInit();
   cmdAdd("info", cli_info);
   cmdAdd("ifconfig", cli_ifconfig);
+  cmdAdd("relay", cli_relay);
+  cmdAdd("termistor", cli_termistor);
+  cmdAdd("dht", cli_dht);
+
 }
 
 void loop() {
