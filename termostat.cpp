@@ -12,8 +12,9 @@
 #include "WebFaceWiFiConfig.h"
 #include "CFrontendFS.h"
 #include "frontend.h"
+#include "cmd.h"
 
-
+#define WIFI_SERVER
 const char *ssid = "ITPwifi";
 const char *password = "_RESTRICTED3db@ea";
 ESP8266WebServer server(80);
@@ -21,31 +22,51 @@ WebFaceWiFiConfig WiFiConfig(server);
 CMainConfig mainConfig(server);
 CPresetsConfig presetsConfig(server);
 
+void cli_info(int argc, char **argv) {
+  Serial.println("FSInfo");
+  FSInfo fsInfo;
+  SPIFFS.info(fsInfo);
+  Serial.print("totalBytes=");
+  Serial.println(fsInfo.totalBytes);
+  Serial.print("usedBytes=");
+  Serial.println(fsInfo.usedBytes);
+  Serial.print("blockSize=");
+  Serial.println(fsInfo.blockSize);
+  Serial.print("pageSize=");
+  Serial.println(fsInfo.pageSize);
+  Serial.print("maxOpenFiles=");
+  Serial.println(fsInfo.maxOpenFiles);
+  Serial.print("maxPathLength=");
+  Serial.println(fsInfo.maxPathLength);
+}
+void cli_ifconfig(int argc, char **argv) {
+#ifndef WIFI_SERVER //cliend
+  Serial.print("Connected to ");
+  Serial.println(ssid);
+  Serial.print("Station IP address: ");
+  Serial.println(WiFi.localIP());
+#else
+  IPAddress myIP = WiFi.softAPIP();
+  Serial.print("AP IP address: ");
+  Serial.println(myIP);
+#endif
+}
+
 void setup() {
     WiFi.persistent(false);
     pinMode(LED_BUILTIN, OUTPUT);
     Serial.begin(115200); delay(100);
     Serial.println("\n\nBOOTING ESP8266 ...");
-#if false //cliend
+#ifndef WIFI_SERVER //cliend
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) delay(500);
   WiFi.mode(WIFI_STA);
-
-    Serial.print("Connected to ");
-    Serial.println(ssid);
-    Serial.print("Station IP address: ");
-    Serial.println(WiFi.localIP());
 #else
 	Serial.print("Configuring access point...");
 	/* You can remove the password parameter if you want the AP to be open. */
 	WiFi.mode(WIFI_AP);
-	WiFi.softAP("test", "esp12345");
-
-	IPAddress myIP = WiFi.softAPIP();
-	Serial.print("AP IP address: ");
-	Serial.println(myIP);
 #endif
-
+  cli_ifconfig(0, NULL);
 //  server.on("/wifi", std::bind(&WiFiManager::handleWifi, &wiFiManager, true));
   //server.on("/", std::bind(&WiFiManager::handleRoot, &wiFiManager));
   //server.on("/",          handleWebsite);
@@ -67,20 +88,17 @@ void setup() {
 //	if(result)
 	//	mainConfig.begin();
 //Serial.println(mainConfig);
-	FSInfo fsInfo;
-		SPIFFS.info(fsInfo);
-		Serial.print( "totalBytes=");Serial.println( fsInfo.totalBytes);
-		Serial.print( "usedBytes=");Serial.println( fsInfo.usedBytes);
-		Serial.print( "blockSize=");Serial.println( fsInfo.blockSize);
-		Serial.print( "pageSize=");Serial.println( fsInfo.pageSize);
-		Serial.print( "maxOpenFiles=");Serial.println( fsInfo.maxOpenFiles);
-		Serial.print( "maxPathLength=");Serial.println( fsInfo.maxPathLength);
+  cli_info(0, NULL);
 	server.begin();
 
   presetsConfig.begin();
   Serial.println("Started");
+  cmdInit();
+  cmdAdd("info", cli_info);
+  cmdAdd("ifconfig", cli_ifconfig);
 }
 
 void loop() {
   server.handleClient();
+  cmdPoll();
 }

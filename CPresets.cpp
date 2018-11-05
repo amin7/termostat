@@ -68,7 +68,7 @@ void CPresetsConfig::onLoad() {
   server.setContentLength(CONTENT_LENGTH_UNKNOWN);
   server.send(200, "text/json", "");
   server.client().stop();
-  serializeJson(root, server.client());
+  //serializeJson(root, server.client());
 
 
 }
