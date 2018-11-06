@@ -21,8 +21,9 @@
 #include "CConfigFile.h"
 
 #define WIFI_SERVER
-const auto PIN_RELAY = D6;
-const auto DHTPIN = D4;
+const auto RelayPin = D6;
+const auto DHTPin = D4;
+const auto TermistorPin = A0;
 
 const char *ssid = "ITPwifi";
 const char *password = "_RESTRICTED3db@ea";
@@ -35,6 +36,7 @@ DHTesp dht;
 
 void cli_info(int argc, char **argv) {
   ConfigFile.info();
+  cmd_handler_list();
 }
 
 void cli_ifconfig(int argc, char **argv) {
@@ -54,33 +56,38 @@ void cli_relay(int argc, char **argv) {
   if (2 == argc) {
     switch (*argv[1]) {
       case '0':
-        digitalWrite(PIN_RELAY, 0);
+        digitalWrite(RelayPin, 0);
         break;
       case '1':
-        digitalWrite(PIN_RELAY, 1);
+        digitalWrite(RelayPin, 1);
         break;
     }
   }
 }
 
-void cli_dht(int argc, char **argv) {
+void cli_termo(int argc, char **argv) {
   Serial.print("dht status:");
   Serial.println(dht.getStatusString());
+  Serial.print("Temperature= ");
+  Serial.println(dht.getTemperature());
+  Serial.print("Humidity= ");
+  Serial.println(dht.getHumidity());
+
+  auto ADCvalue = analogRead(TermistorPin);
+  Serial.print("Analoge ");
+  Serial.println(ADCvalue);
 }
 
-void cli_termistor(int argc, char **argv) {
-
-}
 void setup() {
   WiFi.persistent(false);
   pinMode(LED_BUILTIN, OUTPUT);
-  pinMode(PIN_RELAY, OUTPUT | WAKEUP_PULLUP);
-  digitalWrite(PIN_RELAY, 0); //off
+  pinMode(RelayPin, OUTPUT);
+  digitalWrite(RelayPin, 0); //off
+  pinMode(DHTPin, INPUT);
   Serial.begin(115200);
   delay(100);
   Serial.println("\n\nBOOTING ESP8266 ...");
-  dht.setup(DHTPIN, DHTesp::DHT22);
-  ConfigFile.begin();
+  dht.setup(DHTPin, DHTesp::DHT22);
 #ifndef WIFI_SERVER //cliend
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) delay(500);
@@ -108,20 +115,15 @@ void setup() {
 			Serial.println(server.uri());
 	});
 
-//	if(result)
-	//	mainConfig.begin();
-//Serial.println(mainConfig);
-  cli_info(0, NULL);
 	server.begin();
   ConfigFile.add("/presets.json", presetsConfig);
-  ConfigFile.begin();
+//  ConfigFile.begin();
   Serial.println("Started");
   cmdInit();
   cmdAdd("info", cli_info);
   cmdAdd("ifconfig", cli_ifconfig);
   cmdAdd("relay", cli_relay);
-  cmdAdd("termistor", cli_termistor);
-  cmdAdd("dht", cli_dht);
+  cmdAdd("term", cli_termo);
 
 }
 

@@ -1,3 +1,4 @@
+#BOARD lolin (wemos) d1 r2 & mini
 # termostat
 https://circuits.io/circuits/5409828-termostat
 esp8266

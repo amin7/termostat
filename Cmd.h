@@ -57,5 +57,6 @@ void cmdPoll();
 void cmd_handler();
 void cmdAdd(char *name, void (*func)(int argc, char **argv));
 uint32_t cmdStr2Num(char *str, uint8_t base);
+void cmd_handler_list();
 
 #endif //CMD_H

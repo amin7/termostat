@@ -49,10 +49,10 @@
 
 // command line message buffer and pointer
 static uint8_t msg[MAX_MSG_SIZE];
-static uint8_t *msg_ptr;
+static uint8_t *msg_ptr = NULL;
 
 // linked list for command table
-static cmd_t *cmd_tbl_list, *cmd_tbl;
+static cmd_t *cmd_tbl_list = NULL, *cmd_tbl = NULL;
 
 // text strings for command prompt (stored in flash)
 const char cmd_prompt[] PROGMEM = "CMD >> ";
@@ -86,7 +86,7 @@ void cmd_parse(char *cmd)
     uint8_t argc, i = 0;
     char *argv[30];
     char buf[50];
-    cmd_t *cmd_entry;
+
 
     fflush(stdout);
 
@@ -100,10 +100,10 @@ void cmd_parse(char *cmd)
     
     // save off the number of arguments for the particular command.
     argc = i;
-
+  auto cmd_entry = cmd_tbl;
     // parse the command table for valid command. used argv[0] which is the
     // actual command name typed in at the prompt
-    for (cmd_entry = cmd_tbl; cmd_entry != NULL; cmd_entry = cmd_entry->next)
+  while (cmd_entry != NULL)
     {
         if (!strcmp(argv[0], cmd_entry->cmd))
         {
@@ -111,6 +111,7 @@ void cmd_parse(char *cmd)
             cmd_display();
             return;
         }
+    cmd_entry = cmd_entry->next;
     }
 
     // command not recognized. print message and re-generate prompt.
@@ -233,4 +234,12 @@ void cmdAdd(char *name, void (*func)(int argc, char **argv))
 uint32_t cmdStr2Num(char *str, uint8_t base)
 {
     return strtol(str, NULL, base);
+}
+
+void cmd_handler_list() {
+  auto cmd_entry = cmd_tbl;
+  while (cmd_entry != NULL) {
+    Serial.println(cmd_entry->cmd);
+    cmd_entry = cmd_entry->next;
+  }
 }
