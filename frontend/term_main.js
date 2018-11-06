@@ -38,20 +38,20 @@ function PresetSave(){
 		  console.log("saved ok");
 	  }
 	}
-	let myJSON = new Object;
-	myJSON.test="test";
+	let myJSON = new Object;	
 	myJSON.Presets=[];
-//	var doc = document.getElementById("PresetsList");
-//	for (i = 0; i < doc.children.length; i++) {
-//		let preset = new Object;	
-//		preset.weekDay=doc.children[i].preset.weekDay.getValue();
-//		preset.hours=doc.children[i].preset.hours.getValue();
-//		myJSON.Presets.push(preset);
-//	}	
+	var doc = document.getElementById("PresetsList");
+	for (i = 0; i < doc.children.length; i++) {
+		let preset = new Object;	
+		preset.weekDay=doc.children[i].preset.weekDay.getValue();
+		preset.hours=doc.children[i].preset.hours.getValue();
+		myJSON.Presets.push(preset);
+	}	
+    var data = JSON.stringify(myJSON);
 	xmlHttp.open('PUT',"/PresetSave",true); 
 	xmlHttp.setRequestHeader("Content-Type", "application/json");				
-	xmlHttp.send(myJSON);
-	console.log(myJSON);
+	xmlHttp.send(data);
+	console.log(data);	
   }
 }
       
@@ -193,7 +193,7 @@ function add_Presets(config){
 function init(){
 	updateCurrDateTime();
 	setInterval('updateCurrDateTime()', 1000);
-	let val=new Object;
+//	let val=new Object;
 //	val={
 //			  "Presets": [
 //				    {

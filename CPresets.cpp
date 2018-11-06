@@ -13,10 +13,9 @@ bool CPI_byWeekDay::serialize(JsonObject& root) {
 }
 
 bool CPI_byWeekDay::deSerialize(const JsonObject& root) {
-  JsonObject data = root["data"];
-  if (weekDay.deSerialize(data["weekDay"]))
+  if (weekDay.deSerialize(root))
     return false;
-  if (hours.deSerialize(data["hours"]))
+  if (hours.deSerialize(root))
     return false;
   return true;
 }
@@ -35,9 +34,14 @@ bool CPresets::serialize(JsonObject& root) {
   }
 }
 bool CPresets::deSerialize(const JsonObject& root) {
-
+  JsonArray array = root["Presets"];
+  items.clear();
+  for (JsonObject nested : array) {
+    CPI_byWeekDay item;
+    item.deSerialize(nested);
+    items.push_back(item);
+  }
 }
-
 
 #ifndef TEST
 /***
@@ -46,8 +50,15 @@ bool CPresets::deSerialize(const JsonObject& root) {
 
 void CPresetsConfig::onSave() {
   Serial.println(__FUNCTION__);
-  Serial.print("Payload=");
   Serial.println(server.arg("plain"));
+  StaticJsonDocument < 512 > doc;
+  deserializeJson(doc, server.arg("plain"));
+  Serial.print("memoryUsage=");
+  Serial.println(doc.memoryUsage());
+  JsonObject root = doc.as<JsonObject>();
+  deSerialize(root);
+
+
 }
 void CPresetsConfig::onLoad() {
   Serial.println(__FUNCTION__);
@@ -55,8 +66,7 @@ void CPresetsConfig::onLoad() {
   JsonObject root = doc.to<JsonObject>();
   serialize(root);
   Serial.print("memoryUsage=");
-  auto memuse = doc.memoryUsage();
-  Serial.println(memuse);
+  Serial.println(doc.memoryUsage());
   String tt;
   serializeJson(root, tt);
   server.send(200, "text/json", tt);

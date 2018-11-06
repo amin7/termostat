@@ -1,6 +1,6 @@
 #ifndef _FRONT_END_
 #define _FRONT_END_
-//converted  date time= 2018-11-05 18:02:29.468407
+//converted  date time= 2018-11-06 13:41:41.063912
 //cmd gen: D:\personal\git\termostat\text2code.py -D frontend/
 const char* _frontend_term_main_css_ PROGMEM ={\
   "#button_schedule_hour{\n"\
@@ -109,19 +109,19 @@ const char* _frontend_term_main_js_ PROGMEM ={\
       "}\n"\
     "}\n"\
     "let myJSON = new Object;\n"\
-    "myJSON.test=\"test\";\n"\
     "myJSON.Presets=[];\n"\
-"//	var doc = document.getElementById(\"PresetsList\");\n"\
-"//	for (i = 0; i < doc.children.length; i++) {\n"\
-"//		let preset = new Object;\n"\
-"//		preset.weekDay=doc.children[i].preset.weekDay.getValue();\n"\
-"//		preset.hours=doc.children[i].preset.hours.getValue();\n"\
-"//		myJSON.Presets.push(preset);\n"\
-"//	}\n"\
+    "var doc = document.getElementById(\"PresetsList\");\n"\
+    "for (i = 0; i < doc.children.length; i++) {\n"\
+        "let preset = new Object;\n"\
+        "preset.weekDay=doc.children[i].preset.weekDay.getValue();\n"\
+        "preset.hours=doc.children[i].preset.hours.getValue();\n"\
+        "myJSON.Presets.push(preset);\n"\
+    "}\n"\
+    "var data = JSON.stringify(myJSON);\n"\
     "xmlHttp.open(\'PUT\',\"/PresetSave\",true);\n"\
     "xmlHttp.setRequestHeader(\"Content-Type\", \"application/json\");\n"\
-    "xmlHttp.send(myJSON);\n"\
-    "console.log(myJSON);\n"\
+    "xmlHttp.send(data);\n"\
+    "console.log(data);\n"\
   "}\n"\
 "}\n"\
 \
@@ -263,7 +263,7 @@ const char* _frontend_term_main_js_ PROGMEM ={\
 "function init(){\n"\
     "updateCurrDateTime();\n"\
     "setInterval(\'updateCurrDateTime()\', 1000);\n"\
-    "let val=new Object;\n"\
+"//	let val=new Object;\n"\
 "//	val={\n"\
 "//			  \"Presets\": [\n"\
 "//				    {\n"\

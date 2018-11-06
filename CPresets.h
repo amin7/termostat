@@ -45,9 +45,9 @@ public:
   }
 
   bool deSerialize(const JsonObject& root) override {
-    const JsonArray& Value = root[_name];
+    const uint32_t bits = root[_name];
     for (auto index = 0; index < _size; index++) {
-      this->operator [](index) = Value[index];
+      this->operator [](index) = (bits & (1 << index)) ? true : false;
     }
     return 0;
   }
@@ -101,7 +101,6 @@ ESP8266WebServer &server;
 public:
 	CPresetsConfig(ESP8266WebServer &server);
   void begin() {
-    onLoad();
   }
   ;
 };
