@@ -50,7 +50,7 @@ void CMainConfig::onFactoryReset(){
 	delay(1000);
 }
 
-bool CMainConfig::serialize(JsonObject& root) {
+bool CMainConfig::serialize(JsonObject& root) const {
   return true;
 }
 

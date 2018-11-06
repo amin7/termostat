@@ -21,7 +21,7 @@ class CPItem {
 private:
 public:
   virtual bool deSerialize(const JsonObject& root)=0;
-  virtual bool serialize(JsonObject& root)=0;
+  virtual bool serialize(JsonObject& root) const=0;
 };
 
 template<size_t _size>
@@ -38,7 +38,7 @@ public:
       index = _size;
     return bitField[index];
   }
-  bool &operator[](int index) const {
+  const bool &operator[](int index) const {
     if (_size <= index) //to prevent mem error
       index = _size;
     return bitField[index];
@@ -52,7 +52,7 @@ public:
     return 0;
   }
 
-  bool serialize(JsonObject& root) override {
+  bool serialize(JsonObject& root) const override {
     uint32_t bits = 0;
     for (auto index = 0; index < _size; index++) {
       if (this->operator [](index)) {
@@ -68,7 +68,7 @@ class CPI_byWeekDay: public CPItem {
 public:
   CPI_BitField<7> weekDay;
   CPI_BitField<24> hours;
-  virtual bool serialize(JsonObject& root) override;
+  virtual bool serialize(JsonObject& root) const override;
   virtual bool deSerialize(const JsonObject& root) override;
   CPI_byWeekDay() :
       weekDay("weekDay"), hours("hours") {
@@ -79,16 +79,8 @@ public:
 
 class CPresets: public CPItem {
   vector<CPI_byWeekDay> items;
-public:
-  enum {
-    preset_count = 5
-  };
-  CPresets() :
-      items(preset_count) {
-  }
-  ;
-  void init();
-  virtual bool serialize(JsonObject& root) override;
+  public:
+  virtual bool serialize(JsonObject& root) const override;
   virtual bool deSerialize(const JsonObject& root) override;
 	friend class presetsTest_deserialize_Test;
 };
@@ -100,8 +92,6 @@ ESP8266WebServer &server;
   void onSave();
 public:
 	CPresetsConfig(ESP8266WebServer &server);
-  void begin() {
-  }
   ;
 };
 #endif

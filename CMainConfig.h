@@ -30,7 +30,7 @@ class CMainConfig: public CPItem {
 
 	void onFactoryReset();
 public:
-  virtual bool serialize(JsonObject& root) override;
+  virtual bool serialize(JsonObject& root) const override;
   virtual bool deSerialize(const JsonObject& root) override;
 	CMainConfig(ESP8266WebServer &server);
 	virtual ~CMainConfig();

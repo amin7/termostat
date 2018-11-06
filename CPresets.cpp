@@ -6,7 +6,7 @@
  */
 
 #include "CPresets.h"
-bool CPI_byWeekDay::serialize(JsonObject& root) {
+bool CPI_byWeekDay::serialize(JsonObject& root) const {
   weekDay.serialize(root);
   hours.serialize(root);
   return true;
@@ -23,10 +23,7 @@ bool CPI_byWeekDay::deSerialize(const JsonObject& root) {
  *
  */
 
-void CPresets::init() {
-
-}
-bool CPresets::serialize(JsonObject& root) {
+bool CPresets::serialize(JsonObject& root) const {
   JsonArray array = root.createNestedArray("Presets");
   for (auto day : items) {
     JsonObject nested = array.createNestedObject();
@@ -43,7 +40,6 @@ bool CPresets::deSerialize(const JsonObject& root) {
   }
 }
 
-#ifndef TEST
 /***
  *
  */
@@ -77,4 +73,3 @@ CPresetsConfig::CPresetsConfig(ESP8266WebServer &server):server(server){
   server.on("/PresetSave", std::bind(&CPresetsConfig::onSave, this));
   server.on("/PresetLoad", std::bind(&CPresetsConfig::onLoad, this));
 }
-#endif

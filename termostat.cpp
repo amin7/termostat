@@ -1,5 +1,7 @@
 //https://github.com/google/googletest.git
 #define ARDUINOJSON_ENABLE_ARDUINO_STRING 1
+#define ARDUINOJSON_ENABLE_PROGMEM 1
+#define  ARDUINOJSON_DEFAULT_NESTING_LIMIT 10
 //libs
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
@@ -16,6 +18,7 @@
 #include "CFrontendFS.h"
 #include "frontend.h"
 #include "cmd.h"
+#include "CConfigFile.h"
 
 #define WIFI_SERVER
 const auto PIN_RELAY = D6;
@@ -27,25 +30,13 @@ ESP8266WebServer server(80);
 WebFaceWiFiConfig WiFiConfig(server);
 CMainConfig mainConfig(server);
 CPresetsConfig presetsConfig(server);
+CConfigFile ConfigFile(server);
 DHTesp dht;
 
 void cli_info(int argc, char **argv) {
-  Serial.println("FSInfo");
-  FSInfo fsInfo;
-  SPIFFS.info(fsInfo);
-  Serial.print("totalBytes=");
-  Serial.println(fsInfo.totalBytes);
-  Serial.print("usedBytes=");
-  Serial.println(fsInfo.usedBytes);
-  Serial.print("blockSize=");
-  Serial.println(fsInfo.blockSize);
-  Serial.print("pageSize=");
-  Serial.println(fsInfo.pageSize);
-  Serial.print("maxOpenFiles=");
-  Serial.println(fsInfo.maxOpenFiles);
-  Serial.print("maxPathLength=");
-  Serial.println(fsInfo.maxPathLength);
+  ConfigFile.info();
 }
+
 void cli_ifconfig(int argc, char **argv) {
 #ifndef WIFI_SERVER //cliend
   Serial.print("Connected to ");
@@ -81,14 +72,15 @@ void cli_termistor(int argc, char **argv) {
 
 }
 void setup() {
-    WiFi.persistent(false);
-    pinMode(LED_BUILTIN, OUTPUT);
+  WiFi.persistent(false);
+  pinMode(LED_BUILTIN, OUTPUT);
   pinMode(PIN_RELAY, OUTPUT | WAKEUP_PULLUP);
   digitalWrite(PIN_RELAY, 0); //off
   Serial.begin(115200);
   delay(100);
   Serial.println("\n\nBOOTING ESP8266 ...");
   dht.setup(DHTPIN, DHTesp::DHT22);
+  ConfigFile.begin();
 #ifndef WIFI_SERVER //cliend
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) delay(500);
@@ -116,15 +108,13 @@ void setup() {
 			Serial.println(server.uri());
 	});
 
-	bool result = SPIFFS.begin();
-	Serial.print("SPIFFS opened: ");Serial.println(result);
 //	if(result)
 	//	mainConfig.begin();
 //Serial.println(mainConfig);
   cli_info(0, NULL);
 	server.begin();
-
-  presetsConfig.begin();
+  ConfigFile.add("/presets.json", presetsConfig);
+  ConfigFile.begin();
   Serial.println("Started");
   cmdInit();
   cmdAdd("info", cli_info);
