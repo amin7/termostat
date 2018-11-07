@@ -78,6 +78,9 @@ void cli_termo(int argc, char **argv) {
   Serial.println(ADCvalue);
 }
 
+void cli_freset(int argc, char **argv) {
+  ConfigFile.factoryReset();
+}
 void setup() {
   WiFi.persistent(false);
   pinMode(LED_BUILTIN, OUTPUT);
@@ -116,14 +119,16 @@ void setup() {
 	});
 
 	server.begin();
-  ConfigFile.add("/presets.json", presetsConfig);
-//  ConfigFile.begin();
+  ConfigFile.add("/presets.json", _frontend_def_preset_json_, presetsConfig);
+  ConfigFile.begin();
+
   Serial.println("Started");
   cmdInit();
   cmdAdd("info", cli_info);
   cmdAdd("ifconfig", cli_ifconfig);
   cmdAdd("relay", cli_relay);
   cmdAdd("term", cli_termo);
+  cmdAdd("freset", cli_freset);
 
 }
 

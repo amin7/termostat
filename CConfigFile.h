@@ -17,6 +17,7 @@ class CConfigFile {
   ESP8266WebServer &server;
   typedef struct {
     const char *filename;
+    const char *defvalue;
     CPItem &handler;
     //const PROGMEM char* defValue;
   } initList_t;
@@ -29,12 +30,13 @@ class CConfigFile {
   void onSave() {
   }
   ;
-  void factoryReset();
+
 public:
   CConfigFile(ESP8266WebServer &server);
-  void add(const char *filename, CPItem &item) {
-    items.push_back( { filename, item });
+  void add(const char *filename, const char *def, CPItem &item) {
+    items.push_back( { filename, def, item });
   }
+  void factoryReset();
   void begin();
   void info();
 };

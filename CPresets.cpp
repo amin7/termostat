@@ -29,15 +29,19 @@ bool CPresets::serialize(JsonObject& root) const {
     JsonObject nested = array.createNestedObject();
     day.serialize(nested);
   }
+  return true;
 }
 bool CPresets::deSerialize(const JsonObject& root) {
   JsonArray array = root["Presets"];
   items.clear();
   for (JsonObject nested : array) {
     CPI_byWeekDay item;
-    item.deSerialize(nested);
+    if (false == item.deSerialize(nested)) {
+      return false;
+    }
     items.push_back(item);
   }
+  return true;
 }
 
 /***

@@ -18,8 +18,16 @@ void CConfigFile::factoryReset() {
   Serial.println(__FUNCTION__);
   StaticJsonDocument<1024> doc;
   for (auto item : items) {
-    JsonObject root = doc.to<JsonObject>();
-    //item.handler.getDefault(root);
+    Serial.println(item.filename);
+    auto err = deserializeJson(doc, item.defvalue);
+    if (err) {
+      Serial.print(F("deserializeJson() failed: "));
+      Serial.println(err.c_str());
+      return;
+    }
+    serializeJsonPretty(doc, Serial);
+    JsonObject root = doc.as<JsonObject>();
+    item.handler.deSerialize(root);
     save(item);
   }
 }
@@ -39,6 +47,7 @@ bool CConfigFile::load(const initList_t &item) {
     Serial.println(err.c_str());
     return false;
   }
+  serializeJsonPretty(doc, Serial);
   JsonObject root = doc.as<JsonObject>();
   return item.handler.deSerialize(root);
 }
@@ -69,7 +78,7 @@ void CConfigFile::begin() {
   }
   bool err = false;
   for (auto item : items) {
-    if (load(item)) {
+    if (false == load(item)) {
       err = true;
       break;
     }

@@ -1,0 +1,12 @@
+{
+            "Presets": [
+                  {
+                    "weekDay": 1,
+                    "hours": 2
+                  },
+                  {
+                    "weekDay": 3,
+                    "hours": 0
+                  }
+                ]
+              }

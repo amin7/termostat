@@ -1,7 +1,21 @@
 #ifndef _FRONT_END_
 #define _FRONT_END_
-//converted  date time= 2018-11-06 13:41:41.063912
-//cmd gen: D:\personal\git\termostat\text2code.py -D frontend/
+//converted  date time= 2018-11-07 15:33:36.002593
+//cmd gen: D:\user\hobby\git\termostat\text2code.py -D frontend/
+const char* _frontend_def_preset_json_ PROGMEM ={\
+"{\n"\
+            "\"Presets\": [\n"\
+                  "{\n"\
+                    "\"weekDay\": 1,\n"\
+                    "\"hours\": 2\n"\
+                  "},\n"\
+                  "{\n"\
+                    "\"weekDay\": 3,\n"\
+                    "\"hours\": 0\n"\
+                  "}\n"\
+                "]\n"\
+              "}\n"\
+};
 const char* _frontend_term_main_css_ PROGMEM ={\
   "#button_schedule_hour{\n"\
     "border: 0px solid black;\n"\
@@ -495,6 +509,7 @@ const char* _frontend_WiFiConfigEntry_html_ PROGMEM ={\
 };
 
 //converted list
+//  CFrontendFS::add(server, "/def_preset.json", ct_json,_frontend_def_preset_json_);
 //  CFrontendFS::add(server, "/term_main.css", ct_css,_frontend_term_main_css_);
 //  CFrontendFS::add(server, "/term_main.html", ct_html,_frontend_term_main_html_);
 //  CFrontendFS::add(server, "/term_main.js", ct_js,_frontend_term_main_js_);
