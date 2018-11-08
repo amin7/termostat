@@ -1,11 +1,6 @@
 #https://github.com/arduino/Arduino/blob/master/build/shared/manpage.adoc
-PROJECT_FOLDER=$(pwd)
-PROJECT_NAME=clock.ino
-PROJECT=$(PROJECT_FOLDER)$(PROJECT_NAME)
-SLOEBER_PATH=/home/ominenko/work/ides/sloeber/arduinoPlugin/packages/esp8266/hardware/esp8266/2.3.0/cores/esp8266/
-
-INCLUDE_PATH_= ../../libraries/ArduinoJson/src \
-			 $(SLOEBER_PATH)
+#git repository https://github.com/google/googletest.git
+INCLUDE_PATH_= ../../libraries/ArduinoJson/src 
 
 INCLUDE_PATH =  $(addprefix -I ,$(INCLUDE_PATH_))
 GTEST_DIR=/cygdrive/d/work/test/googletest/googletest/
@@ -13,40 +8,64 @@ GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h \
                 $(GTEST_DIR)/include/gtest/internal/*.h
 GTEST_SRCS_ = $(GTEST_DIR)/src/*.cc $(GTEST_DIR)/src/*.h $(GTEST_HEADERS)
  
-#FLAGS="-v"
+CPPFLAGS += -isystem $(GTEST_DIR)/include
+
 FLAGS_TEST=-DTEST -std=c++11 -g
+
+CXXFLAGS += -g -Wall -Wextra -pthread
+CXXFLAGS += -D _UNIT_TEST_ACTIVE_
+
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S), Linux)
+	CXXFLAGS += -std=c++11
+endif
+
+
+MKDIR_P = mkdir -p
+
 LIB_TEST=
 
-MODULES =  CPresets
+MODULES =  CTransformLine
 SOURCES =  $(addprefix ../,$(MODULES))
   
 TESTS   =$(addsuffix _test,$(MODULES))
 
-ALL_SRC=$(addsuffix .cpp ,$(SOURCES) $(TESTS))
+TESTS_CPP=$(addsuffix .cpp ,$(SOURCES) $(TESTS))
 
-DEPEND = CObserver
-DEPEND_SRC  =$(addsuffix .cpp,$(DEPEND))
+DEPEND_CPP = 
 
-OUT_DIR=./obj/
-#---------------------------------------------------------------------
-# executables
-#---------------------------------------------------------------------
-MD := mkdir -p
-RM := rm
-CC := g++
+OBJ_DIR=./obj/
+OBJS=$(subst .cpp,.o,$(TESTS_CPP) $(DEPEND_CPP))
 
-all: clean tests
-clean:
-	@echo "clean"
-	$(RM) -rf $(OUT_DIR)
-dirs:
-		$(MD) $(OUT_DIR) -p		
-gtest.o:  dirs
-	$(CC) -isystem ${GTEST_DIR}/include -I${GTEST_DIR}  -pthread -c ${GTEST_DIR}/src/gtest-all.cc -o $(OUT_DIR)gtest-all.o
-	ar -rv $(OUT_DIR)libgtest.a $(OUT_DIR)gtest-all.o
+
+default : all
+
+$(OBJ_DIR)gtest-all.o : $(GTEST_SRCS_)
+	$(CXX) $(CPPFLAGS) -I$(GTEST_DIR) $(CXXFLAGS) -c \
+            $(GTEST_DIR)/src/gtest-all.cc -o $@
+
+$(OBJ_DIR)gtest_main.o : $(GTEST_SRCS_)
+	$(CXX) $(CPPFLAGS) -I$(GTEST_DIR) $(CXXFLAGS) -c \
+            $(GTEST_DIR)/src/gtest_main.cc -o $@
+
+$(OBJ_DIR)gtest.a : $(OBJ_DIR)gtest-all.o
+	$(AR) $(ARFLAGS) $@ $^
+
+$(OBJ_DIR)gtest_main.a : $(OBJ_DIR)gtest-all.o $(OBJ_DIR)gtest_main.o
+	$(AR) $(ARFLAGS) $@ $^
 	
-tests: dirs gtest.o
-	 $(CC) $(ALL_SRC) $(GTEST_DIR)/src/gtest_main.cc $(FLAGS_TEST) $(LIB_TEST) $(INCLUDE_PATH) -isystem ${GTEST_DIR}/include -pthread $(OUT_DIR)libgtest.a -o $(OUT_DIR)test_all.o		
-list: 
-	@echo "test list [" $(SOURCES) "]"
-.PHONY: all upload clean tests dirs $(SOURCES)
+
+all : $(OBJS) $(GTEST_HEADERS) $(OBJ_DIR)gtest_main.a $(HELPER_OBJS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LCFLAGS) $(wildcard $(OBJ_DIR)/*.o)  -lpthread -o $(OBJ_DIR)$@	
+ 
+$(OBJS): ${OBJ_DIR}
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(basename $@).cpp $(LCFLAGS) $(CSFLAFS) -lpthread $^ -o $(OBJ_DIR)$(notdir $@) -D TEST
+	
+clean :
+	rm $(OBJ_DIR) -rf
+
+$(OBJ_DIR):
+	${MKDIR_P} ${OBJ_DIR}	
+.PHONY: default all clean
+
+#eof
