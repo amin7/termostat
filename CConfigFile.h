@@ -8,33 +8,26 @@
 #ifndef CCONFIGFILE_H_
 #define CCONFIGFILE_H_
 #include <stdint.h>
-#include <vector>
+#include <map>
 #include <ArduinoJson.h>
 #include "FS.h"
 #include "CPresets.h"
 
 class CConfigFile {
-  ESP8266WebServer &server;
-  typedef struct {
-    const char *filename;
-    const char *defvalue;
-    CPItem &handler;
-    //const PROGMEM char* defValue;
-  } initList_t;
-  vector<initList_t> items;
-  bool load(const initList_t &item);
-  bool save(const initList_t &item);
-  void onLoad() {
+  String getFileName(String name) {
+    return "/" + name + ".json";
   }
-  ;
-  void onSave() {
-  }
-  ;
-
+protected:
+  std::map<String, std::pair<const char *, CPItem *>> items;
+  bool load(const String &name, CPItem &handler);
+  bool save(const String &name, CPItem &handler);
 public:
-  CConfigFile(ESP8266WebServer &server);
-  void add(const char *filename, const char *def, CPItem &item) {
-    items.push_back( { filename, def, item });
+  CConfigFile() :
+      items( { }) {
+
+  }
+  void add(const String name, const char *defvalue, CPItem &item) {
+    items[name] = {defvalue, &item};
   }
   void factoryReset();
   void begin();

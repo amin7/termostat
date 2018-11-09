@@ -85,15 +85,4 @@ class CPresets: public CPItem {
 	friend class presetsTest_deserialize_Test;
 };
 
-#ifndef TEST
-class CPresetsConfig:public CPresets{
-ESP8266WebServer &server;
-  void onLoad();
-  void onSave();
-public:
-	CPresetsConfig(ESP8266WebServer &server);
-  ;
-};
-#endif
-
 #endif /* CPRESETS_H_ */

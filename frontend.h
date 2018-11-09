@@ -1,6 +1,6 @@
 #ifndef _FRONT_END_
 #define _FRONT_END_
-//converted  date time= 2018-11-09 10:46:36.240498
+//converted  date time= 2018-11-09 16:44:16.616777
 //cmd gen: D:\personal\git\termostat\text2code.py -D frontend/
 const char* _frontend_def_preset_json_ PROGMEM ={\
 "{\n"\
@@ -125,7 +125,7 @@ const char* _frontend_term_main_js_ PROGMEM ={\
           "}\n"\
         "}\n"\
       "};\n"\
-      "xh.open(\"GET\", \"/PresetLoad\", true);\n"\
+      "xh.open(\"GET\", \"/ConfigLoad?name=presets\", true);\n"\
       "xh.send(null);\n"\
     "}\n"\
 \
@@ -146,7 +146,7 @@ const char* _frontend_term_main_js_ PROGMEM ={\
         "myJSON.Presets.push(preset);\n"\
     "}\n"\
     "var data = JSON.stringify(myJSON);\n"\
-    "xmlHttp.open(\'PUT\',\"/PresetSave\",true);\n"\
+    "xmlHttp.open(\'PUT\',\"/ConfigSave?name=presets\",true);\n"\
     "xmlHttp.setRequestHeader(\"Content-Type\", \"application/json\");\n"\
     "xmlHttp.send(data);\n"\
     "console.log(data);\n"\

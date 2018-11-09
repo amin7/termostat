@@ -7,19 +7,12 @@
 
 #include "CConfigFile.h"
 
-CConfigFile::CConfigFile(ESP8266WebServer &server) :
-    server(server) {
-  server.on("/ConfigSave", std::bind(&CConfigFile::onSave, this));
-  server.on("/ConfigLoad", std::bind(&CConfigFile::onLoad, this));
-}
-;
-
 void CConfigFile::factoryReset() {
   Serial.println(__FUNCTION__);
   StaticJsonDocument<1024> doc;
   for (auto item : items) {
-    Serial.println(item.filename);
-    auto err = deserializeJson(doc, item.defvalue);
+    Serial.println(item.first);
+    auto err = deserializeJson(doc, item.second.first);
     if (err) {
       Serial.print(F("deserializeJson() failed: "));
       Serial.println(err.c_str());
@@ -27,15 +20,16 @@ void CConfigFile::factoryReset() {
     }
     serializeJsonPretty(doc, Serial);
     JsonObject root = doc.as<JsonObject>();
-    item.handler.deSerialize(root);
-    save(item);
+    item.second.second->deSerialize(root);
+    save(item.first, *item.second.second);
   }
 }
 
-bool CConfigFile::load(const initList_t &item) {
+bool CConfigFile::load(const String &name, CPItem &handler) {
   Serial.print("load ");
-  Serial.println(item.filename);
-  File configFile = SPIFFS.open(item.filename, "r");
+  auto filename = getFileName(name);
+  Serial.println(filename);
+  File configFile = SPIFFS.open(filename, "r");
   if (!configFile) {
     Serial.println(F("Failed to open config file"));
     return false;
@@ -49,18 +43,19 @@ bool CConfigFile::load(const initList_t &item) {
   }
   serializeJsonPretty(doc, Serial);
   JsonObject root = doc.as<JsonObject>();
-  return item.handler.deSerialize(root);
+  return handler.deSerialize(root);
 }
 
-bool CConfigFile::save(const initList_t &item) {
+bool CConfigFile::save(const String &name, CPItem &handler) {
   StaticJsonDocument<1024> doc;
   JsonObject root = doc.to<JsonObject>();
-  if (item.handler.serialize(root)) {
+  if (false == handler.serialize(root)) {
     return false;
   }
   Serial.print("save ");
-  Serial.println(item.filename);
-  File configFile = SPIFFS.open(item.filename, "w");
+  auto filename = getFileName(name);
+  Serial.println(filename);
+  File configFile = SPIFFS.open(filename, "w");
   if (!configFile) {
     Serial.println("Failed to open config file for writing");
     return false;
@@ -78,7 +73,7 @@ void CConfigFile::begin() {
   }
   bool err = false;
   for (auto item : items) {
-    if (false == load(item)) {
+    if (false == load(item.first, *item.second.second)) {
       err = true;
       break;
     }

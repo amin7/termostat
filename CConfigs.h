@@ -10,13 +10,17 @@
 #include "CConfigFile.h"
 #include "CTransformLine.h"
 #include "CMainConfig.h"
+#include "CPresets.h"
 
 class CConfigs: public CConfigFile {
+  ESP8266WebServer &server;
+  void onLoad();
+  void onSave();
 public:
-  CPresetsConfig presets;
+  CPresets presets;
   CTransformLine termistor;
-  //CMainConfig mainConfig(server);
   CConfigs(ESP8266WebServer &server);
+
 };
 
 #endif /* CCONFIGS_H_ */

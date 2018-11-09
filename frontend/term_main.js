@@ -27,7 +27,7 @@ xmlHttp=createXmlHttpObject();
           }
         }
       };
-      xh.open("GET", "/PresetLoad", true);
+      xh.open("GET", "/ConfigLoad?name=presets", true);
       xh.send(null);
 	}
 
@@ -48,7 +48,7 @@ function PresetSave(){
 		myJSON.Presets.push(preset);
 	}	
     var data = JSON.stringify(myJSON);
-	xmlHttp.open('PUT',"/PresetSave",true); 
+	xmlHttp.open('PUT',"/ConfigSave?name=presets",true); 
 	xmlHttp.setRequestHeader("Content-Type", "application/json");				
 	xmlHttp.send(data);
 	console.log(data);	
