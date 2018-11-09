@@ -13,13 +13,11 @@
 #include "DHTesp.h"
 
 //user libs
-#include "CMainConfig.h"
+#include "CConfigs.h"
 #include "WebFaceWiFiConfig.h"
 #include "CFrontendFS.h"
 #include "frontend.h"
 #include "cmd.h"
-#include "CConfigFile.h"
-#include "CTransformLine.h"
 
 #define WIFI_SERVER
 const auto RelayPin = D6;
@@ -30,20 +28,7 @@ const char *ssid = "ITPwifi";
 const char *password = "_RESTRICTED3db@ea";
 ESP8266WebServer server(80);
 WebFaceWiFiConfig WiFiConfig(server);
-CMainConfig mainConfig(server);
 DHTesp dht;
-
-class CConfigs: public CConfigFile {
-public:
-  CPresetsConfig presets;
-  CTransformLine termistor;
-  CConfigs(ESP8266WebServer &server) :
-      CConfigFile(server), presets(server) {
-    add("/presets.json", _frontend_def_preset_json_, presets);
-    add("/termistor.json", _frontend_def_termistor_json_, termistor);
-  };
-};
-
 CConfigs Config(server);
 
 void cli_info(int argc, char **argv) {
