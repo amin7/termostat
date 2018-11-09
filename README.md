@@ -12,7 +12,7 @@ https://arduino.stackexchange.com/questions/36505/help-using-thermistor-with-esp
 
 #libs
  <ArduinoJson.h>//https://github.com/bblanchon/ArduinoJson.git
-//https://arduinojson.org
+ https://arduinojson.org
 
 #Pins
 

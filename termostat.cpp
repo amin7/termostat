@@ -19,6 +19,7 @@
 #include "frontend.h"
 #include "cmd.h"
 #include "CConfigFile.h"
+#include "CTransformLine.h"
 
 #define WIFI_SERVER
 const auto RelayPin = D6;
@@ -30,12 +31,23 @@ const char *password = "_RESTRICTED3db@ea";
 ESP8266WebServer server(80);
 WebFaceWiFiConfig WiFiConfig(server);
 CMainConfig mainConfig(server);
-CPresetsConfig presetsConfig(server);
-CConfigFile ConfigFile(server);
 DHTesp dht;
 
+class CConfigs: public CConfigFile {
+public:
+  CPresetsConfig presets;
+  CTransformLine termistor;
+  CConfigs(ESP8266WebServer &server) :
+      CConfigFile(server), presets(server) {
+    add("/presets.json", _frontend_def_preset_json_, presets);
+    add("/termistor.json", _frontend_def_termistor_json_, termistor);
+  };
+};
+
+CConfigs Config(server);
+
 void cli_info(int argc, char **argv) {
-  ConfigFile.info();
+  Config.info();
   cmd_handler_list();
 }
 
@@ -76,10 +88,12 @@ void cli_termo(int argc, char **argv) {
   auto ADCvalue = analogRead(TermistorPin);
   Serial.print("Analoge ");
   Serial.println(ADCvalue);
+  Serial.print("transformed  ");
+  Serial.println(Config.termistor.convert(ADCvalue));
 }
 
 void cli_freset(int argc, char **argv) {
-  ConfigFile.factoryReset();
+  Config.factoryReset();
 }
 void setup() {
   WiFi.persistent(false);
@@ -118,9 +132,8 @@ void setup() {
 			Serial.println(server.uri());
 	});
 
-	server.begin();
-  ConfigFile.add("/presets.json", _frontend_def_preset_json_, presetsConfig);
-  ConfigFile.begin();
+  server.begin();
+  Config.begin();
 
   Serial.println("Started");
   cmdInit();

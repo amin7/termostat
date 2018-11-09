@@ -1,6 +1,7 @@
 #https://github.com/arduino/Arduino/blob/master/build/shared/manpage.adoc
 #git repository https://github.com/google/googletest.git
-INCLUDE_PATH_= ../../libraries/ArduinoJson/src 
+INCLUDE_PATH_=../ 
+INCLUDE_PATH_+= /cygdrive/c/Users/ominenko/.arduinocdt/libraries/ArduinoJson/6.5.0-beta/
 
 INCLUDE_PATH =  $(addprefix -I ,$(INCLUDE_PATH_))
 GTEST_DIR=/cygdrive/d/work/test/googletest/googletest/
@@ -59,7 +60,7 @@ all : $(OBJS) $(GTEST_HEADERS) $(OBJ_DIR)gtest_main.a $(HELPER_OBJS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LCFLAGS) $(wildcard $(OBJ_DIR)/*.o)  -lpthread -o $(OBJ_DIR)$@	
  
 $(OBJS): ${OBJ_DIR}
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(basename $@).cpp $(LCFLAGS) $(CSFLAFS) -lpthread $^ -o $(OBJ_DIR)$(notdir $@) -D TEST
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDE_PATH) -c $(basename $@).cpp $(LCFLAGS) $(CSFLAFS) -lpthread $^ -o $(OBJ_DIR)$(notdir $@) -D TEST
 	
 clean :
 	rm $(OBJ_DIR) -rf
