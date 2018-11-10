@@ -46,13 +46,14 @@
 #endif
 #include "HardwareSerial.h"
 #include "Cmd.h"
+#include <map>
 
 // command line message buffer and pointer
 static uint8_t msg[MAX_MSG_SIZE];
 static uint8_t *msg_ptr = NULL;
 
 // linked list for command table
-static cmd_t *cmd_tbl_list = NULL, *cmd_tbl = NULL;
+std::map<String, std::function<void(int argc, char **argv)>> cmd_tbl_;
 
 // text strings for command prompt (stored in flash)
 const char cmd_prompt[] PROGMEM = "CMD >> ";
@@ -100,20 +101,14 @@ void cmd_parse(char *cmd)
     
     // save off the number of arguments for the particular command.
     argc = i;
-  auto cmd_entry = cmd_tbl;
+  auto handler = cmd_tbl_.find(argv[0]);
     // parse the command table for valid command. used argv[0] which is the
     // actual command name typed in at the prompt
-  while (cmd_entry != NULL)
-    {
-        if (!strcmp(argv[0], cmd_entry->cmd))
-        {
-            cmd_entry->func(argc, argv);
-            cmd_display();
-            return;
-        }
-    cmd_entry = cmd_entry->next;
-    }
-
+  if (handler != cmd_tbl_.end()) {
+    handler->second(argc, argv);
+    cmd_display();
+    return;
+  }
     // command not recognized. print message and re-generate prompt.
     strcpy_P(buf, cmd_unrecog);
     Serial.println(buf);
@@ -190,12 +185,11 @@ void cmdInit(uint32_t speed)
     msg_ptr = msg;
 
     // init the command table
-    cmd_tbl_list = NULL;
+  cmd_tbl_.clear();
 
     // set the serial speed
   if (speed)
     Serial.begin(speed);
-  cmd_display();
 }
 
 /**************************************************************************/
@@ -206,23 +200,7 @@ void cmdInit(uint32_t speed)
 /**************************************************************************/
 void cmdAdd(char *name, void (*func)(int argc, char **argv))
 {
-    // alloc memory for command struct
-    cmd_tbl = (cmd_t *)malloc(sizeof(cmd_t));
-
-    // alloc memory for command name
-    char *cmd_name = (char *)malloc(strlen(name)+1);
-
-    // copy command name
-    strcpy(cmd_name, name);
-
-    // terminate the command name
-    cmd_name[strlen(name)] = '\0';
-
-    // fill out structure
-    cmd_tbl->cmd = cmd_name;
-    cmd_tbl->func = func;
-    cmd_tbl->next = cmd_tbl_list;
-    cmd_tbl_list = cmd_tbl;
+  cmd_tbl_[name] = func;
 }
 
 /**************************************************************************/
@@ -237,9 +215,7 @@ uint32_t cmdStr2Num(char *str, uint8_t base)
 }
 
 void cmd_handler_list() {
-  auto cmd_entry = cmd_tbl;
-  while (cmd_entry != NULL) {
-    Serial.println(cmd_entry->cmd);
-    cmd_entry = cmd_entry->next;
+  for (auto &cmd : cmd_tbl_) {
+    Serial.println(cmd.first);
   }
 }

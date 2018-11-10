@@ -9,6 +9,7 @@
 
 void CConfigFile::factoryReset() {
   Serial.println(__FUNCTION__);
+
   StaticJsonDocument<1024> doc;
   for (auto item : items) {
     Serial.println(item.first);
@@ -16,9 +17,11 @@ void CConfigFile::factoryReset() {
     if (err) {
       Serial.print(F("deserializeJson() failed: "));
       Serial.println(err.c_str());
+      Serial.println(item.second.first);
       return;
     }
     serializeJsonPretty(doc, Serial);
+    Serial.println();
     JsonObject root = doc.as<JsonObject>();
     item.second.second->deSerialize(root);
     save(item.first, *item.second.second);
@@ -47,14 +50,15 @@ bool CConfigFile::load(const String &name, CPItem &handler) {
 }
 
 bool CConfigFile::save(const String &name, CPItem &handler) {
+  Serial.print("save ");
+  auto filename = getFileName(name);
+  Serial.println(filename);
+
   StaticJsonDocument<1024> doc;
   JsonObject root = doc.to<JsonObject>();
   if (false == handler.serialize(root)) {
     return false;
   }
-  Serial.print("save ");
-  auto filename = getFileName(name);
-  Serial.println(filename);
   File configFile = SPIFFS.open(filename, "w");
   if (!configFile) {
     Serial.println("Failed to open config file for writing");

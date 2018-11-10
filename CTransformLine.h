@@ -9,8 +9,7 @@
 #define CTRANSFORMLINE_H_
 #include <stdint.h>
 #include <map>
-#include <ArduinoJson.h>
-#include "CPresets.h"
+#include "CPItem.h"
 class CTransformLine: public CPItem {
   std::map<uint8_t, float> adc2c;
   float result_offset;

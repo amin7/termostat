@@ -7,16 +7,11 @@
 
 #include "CConfigs.h"
 
-extern const char* _frontend_def_preset_json_ PROGMEM;
-extern const char* _frontend_def_termistor_json_ PROGMEM;
-
 CConfigs::CConfigs(ESP8266WebServer &server) :
     server(server) {
   server.on("/ConfigSave", std::bind(&CConfigs::onSave, this));
   server.on("/ConfigLoad", std::bind(&CConfigs::onLoad, this));
-
-  add("presets", _frontend_def_preset_json_, presets);
-  add("termistor", _frontend_def_termistor_json_, termistor);
+  addItems();
 }
 ;
 

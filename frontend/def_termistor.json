@@ -1,12 +1,5 @@
 {
-  "Presets": [
-    {
-      "weekDay": 1,
-      "hours": 2
-    },
-    {
-      "weekDay": 3,
-      "hours": 0
-    }
-  ]
+"offset": 0,
+ "points": [
+ {177:24.4},{183:26.10},{235:36.6}]
 }

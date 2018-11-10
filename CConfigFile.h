@@ -9,9 +9,8 @@
 #define CCONFIGFILE_H_
 #include <stdint.h>
 #include <map>
-#include <ArduinoJson.h>
 #include "FS.h"
-#include "CPresets.h"
+#include "CPItem.h"
 
 class CConfigFile {
   String getFileName(String name) {

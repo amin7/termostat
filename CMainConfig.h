@@ -14,27 +14,21 @@
 #include "CPresets.h"
 
 class CMainConfig: public CPItem {
-	ESP8266WebServer &server;
-	const float def_tempAirMin=18;
-	const float def_tempAirMax=23;
-	const float def_tempFlourMax=40;
-	const float def_tempFlour=30;
-	const float def_tempHisteresis=0.50;
-	const uint8_t def_PWM=50;
-	const uint32_t def_dutyCircle=60*60*1000;//ms
-	float tempAirMin;
-	float tempAirMax;
-	float tempFlour;
-	float tempHisteresis;
-	uint8_t PWM;
-
-	void onFactoryReset();
+  typedef enum {
+    mode_off = 0,
+    mode_vacation,
+    mode_night,
+    mode_day,
+    mode_auto
+  } heat_mode_t;
+  heat_mode_t heat_mode_;
+  float term_vacation;
+  float term_night;
+  float term_day;
+  const float term_max = 40;
 public:
   virtual bool serialize(JsonObject& root) const override;
   virtual bool deSerialize(const JsonObject& root) override;
-	CMainConfig(ESP8266WebServer &server);
-	virtual ~CMainConfig();
-  bool begin();
 };
 
 #endif /* CMAINCONFIG_H_ */

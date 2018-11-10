@@ -10,6 +10,7 @@ fileExt={
     "js"    :"application/javascript",
     "css"   :"text/css",
     "json"  :"application/json"
+#    ,"png"   :"image/x-icon"
 }
 
 def convertFileName(fileName):

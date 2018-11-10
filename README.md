@@ -9,10 +9,15 @@ mqtt - for statistics
 https://www.electronics-tutorials.ws/blog/relay-switch-circuit.html\
 #termistor
 https://arduino.stackexchange.com/questions/36505/help-using-thermistor-with-esp8266
+http://www.arroyoinstruments.com/manuals/ArroyoThermistorInstructions.pdf
 
 #libs
  <ArduinoJson.h>//https://github.com/bblanchon/ArduinoJson.git
  https://arduinojson.org
+ https://github.com/knolleary/pubsubclient.git
+ git@github.com:amin7/libpack.git
+ git@github.com:amin7/acus.git
+ 
 
 #Pins
 
@@ -35,7 +40,7 @@ G   |	Ground    |	GND|
 RST |	Reset |	RST|
 
 #termistor
-(+3.3) -termistor- (A0) -resistor 3k- (GND)
+(+3.3) -termistor- (A0) -resistor 2k- (GND)
 
 #DHT
 1 vcc (5V)

@@ -1,7 +1,13 @@
 #ifndef _FRONT_END_
 #define _FRONT_END_
-//converted  date time= 2018-11-09 16:44:16.616777
-//cmd gen: D:\personal\git\termostat\text2code.py -D frontend/
+//converted  date time= 2018-11-10 17:44:02.739093
+//cmd gen: D:\user\hobby\git\termostat\text2code.py -D frontend/
+const char* _frontend_def_main_config_json_ PROGMEM ={\
+"{\n"\
+"\"offset\": 0,\n"\
+"\"points\": [{177:24}]\n"\
+"}\n"\
+};
 const char* _frontend_def_preset_json_ PROGMEM ={\
 "{\n"\
   "\"Presets\": [\n"\
@@ -18,16 +24,8 @@ const char* _frontend_def_preset_json_ PROGMEM ={\
 };
 const char* _frontend_def_termistor_json_ PROGMEM ={\
 "{\n"\
-  "\"Presets\": [\n"\
-    "{\n"\
-      "\"weekDay\": 1,\n"\
-      "\"hours\": 2\n"\
-    "},\n"\
-    "{\n"\
-      "\"weekDay\": 3,\n"\
-      "\"hours\": 0\n"\
-    "}\n"\
-  "]\n"\
+"\"offset\": 0,\n"\
+ "\"points\": [{177:24.4},{183:26.10},{235:36.6}]\n"\
 "}\n"\
 };
 const char* _frontend_term_main_css_ PROGMEM ={\
@@ -523,6 +521,7 @@ const char* _frontend_WiFiConfigEntry_html_ PROGMEM ={\
 };
 
 //converted list
+//  CFrontendFS::add(server, "/def_main_config.json", ct_json,_frontend_def_main_config_json_);
 //  CFrontendFS::add(server, "/def_preset.json", ct_json,_frontend_def_preset_json_);
 //  CFrontendFS::add(server, "/def_termistor.json", ct_json,_frontend_def_termistor_json_);
 //  CFrontendFS::add(server, "/term_main.css", ct_css,_frontend_term_main_css_);
@@ -530,5 +529,6 @@ const char* _frontend_WiFiConfigEntry_html_ PROGMEM ={\
 //  CFrontendFS::add(server, "/term_main.js", ct_js,_frontend_term_main_js_);
 //  CFrontendFS::add(server, "/thtml1.html", ct_html,_frontend_thtml1_html_);
 //  CFrontendFS::add(server, "/WiFiConfigEntry.html", ct_html,_frontend_WiFiConfigEntry_html_);
+//file ignored frontend/termostat.png
 #endif
 //EOF

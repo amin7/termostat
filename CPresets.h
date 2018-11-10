@@ -9,20 +9,8 @@
 #define CPRESETS_H_
 #include <stdint.h>
 #include <vector>
-#ifndef TEST
-	#include <ESP8266WebServer.h>
-#endif
-
-#include <ArduinoJson.h>//https://github.com/bblanchon/ArduinoJson.git
-//https://arduinojson.org
+#include "CPItem.h"
 using namespace std ;
-
-class CPItem {
-private:
-public:
-  virtual bool deSerialize(const JsonObject& root)=0;
-  virtual bool serialize(JsonObject& root) const=0;
-};
 
 template<size_t _size>
 class CPI_BitField: public CPItem {
