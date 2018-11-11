@@ -16,7 +16,7 @@ public:
   float floor_temperature_;
   float desired_temperature_;
   uint8_t adc_;
-  bool relay_on_;
+  bool heater_on_;
   virtual bool serialize(JsonObject& root) const override;
   virtual bool deSerialize(const JsonObject& root) override;
 };

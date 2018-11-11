@@ -27,7 +27,7 @@
 #include "NTPtime.h"
 #include "CMQTT.h"
 
-
+//#define DEBUG
 
 #if 0
 #define WIFI_SERVER
@@ -41,7 +41,11 @@ const auto TermistorPin = A0;
 const char* update_path = "/firmware";
 const char* DEVICE_NAME = "termostat";
 const unsigned long SYNK_NTP_PERIOD = 24 * 60 * 60 * 1000; // one per day
-
+#ifndef DEBUG
+const long MQTT_REFRESH_PERIOD = 15 * 60 * 1000;
+#else
+const long MQTT_REFRESH_PERIOD=5*1000;
+#endif
 class CSetClock: public ObserverWrite<time_t> {
 public:
   virtual void writeValue(time_t value) {
@@ -240,38 +244,29 @@ void mqtt_loop() {
     return;
   }
 
-//  float dht_readTemperature = dht.readTemperature();
-//  float dht_readHumidity = dht.readHumidity();
-//  Serial.print("t=");
-//  Serial.print(dht_readTemperature);
-//  Serial.print(" h=");
-//  Serial.println(dht_readHumidity);
-//
-//  if (isnan(dht_readTemperature) || isnan(dht_readHumidity)) {
-//    Serial.println("Failed to read from sensor!");
-//    nextMsgMQTT = now + 5 * 1000;
-//    return;
-//  }
-//
-//  nextMsgMQTT = now + MQTT_REFRESH_PERIOD;
-//
-//  String topic;
-//
-//  topic = "channels/" + String(House_channelID) + "/publish/"
-//      + House_Write_API_Key;
-//  String data;
-//  data = "field" + String(MQTT_TEMPERATURE) + "="
-//      + String(dht_readTemperature, 1);
-//  data += "&field" + String(MQTT_HUMIDITY) + "="
-//      + String(dht_readHumidity, 1);
-//#ifndef DEBUG
-//  mqtt.publish(topic, data);
-//#endif
-//  Serial.print("topic= ");
-//  Serial.print(topic);
-//  Serial.print(" [");
-//  Serial.print(data);
-//  Serial.println("]");
+  nextMsgMQTT = now + MQTT_REFRESH_PERIOD;
+
+  String topic;
+
+  topic = "channels/" + String(termostat_channelID) + "/publish/"
+      + termostat_Write_API_Key;
+  String data;
+
+  data = "field1=" + String(Config.status_.temperature_, 1);
+  data += "&field2=" + String(Config.status_.humidity_, 1);
+  data += "&field3=" + String(Config.status_.floor_temperature_, 1);
+  data += "&field4=" + String(Config.status_.desired_temperature_, 1);
+  data += "&field6=" + String(Config.status_.heater_on_);
+  data += "&field7=" + String(Config.status_.adc_);
+  Config.status_.adc_++;
+#ifndef DEBUG
+  mqtt.publish(topic, data);
+#endif
+  Serial.print("topic= ");
+  Serial.print(topic);
+  Serial.print(" [");
+  Serial.print(data);
+  Serial.println("]");
 }
 
 void loop() {
