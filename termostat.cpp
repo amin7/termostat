@@ -25,6 +25,7 @@
 #include "cmd.h"
 #include "CFilter.h"
 #include "NTPtime.h"
+#include "CMQTT.h"
 
 
 
@@ -86,6 +87,8 @@ WebFaceWiFiConfig WiFiConfig(server);
 DHTesp dht;
 CConfigs Config(server);
 ESP8266OTA otaUpdater;
+CMQTT mqtt;
+
 
 void cli_info(int argc, char **argv) {
   Config.info();
@@ -139,7 +142,7 @@ void cli_termo(int argc, char **argv) {
   Serial.print("Analoge ");
   Serial.println(ADCvalue);
   Serial.print("transformed  ");
-  Serial.println(Config.termistor.convert(ADCvalue));
+  Serial.println(Config.termistor_.convert(ADCvalue));
 }
 
 void cli_freset(int argc, char **argv) {
@@ -152,8 +155,11 @@ void cli_time(int argc, char **argv) {
   Serial.println(stat);
   time_t value;
   if (Clock1sec.readValue(value)) {
-      Serial.printf("set GMT %02u:%02u:%02u done\n", hour(value), minute(value),
+    Serial.printf("GMT %02u:%02u:%02u done\r\n", hour(value), minute(value),
           second(value));
+    auto local = myTZ.toLocal(value);
+    Serial.printf("local %02u:%02u:%02u done\r\n", hour(local), minute(local),
+        second(local));
   }
 }
 
@@ -179,6 +185,8 @@ void setup() {
   setup_wifi(wifi_ssid, wifi_password, DEVICE_NAME);
 #endif
   MDNS.begin(DEVICE_NAME);
+  mqtt.setup(mqtt_server, mqtt_port);
+  mqtt.setClientID(DEVICE_NAME);
   cli_ifconfig(0, NULL);
 
 	CFrontendFS::add(server, "/thtml1.html", ct_html,_frontend_thtml1_html_);
@@ -220,9 +228,56 @@ void setup() {
   cmd_display();
 }
 
+void mqtt_loop() {
+  if (WL_CONNECTED != WiFi.status()) {
+    return;
+  }
+
+  const long now = millis();
+  mqtt.loop();
+  static long nextMsgMQTT = 0;
+  if (now < nextMsgMQTT) {
+    return;
+  }
+
+//  float dht_readTemperature = dht.readTemperature();
+//  float dht_readHumidity = dht.readHumidity();
+//  Serial.print("t=");
+//  Serial.print(dht_readTemperature);
+//  Serial.print(" h=");
+//  Serial.println(dht_readHumidity);
+//
+//  if (isnan(dht_readTemperature) || isnan(dht_readHumidity)) {
+//    Serial.println("Failed to read from sensor!");
+//    nextMsgMQTT = now + 5 * 1000;
+//    return;
+//  }
+//
+//  nextMsgMQTT = now + MQTT_REFRESH_PERIOD;
+//
+//  String topic;
+//
+//  topic = "channels/" + String(House_channelID) + "/publish/"
+//      + House_Write_API_Key;
+//  String data;
+//  data = "field" + String(MQTT_TEMPERATURE) + "="
+//      + String(dht_readTemperature, 1);
+//  data += "&field" + String(MQTT_HUMIDITY) + "="
+//      + String(dht_readHumidity, 1);
+//#ifndef DEBUG
+//  mqtt.publish(topic, data);
+//#endif
+//  Serial.print("topic= ");
+//  Serial.print(topic);
+//  Serial.print(" [");
+//  Serial.print(data);
+//  Serial.println("]");
+}
+
 void loop() {
   server.handleClient();
   cmdPoll();
   CFilterLoop::loops();
   wifi_loop();
+  mqtt_loop();
 }

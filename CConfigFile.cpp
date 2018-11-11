@@ -11,28 +11,28 @@ void CConfigFile::factoryReset() {
   Serial.println(__FUNCTION__);
 
   StaticJsonDocument<1024> doc;
-  for (auto item : items) {
+  for (auto item : items_) {
     Serial.println(item.first);
-    auto err = deserializeJson(doc, item.second.first);
+    auto err = deserializeJson(doc, item.second.defvalue);
     if (err) {
       Serial.print(F("deserializeJson() failed: "));
       Serial.println(err.c_str());
-      Serial.println(item.second.first);
+      Serial.println(item.second.defvalue);
       return;
     }
     serializeJsonPretty(doc, Serial);
     Serial.println();
     JsonObject root = doc.as<JsonObject>();
-    item.second.second->deSerialize(root);
-    save(item.first, *item.second.second);
+    item.second.handler->deSerialize(root);
+    if (item.second.file_name)
+      save(item.second.file_name, *item.second.handler);
   }
 }
 
-bool CConfigFile::load(const String &name, CPItem &handler) {
+bool CConfigFile::load(const char *file_name, CPItem &handler) {
   Serial.print("load ");
-  auto filename = getFileName(name);
-  Serial.println(filename);
-  File configFile = SPIFFS.open(filename, "r");
+  Serial.println(file_name);
+  File configFile = SPIFFS.open(file_name, "r");
   if (!configFile) {
     Serial.println(F("Failed to open config file"));
     return false;
@@ -49,17 +49,16 @@ bool CConfigFile::load(const String &name, CPItem &handler) {
   return handler.deSerialize(root);
 }
 
-bool CConfigFile::save(const String &name, CPItem &handler) {
+bool CConfigFile::save(const char *file_name, CPItem &handler) {
   Serial.print("save ");
-  auto filename = getFileName(name);
-  Serial.println(filename);
+  Serial.println(file_name);
 
   StaticJsonDocument<1024> doc;
   JsonObject root = doc.to<JsonObject>();
   if (false == handler.serialize(root)) {
     return false;
   }
-  File configFile = SPIFFS.open(filename, "w");
+  File configFile = SPIFFS.open(file_name, "w");
   if (!configFile) {
     Serial.println("Failed to open config file for writing");
     return false;
@@ -76,8 +75,9 @@ void CConfigFile::begin() {
     return;
   }
   bool err = false;
-  for (auto item : items) {
-    if (false == load(item.first, *item.second.second)) {
+  for (auto item : items_) {
+    if (item.second.file_name)
+      if (false == load(item.second.file_name, *item.second.handler)) {
       err = true;
       break;
     }

@@ -13,20 +13,23 @@
 #include "CPItem.h"
 
 class CConfigFile {
-  String getFileName(String name) {
-    return "/" + name + ".json";
-  }
 protected:
-  std::map<String, std::pair<const char *, CPItem *>> items;
-  bool load(const String &name, CPItem &handler);
-  bool save(const String &name, CPItem &handler);
+  typedef struct {
+    CPItem *handler;
+    const char *defvalue;
+    const char *file_name;
+  } def_items_t;
+  std::map<String, def_items_t> items_;
+  bool load(const char *file_name, CPItem &handler);
+  bool save(const char *file_name, CPItem &handler);
 public:
   CConfigFile() :
-      items( { }) {
+      items_( { }) {
 
   }
-  void add(const String name, const char *defvalue, CPItem &item) {
-    items[name] = {defvalue, &item};
+
+  void add(const String name, const char *defvalue, CPItem &item, const char *file_name) {
+    items_[name] = {&item, defvalue, file_name};
   }
   void factoryReset();
   void begin();

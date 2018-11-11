@@ -19,8 +19,8 @@ void CConfigs::onLoad() {
   Serial.println(__FUNCTION__);
   const auto name = server.arg("name");
   Serial.println(name);
-  auto it = items.find(name);
-  if (it == items.end()) {
+  auto it = items_.find(name);
+  if (it == items_.end()) {
     Serial.println("not found");
     server.send(404, "text/json", "");
     return;
@@ -28,7 +28,7 @@ void CConfigs::onLoad() {
 
   StaticJsonDocument<1024> doc;
   JsonObject root = doc.to<JsonObject>();
-  it->second.second->serialize(root);
+  it->second.handler->serialize(root);
 
   Serial.print("memoryUsage=");
   Serial.println(doc.memoryUsage());
@@ -42,8 +42,8 @@ void CConfigs::onSave() {
   Serial.println(__FUNCTION__);
   const auto name = server.arg("name");
   Serial.println(name);
-  auto it = items.find(name);
-  if (it == items.end()) {
+  auto it = items_.find(name);
+  if (it == items_.end()) {
     Serial.println("not found");
     server.send(404, "text/html", "");
     return;
@@ -55,11 +55,11 @@ void CConfigs::onSave() {
   StaticJsonDocument<1024> doc;
   deserializeJson(doc, server.arg("plain"));
   JsonObject root = doc.as<JsonObject>();
-  it->second.second->deSerialize(root);
+  it->second.handler->deSerialize(root);
   Serial.print("memoryUsage=");
   Serial.println(doc.memoryUsage());
-
-  save(name, *(it->second.second));
+  if (it->second.file_name)
+    save(it->second.file_name, *(it->second.handler));
   server.send(200, "text/html", "");
 }
 

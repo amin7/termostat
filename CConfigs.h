@@ -12,6 +12,7 @@
 #include "CTransformLine.h"
 #include "CMainConfig.h"
 #include "CPresets.h"
+#include "CStatus.h"
 
 extern const char* _frontend_def_preset_json_ PROGMEM;
 extern const char* _frontend_def_termistor_json_ PROGMEM;
@@ -22,15 +23,16 @@ class CConfigs: public CConfigFile {
   void onLoad();
   void onSave();
   void addItems() {
-    add("presets", _frontend_def_preset_json_, presets);
-    add("termistor", _frontend_def_termistor_json_, termistor);
-    add("mainconfig", _frontend_def_main_config_json_, mainConfig);
-
+    add("presets", _frontend_def_preset_json_, presets_, "/presets.json");
+    add("termistor", _frontend_def_termistor_json_, termistor_, "/termistor.json");
+    add("mainconfig", _frontend_def_main_config_json_, mainConfig_, "/mainconfig.json");
+    add("status", _frontend_def_main_config_json_, status_, NULL);
   }
 public:
-  CPresets presets;
-  CTransformLine termistor;
-  CMainConfig mainConfig;
+  CPresets presets_;
+  CTransformLine termistor_;
+  CMainConfig mainConfig_;
+  CStatus status_;
   CConfigs(ESP8266WebServer &server);
 
 };

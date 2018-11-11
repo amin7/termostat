@@ -11,7 +11,7 @@
 #include <ArduinoJson.h>
 //https://github.com/bblanchon/ArduinoJson.git
 						//https://bblanchon.github.io/ArduinoJson/assistant/
-#include "CPresets.h"
+#include "CPItem.h"
 
 class CMainConfig: public CPItem {
   typedef enum {
