@@ -8,23 +8,7 @@
     cursor: pointer;
     float: left;
 }
-  #temper_cur {    
-    display: inline-block;
-    font-size: 32px;    
-    float: left;    
-    height:32px
+  #state {    
+    font-size: 32px;        
 }
-  #temper_present {
-   color: green;   
-   display: inline-block;     
-    font-size: 14px;    
-    float: left;    
-    height:14px
-}
-#temper_ansent {
-	color: gray;	
-	display: inline-block;
-    font-size: 14px;    
-    float: left;    
-    height:14px        
-}
+
