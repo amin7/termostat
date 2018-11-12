@@ -29,8 +29,9 @@
 
 //#define DEBUG
 
-#if 0
+#if 1
 #define WIFI_SERVER
+#include "secret.h_ex"
 #else
 #include "secret.h"
 #endif
@@ -259,7 +260,7 @@ void mqtt_loop() {
   data += "&field6=" + String(Config.status_.heater_on_);
   data += "&field7=" + String(Config.status_.adc_);
   Config.status_.adc_++;
-#ifndef DEBUG
+#ifndef WIFI_SERVER
   mqtt.publish(topic, data);
 #endif
   Serial.print("topic= ");

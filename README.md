@@ -14,6 +14,8 @@ https://arduino.stackexchange.com/questions/36505/help-using-thermistor-with-esp
 http://www.arroyoinstruments.com/manuals/ArroyoThermistorInstructions.pdf
 
 #libs
+https://github.com/JChristensen/Timezone.git
+https://github.com/ChipTechno/ESP8266OTA
  <ArduinoJson.h>//https://github.com/bblanchon/ArduinoJson.git
  https://arduinojson.org
  https://github.com/knolleary/pubsubclient.git
