@@ -31,6 +31,27 @@ xmlHttp=createXmlHttpObject();
       xh.send(null);
 	}
 
+  function StatusLoad(){
+      var xh = new XMLHttpRequest();
+      xh.onreadystatechange = function(){
+        if (xh.readyState == 4){
+          if(xh.status == 200) {
+            var res = JSON.parse(xh.responseText);
+            console.log(res);
+            document.getElementById("air_term").innerHTML=res["air_term"];
+            document.getElementById("air_humm").innerHTML=res["air_humm"];
+            document.getElementById("floor_term").innerHTML=res["floor_term"];
+            document.getElementById("target_term").innerHTML=res["target_term"];
+            document.getElementById("time_status").innerHTML=res["time_status"];
+            updateCurrDateTime(res["time"]*1000);
+            document.getElementById("heater_on").innerHTML=res["heater_on"];
+          }
+        }
+      };
+      xh.open("GET", "/ConfigLoad?name=status", true);
+      xh.send(null);
+    }
+    
 function PresetSave(){
   if(xmlHttp.readyState==0||xmlHttp.readyState==4){
 	xmlHttp.onreadystatechange=function(){
@@ -153,13 +174,13 @@ function selectionList(parent,valList,initial){
    	}		   	 		   		
    	window.addEventListener('mouseup', function(event){obj.keyUp();});   	
 }
-function updateCurrDateTime(){
+function updateCurrDateTime(timestamt){
 	var options = {  
 		    weekday: "long", year: "numeric", month: "short",  
 		    day: "numeric", hour: "2-digit", minute: "2-digit",hour12: false  
 		};  
-	var date=new Date();
-	document.getElementById("date").innerHTML = date.toLocaleTimeString([], options);
+	var date=new Date(timestamt);
+	document.getElementById("time").innerHTML = date.toLocaleTimeString([], options);
 }
 function htmlObj(html){
 	let el = document.createElement("span");
@@ -191,21 +212,7 @@ function add_Presets(config){
 }
 
 function init(){
-	updateCurrDateTime();
-	setInterval('updateCurrDateTime()', 1000);
-//	let val=new Object;
-//	val={
-//			  "Presets": [
-//				    {
-//				      "weekDay": 1,
-//				      "hours": 2
-//				    },
-//				    {
-//				      "weekDay": 3,
-//				      "hours": 0
-//				    }
-//				  ]
-//				}
-//	add_Presets(val);//for test
 	PresetLoad();
+	StatusLoad();
+	setInterval('StatusLoad()', 5000);
 }    	

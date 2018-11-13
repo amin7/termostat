@@ -29,7 +29,7 @@
 
 //#define DEBUG
 
-#if 1
+#if 0
 #define WIFI_SERVER
 #include "secret.h_ex"
 #else
@@ -47,6 +47,14 @@ const long MQTT_REFRESH_PERIOD = 15 * 60 * 1000;
 #else
 const long MQTT_REFRESH_PERIOD=5*1000;
 #endif
+const auto SENSOR_REFRESH_PERIOD = 5 * 1000;
+
+Timezone myTZ((TimeChangeRule ) { "DST", Last, Sun, Mar, 3, +3 * 60 },
+    (TimeChangeRule ) { "STD", Last, Sun, Oct, 4, +2 * 60 });
+
+time_t get_local_time() {
+  return myTZ.toLocal(now());
+}
 class CSetClock: public ObserverWrite<time_t> {
 public:
   virtual void writeValue(time_t value) {
@@ -84,8 +92,6 @@ public:
 NTPtime ntpTime(SYNK_NTP_PERIOD);
 CSetClock setClock;
 CClock Clock1sec(1000);
-Timezone myTZ((TimeChangeRule ) { "DST", Last, Sun, Mar, 3, +3 * 60 },
-    (TimeChangeRule ) { "STD", Last, Sun, Oct, 4, +2 * 60 });
 
 ESP8266WebServer server(80);
 WebFaceWiFiConfig WiFiConfig(server);
@@ -162,7 +168,7 @@ void cli_time(int argc, char **argv) {
   if (Clock1sec.readValue(value)) {
     Serial.printf("GMT %02u:%02u:%02u done\r\n", hour(value), minute(value),
           second(value));
-    auto local = myTZ.toLocal(value);
+    auto local = get_local_time();
     Serial.printf("local %02u:%02u:%02u done\r\n", hour(local), minute(local),
         second(local));
   }
@@ -253,9 +259,9 @@ void mqtt_loop() {
       + termostat_Write_API_Key;
   String data;
 
-  data = "field1=" + String(Config.status_.temperature_, 1);
-  data += "&field2=" + String(Config.status_.humidity_, 1);
-  data += "&field3=" + String(Config.status_.floor_temperature_, 1);
+  data = "field1=" + String(Config.status_.air_term_, 1);
+  data += "&field2=" + String(Config.status_.air_humm_, 1);
+  data += "&field3=" + String(Config.status_.floor_term_, 1);
   data += "&field4=" + String(Config.status_.desired_temperature_, 1);
   data += "&field6=" + String(Config.status_.heater_on_);
   data += "&field7=" + String(Config.status_.adc_);
@@ -269,6 +275,26 @@ void mqtt_loop() {
   Serial.print(data);
   Serial.println("]");
 }
+void sensor_loop() {
+  const long now = millis();
+  static long nextSensor = 0;
+  if (now < nextSensor) {
+    return;
+  }
+  nextSensor = now + SENSOR_REFRESH_PERIOD;
+
+  const auto air_term = dht.getTemperature();
+  if (NAN != air_term) {
+    Config.status_.air_term_ = air_term;
+  }
+  const auto air_humm = dht.getHumidity();
+  if (NAN != air_humm) {
+    Config.status_.air_humm_ = air_humm;
+  }
+  const auto ADCvalue = analogRead(TermistorPin);
+  Config.status_.floor_term_ = Config.termistor_.convert(ADCvalue);
+
+}
 
 void loop() {
   server.handleClient();
@@ -276,4 +302,5 @@ void loop() {
   CFilterLoop::loops();
   wifi_loop();
   mqtt_loop();
+  sensor_loop();
 }

@@ -9,11 +9,12 @@
 #define CSTATUS_H_
 #include <stdint.h>
 #include "CPItem.h"
+
 class CStatus: public CPItem {
 public:
-  float temperature_;
-  float humidity_;
-  float floor_temperature_;
+  float air_term_;
+  float air_humm_;
+  float floor_term_;
   float desired_temperature_;
   uint8_t adc_;
   bool heater_on_;

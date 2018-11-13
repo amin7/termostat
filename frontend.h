@@ -1,6 +1,6 @@
 #ifndef _FRONT_END_
 #define _FRONT_END_
-//converted  date time= 2018-11-10 17:44:02.739093
+//converted  date time= 2018-11-13 17:37:27.280371
 //cmd gen: D:\user\hobby\git\termostat\text2code.py -D frontend/
 const char* _frontend_def_main_config_json_ PROGMEM ={\
 "{\n"\
@@ -25,7 +25,8 @@ const char* _frontend_def_preset_json_ PROGMEM ={\
 const char* _frontend_def_termistor_json_ PROGMEM ={\
 "{\n"\
 "\"offset\": 0,\n"\
- "\"points\": [{177:24.4},{183:26.10},{235:36.6}]\n"\
+ "\"points\": [\n"\
+ "{177:24.4},{183:26.10},{235:36.6}]\n"\
 "}\n"\
 };
 const char* _frontend_term_main_css_ PROGMEM ={\
@@ -39,26 +40,10 @@ const char* _frontend_term_main_css_ PROGMEM ={\
     "cursor: pointer;\n"\
     "float: left;\n"\
 "}\n"\
-  "#temper_cur {\n"\
-    "display: inline-block;\n"\
+  "#state {\n"\
     "font-size: 32px;\n"\
-    "float: left;\n"\
-    "height:32px\n"\
 "}\n"\
-  "#temper_present {\n"\
-   "color: green;\n"\
-   "display: inline-block;\n"\
-    "font-size: 14px;\n"\
-    "float: left;\n"\
-    "height:14px\n"\
-"}\n"\
-"#temper_ansent {\n"\
-    "color: gray;\n"\
-    "display: inline-block;\n"\
-    "font-size: 14px;\n"\
-    "float: left;\n"\
-    "height:14px\n"\
-"}\n"\
+\
 };
 const char* _frontend_term_main_html_ PROGMEM ={\
 "<!DOCTYPE html>\n"\
@@ -69,27 +54,24 @@ const char* _frontend_term_main_html_ PROGMEM ={\
         "<link rel=\"stylesheet\" href=\"term_main.css\">\n"\
     "</head>\n"\
     "<body onload=\"init()\">\n"\
-        "<h1>state</h1>\n"\
-        "<p id=\"date\"></p>\n"\
-        "<div id=\"temper_cur\" >25.1</div>\n"\
-        "<div >\n"\
-            "<div id=\"temper_present\" >27.1</div>\n"\
-            "<br/>\n"\
-            "<div id=\"temper_ansent\" >24.1</div>\n"\
-        "</div>\n"\
-\
-        "<div id=\"Presets\" >\n"\
-            "<h2>Presets</h2>\n"\
-            "<hr>\n"\
-            "<div>\n"\
-              "<button onclick=add_byWeekday()>by Weekday</button>\n"\
-              "<button >Out till</button>\n"\
-              "<button >today</button>\n"\
-            "</div>\n"\
-            "<ul id=PresetsList> </ul>\n"\
-        "</div>\n"\
+    "<fieldset>\n"\
+        "<legend>State</legend>\n"\
+        "air_term: <a id=\"air_term\"></a>\n"\
+        "air_humm: <a id=\"air_humm\"></a></br>\n"\
+        "floor_term: <a id=\"floor_term\"></a></br>\n"\
+        "target_term: <a id=\"target_term\"></a></br>\n"\
+        "heater:<a id=\"heater_on\"></a></br>\n"\
+        "time_status: <a id=\"time_status\"></a> <a id=\"time\"></a></br>\n"\
+    "</fieldset>\n"\
+    "<button onclick=add_byWeekday()>by Weekday</button>\n"\
+    "<button >Out till</button>\n"\
+    "<button >today</button>\n"\
+    "<fieldset>\n"\
+        "<legend>Presets</legend>\n"\
+        "<ul id=PresetsList> </ul>\n"\
         "<button onclick=PresetSave()>Save</button>\n"\
         "<button onclick=PresetLoad()>Load</button>\n"\
+      "</fieldset>\n"\
     "</body>\n"\
 "</html>\n"\
 };
@@ -124,6 +106,27 @@ const char* _frontend_term_main_js_ PROGMEM ={\
         "}\n"\
       "};\n"\
       "xh.open(\"GET\", \"/ConfigLoad?name=presets\", true);\n"\
+      "xh.send(null);\n"\
+    "}\n"\
+\
+  "function StatusLoad(){\n"\
+      "var xh = new XMLHttpRequest();\n"\
+      "xh.onreadystatechange = function(){\n"\
+        "if (xh.readyState == 4){\n"\
+          "if(xh.status == 200) {\n"\
+            "var res = JSON.parse(xh.responseText);\n"\
+            "console.log(res);\n"\
+            "document.getElementById(\"air_term\").innerHTML=res[\"air_term\"];\n"\
+            "document.getElementById(\"air_humm\").innerHTML=res[\"air_humm\"];\n"\
+            "document.getElementById(\"floor_term\").innerHTML=res[\"floor_term\"];\n"\
+            "document.getElementById(\"target_term\").innerHTML=res[\"target_term\"];\n"\
+            "document.getElementById(\"time_status\").innerHTML=res[\"time_status\"];\n"\
+            "updateCurrDateTime(res[\"time\"]*1000);\n"\
+            "document.getElementById(\"heater_on\").innerHTML=res[\"heater_on\"];\n"\
+          "}\n"\
+        "}\n"\
+      "};\n"\
+      "xh.open(\"GET\", \"/ConfigLoad?name=status\", true);\n"\
       "xh.send(null);\n"\
     "}\n"\
 \
@@ -249,13 +252,13 @@ const char* _frontend_term_main_js_ PROGMEM ={\
        "}\n"\
        "window.addEventListener(\'mouseup\', function(event){obj.keyUp();});\n"\
 "}\n"\
-"function updateCurrDateTime(){\n"\
+"function updateCurrDateTime(timestamt){\n"\
     "var options = {\n"\
             "weekday: \"long\", year: \"numeric\", month: \"short\",\n"\
             "day: \"numeric\", hour: \"2-digit\", minute: \"2-digit\",hour12: false\n"\
         "};\n"\
-    "var date=new Date();\n"\
-    "document.getElementById(\"date\").innerHTML = date.toLocaleTimeString([], options);\n"\
+    "var date=new Date(timestamt);\n"\
+    "document.getElementById(\"time\").innerHTML = date.toLocaleTimeString([], options);\n"\
 "}\n"\
 "function htmlObj(html){\n"\
     "let el = document.createElement(\"span\");\n"\
@@ -287,23 +290,9 @@ const char* _frontend_term_main_js_ PROGMEM ={\
 "}\n"\
 \
 "function init(){\n"\
-    "updateCurrDateTime();\n"\
-    "setInterval(\'updateCurrDateTime()\', 1000);\n"\
-"//	let val=new Object;\n"\
-"//	val={\n"\
-"//			  \"Presets\": [\n"\
-"//				    {\n"\
-"//				      \"weekDay\": 1,\n"\
-"//				      \"hours\": 2\n"\
-"//				    },\n"\
-"//				    {\n"\
-"//				      \"weekDay\": 3,\n"\
-"//				      \"hours\": 0\n"\
-"//				    }\n"\
-"//				  ]\n"\
-"//				}\n"\
-"//	add_Presets(val);//for test\n"\
     "PresetLoad();\n"\
+    "StatusLoad();\n"\
+    "setInterval(\'StatusLoad()\', 5000);\n"\
 "}\n"\
 };
 const char* _frontend_thtml1_html_ PROGMEM ={\
