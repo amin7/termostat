@@ -180,7 +180,7 @@ function updateCurrDateTime(timestamt){
 		    day: "numeric", hour: "2-digit", minute: "2-digit",hour12: false  
 		};  
 	var date=new Date(timestamt);
-	document.getElementById("time").innerHTML = date.toLocaleTimeString([], options);
+	document.getElementById("time").innerHTML = date.toUTCString([], options);
 }
 function htmlObj(html){
 	let el = document.createElement("span");

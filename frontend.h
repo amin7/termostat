@@ -1,6 +1,6 @@
 #ifndef _FRONT_END_
 #define _FRONT_END_
-//converted  date time= 2018-11-13 17:37:27.280371
+//converted  date time= 2018-11-13 19:36:32.462737
 //cmd gen: D:\user\hobby\git\termostat\text2code.py -D frontend/
 const char* _frontend_def_main_config_json_ PROGMEM ={\
 "{\n"\
@@ -56,21 +56,24 @@ const char* _frontend_term_main_html_ PROGMEM ={\
     "<body onload=\"init()\">\n"\
     "<fieldset>\n"\
         "<legend>State</legend>\n"\
-        "air_term: <a id=\"air_term\"></a>\n"\
-        "air_humm: <a id=\"air_humm\"></a></br>\n"\
-        "floor_term: <a id=\"floor_term\"></a></br>\n"\
-        "target_term: <a id=\"target_term\"></a></br>\n"\
+        "air_term: <a id=\"air_term\"></a>  &#8451;\n"\
+        "air_humm: <a id=\"air_humm\"></a> %</br>\n"\
+        "floor_term: <a id=\"floor_term\"></a> &#8451;</br>\n"\
+        "target_term: <a id=\"target_term\"></a> &#8451;</br>\n"\
         "heater:<a id=\"heater_on\"></a></br>\n"\
         "time_status: <a id=\"time_status\"></a> <a id=\"time\"></a></br>\n"\
     "</fieldset>\n"\
-    "<button onclick=add_byWeekday()>by Weekday</button>\n"\
-    "<button >Out till</button>\n"\
-    "<button >today</button>\n"\
-    "<fieldset>\n"\
-        "<legend>Presets</legend>\n"\
-        "<ul id=PresetsList> </ul>\n"\
-        "<button onclick=PresetSave()>Save</button>\n"\
-        "<button onclick=PresetLoad()>Load</button>\n"\
+   "<fieldset>\n"\
+        "<legend>Control</legend>\n"\
+        "<button onclick=add_byWeekday()>by Weekday</button>\n"\
+        "<button >Out till</button>\n"\
+        "<button >today</button>\n"\
+        "<fieldset>\n"\
+            "<legend>Presets</legend>\n"\
+            "<ul id=PresetsList> </ul>\n"\
+            "<button onclick=PresetSave()>Save</button>\n"\
+            "<button onclick=PresetLoad()>Load</button>\n"\
+          "</fieldset>\n"\
       "</fieldset>\n"\
     "</body>\n"\
 "</html>\n"\
@@ -258,7 +261,7 @@ const char* _frontend_term_main_js_ PROGMEM ={\
             "day: \"numeric\", hour: \"2-digit\", minute: \"2-digit\",hour12: false\n"\
         "};\n"\
     "var date=new Date(timestamt);\n"\
-    "document.getElementById(\"time\").innerHTML = date.toLocaleTimeString([], options);\n"\
+    "document.getElementById(\"time\").innerHTML = date.toUTCString([], options);\n"\
 "}\n"\
 "function htmlObj(html){\n"\
     "let el = document.createElement(\"span\");\n"\
