@@ -91,6 +91,7 @@ function SetHeatMode(mode){
 }
 
 
+
 function MainConfigLoad(){
     var xh = new XMLHttpRequest();
     xh.onreadystatechange = function(){

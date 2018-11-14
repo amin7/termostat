@@ -1,13 +1,14 @@
 #ifndef _FRONT_END_
 #define _FRONT_END_
-//converted  date time= 2018-11-14 15:51:30.957347
-//cmd gen: D:\personal\git\termostat\text2code.py -D frontend/
+//converted  date time= 2018-11-14 19:38:33.551184
+//cmd gen: D:\user\hobby\git\termostat\text2code.py -D frontend/
 const char* _frontend_def_main_config_json_ PROGMEM ={\
 "{\n"\
    "\"heat_mode\": 0,\n"\
    "\"term_vacation\":10,\n"\
    "\"term_night\":16,\n"\
-   "\"term_day\":24\n"\
+   "\"term_day\":24,\n"\
+   "\"term_max\":40\n"\
 "}\n"\
 };
 const char* _frontend_def_preset_json_ PROGMEM ={\
@@ -69,11 +70,11 @@ const char* _frontend_term_main_html_ PROGMEM ={\
    "<fieldset>\n"\
         "<legend>Control</legend>\n"\
         "<div class=\"btn-group\">\n"\
-          "<button  class=\"btn\" name=\"options\" id=\"mode_off\" onclick=set_mode(this)>Off</button>\n"\
-          "<button  class=\"btn\" name=\"options\" id=\"mode_schedule\" onclick=set_mode(this)>Schedule</button>\n"\
-          "<button  class=\"btn\" name=\"options\" id=\"mode_vocation\" onclick=set_mode(this)>Vocation</button>\n"\
-          "<button  class=\"btn\" name=\"options\" id=\"mode_in\" onclick=set_mode_inout(this)>in</button>\n"\
-          "<button  class=\"btn\" name=\"options\" id=\"mode_out\" onclick=set_mode_inout(this)>out</button>\n"\
+          "<button  class=\"btn\" id=\"mode_off\" onclick=SetHeatMode(0)>Off</button>\n"\
+          "<button  class=\"btn\" id=\"mode_schedule\" onclick=SetHeatMode(1)>Schedule</button>\n"\
+          "<button  class=\"btn\" id=\"mode_vocation\" onclick=SetHeatMode(2)>Vocation</button>\n"\
+          "<button  class=\"btn\" id=\"mode_in\" onclick=SetHeatMode(3)>in</button>\n"\
+          "<button  class=\"btn\" id=\"mode_out\" onclick=document.getElementById(\"myDialog\").showModal()>out</button>\n"\
         "</div>\n"\
         "<a id=\"mode_ext_str\"></a><br>\n"\
         "<br>\n"\
@@ -83,21 +84,32 @@ const char* _frontend_term_main_html_ PROGMEM ={\
             "term_night <input type=\"number\" min=10 max=35 id = \"term_night\"> &#8451;<br>\n"\
             "term_day <input type=\"number\" min=10 max=35 id = \"term_day\"> &#8451;<br>\n"\
             "term_max <a id = \"term_max\"></a> &#8451;<br>\n"\
-            "<button onclick=MainConfigSave()>Save</button>\n"\
-            "<button onclick=MainConfigLoad()>Load</button>\n"\
         "</fieldset>\n"\
-        "<fieldset>\n"\
-            "<legend>Presets</legend>\n"\
-            "<ul id=PresetsList> </ul>\n"\
-            "<button onclick=PresetSave()>Save</button>\n"\
-            "<button onclick=PresetLoad()>Load</button>\n"\
-        "</fieldset>\n"\
-      "</fieldset>\n"\
+       "<button onclick=MainConfigSave()>Save</button>\n"\
+       "<button onclick=MainConfigLoad()>Load</button>\n"\
+       "</fieldset>\n"\
+       "<fieldset>\n"\
+           "<legend>Presets</legend>\n"\
+           "<ul id=PresetsList> </ul>\n"\
+           "<button onclick=PresetSave()>Save</button>\n"\
+           "<button onclick=PresetLoad()>Load</button>\n"\
+       "</fieldset>\n"\
+\
+      "<dialog id=\"myDialog\">This is a dialog window\n"\
+        "<button >Show dialog esc exit</button>\n"\
+        "</dialog>\n"\
+\
     "</body>\n"\
 "</html>\n"\
 };
 const char* _frontend_term_main_js_ PROGMEM ={\
 "let dayOfWeekStr=[\"Monday\",\"Tuesday\",\"Wednesday\",\"Thursday\",\"Friday\",\"Saturday\",\"Sunday\"];\n"\
+"const colorSelected=\"#fc6400\";\n"\
+"const colorSelection=\"#fc0000\";\n"\
+"const colorNotSelected=\"#00a3fc\";\n"\
+"const colorNotSelection=\"#0800fc\";\n"\
+\
+"let heat_mode_ids=[\"mode_off\",\"mode_schedule\",\"mode_vocation\",\"mode_in\",\"mode_out\"];\n"\
 \
 "xmlHttp=createXmlHttpObject();\n"\
 \
@@ -175,6 +187,15 @@ const char* _frontend_term_main_js_ PROGMEM ={\
   "}\n"\
 "}\n"\
 \
+"var heat_mode=0;\n"\
+"function SetHeatMode(mode){\n"\
+    "heat_mode=mode;\n"\
+    "for(let ind=0;ind<heat_mode_ids.length;ind++){\n"\
+        "document.getElementById(heat_mode_ids[ind]).style.backgroundColor = (ind==mode)?colorSelection:document.body.style.backgroundColor;\n"\
+    "}\n"\
+"}\n"\
+\
+\
 "function MainConfigLoad(){\n"\
     "var xh = new XMLHttpRequest();\n"\
     "xh.onreadystatechange = function(){\n"\
@@ -182,7 +203,9 @@ const char* _frontend_term_main_js_ PROGMEM ={\
         "if(xh.status == 200) {\n"\
           "var res = JSON.parse(xh.responseText);\n"\
           "console.log(res);\n"\
-          "document.getElementById(\"heat_mode\").innerHTML=res[\"heat_mode\"];\n"\
+          "let mode=res[\"heat_mode\"];\n"\
+          "SetHeatMode(mode)\n"\
+          "document.getElementById(\"heat_mode\").innerHTML=heat_mode_ids[mode];\n"\
           "document.getElementById(\"term_vacation\").value=res[\"term_vacation\"];\n"\
           "document.getElementById(\"term_night\").value=res[\"term_night\"];\n"\
           "document.getElementById(\"term_day\").value=res[\"term_day\"];\n"\
@@ -202,24 +225,21 @@ const char* _frontend_term_main_js_ PROGMEM ={\
       "}\n"\
     "}\n"\
     "let myJSON = new Object;\n"\
-"//    document.getElementById(\"heat_mode\").innerHTML=res[\"heat_mode\"];\n"\
-"//    document.getElementById(\"term_vacation\").innerHTML=res[\"term_vacation\"];\n"\
-"//    document.getElementById(\"term_night\").innerHTML=res[\"term_night\"];\n"\
-"//    document.getElementById(\"term_day\").innerHTML=res[\"term_day\"];\n"\
-"//    document.getElementById(\"term_max\").innerHTML=res[\"term_max\"];\n"\
-  "var data = JSON.stringify(myJSON);\n"\
+    "myJSON[\"heat_mode\"]=heat_mode;\n"\
+    "myJSON[\"term_vacation\"]=document.getElementById(\"term_vacation\").value;\n"\
+    "myJSON[\"term_night\"]=document.getElementById(\"term_night\").value;\n"\
+    "myJSON[\"term_day\"]=document.getElementById(\"term_day\").value;\n"\
+\
+    "var data = JSON.stringify(myJSON);\n"\
     "xmlHttp.open(\'PUT\',\"/ConfigSave?name=mainconfig\",true);\n"\
     "xmlHttp.setRequestHeader(\"Content-Type\", \"application/json\");\n"\
     "xmlHttp.send(data);\n"\
     "console.log(data);\n"\
+    "MainConfigLoad(); //loopback\n"\
 "}\n"\
 "}\n"\
 \
 "function selectionList(parent,valList,initial){\n"\
-    "const colorSelected=\"#fc6400\";\n"\
-    "const colorSelection=\"#fc0000\";\n"\
-    "const colorNotSelected=\"#00a3fc\";\n"\
-    "const colorNotSelection=\"#0800fc\";\n"\
     "var isPressed=false;\n"\
     "var isSelected=false;\n"\
     "var selBeg,selEnd;\n"\

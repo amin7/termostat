@@ -24,7 +24,7 @@ bool CStatus::serialize(JsonObject& root) const {
   }
   root["floor_term"] = floor_term_;
   root["desired_temperature"] = desired_temperature_;
-  root["time_status"] = timeStatus();
+  root["time_status"] = static_cast<int8_t>(timeStatus());
   root["time"] = get_local_time(); //to ms
   return true;
 }
