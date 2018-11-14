@@ -29,7 +29,7 @@
 
 //#define DEBUG
 
-#if 0
+#if 1
 #define WIFI_SERVER
 #include "secret.h_ex"
 #else

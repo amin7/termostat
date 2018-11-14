@@ -8,6 +8,7 @@
     <body onload="init()">
 	<fieldset>
 		<legend>State</legend>
+		mode: <a id="mode"></a><br>
 		air_term: <a id="air_term"></a>  &#8451;
 		air_humm: <a id="air_humm"></a> %</br>
 		floor_term: <a id="floor_term"></a> &#8451;</br>
@@ -17,15 +18,30 @@
 	</fieldset>
    <fieldset>
         <legend>Control</legend>
-    	<button onclick=add_byWeekday()>by Weekday</button>
-        <button >Out till</button>
-        <button >today</button>
-        <fieldset>
+        <div class="btn-group">
+		  <button  class="btn" name="options" id="mode_off" onclick=set_mode(this)>Off</button>
+		  <button  class="btn" name="options" id="mode_schedule" onclick=set_mode(this)>Schedule</button> 
+		  <button  class="btn" name="options" id="mode_vocation" onclick=set_mode(this)>Vocation</button>
+		  <button  class="btn" name="options" id="mode_in" onclick=set_mode_inout(this)>in</button>
+          <button  class="btn" name="options" id="mode_out" onclick=set_mode_inout(this)>out</button>
+		</div>
+		<a id="mode_ext_str"></a><br>
+		<br>
+		<fieldset>
+            <legend>Temperatures</legend>
+            term_vacation <input type="number" min=10 max=35 id = "term_vacation"> &#8451;<br>
+            term_night <input type="number" min=10 max=35 id = "term_night"> &#8451;<br>
+            term_day <input type="number" min=10 max=35 id = "term_day"> &#8451;<br>
+            term_max <a id = "term_max"></a> &#8451;<br>
+            <button onclick=PresetSave()>Save</button>
+            <button onclick=PresetLoad()>Load</button>
+        </fieldset>		
+    	<fieldset>
             <legend>Presets</legend>             
     		<ul id=PresetsList> </ul>
             <button onclick=PresetSave()>Save</button>
             <button onclick=PresetLoad()>Load</button>
-          </fieldset>   
-      </fieldset>                				                       	
+        </fieldset>
+      </fieldset>
     </body>
 </html>

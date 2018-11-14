@@ -22,9 +22,9 @@ class CMainConfig: public CPItem {
     mode_auto
   } heat_mode_t;
   heat_mode_t heat_mode_;
-  float term_vacation;
-  float term_night;
-  float term_day;
+  float term_vacation_;
+  float term_night_;
+  float term_day_;
   const float term_max = 40;
 public:
   virtual bool serialize(JsonObject& root) const override;
