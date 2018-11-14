@@ -39,10 +39,12 @@ workPatch=""
 # HTTPRequestHandler class
 class testHTTPServer_RequestHandler(BaseHTTPRequestHandler):
     def do_Reply(self):
+        print(self.path)
         o = urlparse(self.path)
         print(o)
         print(parse_qs(o.query))
-        uir = o.path
+        #uir = o.path
+        uir=self.path
         if uir not in handler:
             print('unknowFileTypeERROR')
             self.send_response(404)

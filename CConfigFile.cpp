@@ -13,6 +13,10 @@ void CConfigFile::factoryReset() {
   StaticJsonDocument<1024> doc;
   for (auto item : items_) {
     Serial.println(item.first);
+    if (!item.second.defvalue) {
+      Serial.println("no init file");
+      continue;
+    }
     auto err = deserializeJson(doc, item.second.defvalue);
     if (err) {
       Serial.print(F("deserializeJson() failed: "));

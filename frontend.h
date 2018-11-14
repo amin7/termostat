@@ -1,11 +1,13 @@
 #ifndef _FRONT_END_
 #define _FRONT_END_
-//converted  date time= 2018-11-13 19:36:32.462737
-//cmd gen: D:\user\hobby\git\termostat\text2code.py -D frontend/
+//converted  date time= 2018-11-14 15:51:30.957347
+//cmd gen: D:\personal\git\termostat\text2code.py -D frontend/
 const char* _frontend_def_main_config_json_ PROGMEM ={\
 "{\n"\
-"\"offset\": 0,\n"\
-"\"points\": [{177:24}]\n"\
+   "\"heat_mode\": 0,\n"\
+   "\"term_vacation\":10,\n"\
+   "\"term_night\":16,\n"\
+   "\"term_day\":24\n"\
 "}\n"\
 };
 const char* _frontend_def_preset_json_ PROGMEM ={\
@@ -56,24 +58,40 @@ const char* _frontend_term_main_html_ PROGMEM ={\
     "<body onload=\"init()\">\n"\
     "<fieldset>\n"\
         "<legend>State</legend>\n"\
+        "heat_mode: <a id=\"heat_mode\"></a><br>\n"\
         "air_term: <a id=\"air_term\"></a>  &#8451;\n"\
-        "air_humm: <a id=\"air_humm\"></a> %</br>\n"\
-        "floor_term: <a id=\"floor_term\"></a> &#8451;</br>\n"\
-        "target_term: <a id=\"target_term\"></a> &#8451;</br>\n"\
-        "heater:<a id=\"heater_on\"></a></br>\n"\
-        "time_status: <a id=\"time_status\"></a> <a id=\"time\"></a></br>\n"\
+        "air_humm: <a id=\"air_humm\"></a> %<br>\n"\
+        "floor_term: <a id=\"floor_term\"></a> &#8451;<br>\n"\
+        "target_term: <a id=\"target_term\"></a> &#8451;<br>\n"\
+        "heater:<a id=\"heater_on\"></a><br>\n"\
+        "time_status: <a id=\"time_status\"></a> <a id=\"time\"></a><br>\n"\
     "</fieldset>\n"\
    "<fieldset>\n"\
         "<legend>Control</legend>\n"\
-        "<button onclick=add_byWeekday()>by Weekday</button>\n"\
-        "<button >Out till</button>\n"\
-        "<button >today</button>\n"\
+        "<div class=\"btn-group\">\n"\
+          "<button  class=\"btn\" name=\"options\" id=\"mode_off\" onclick=set_mode(this)>Off</button>\n"\
+          "<button  class=\"btn\" name=\"options\" id=\"mode_schedule\" onclick=set_mode(this)>Schedule</button>\n"\
+          "<button  class=\"btn\" name=\"options\" id=\"mode_vocation\" onclick=set_mode(this)>Vocation</button>\n"\
+          "<button  class=\"btn\" name=\"options\" id=\"mode_in\" onclick=set_mode_inout(this)>in</button>\n"\
+          "<button  class=\"btn\" name=\"options\" id=\"mode_out\" onclick=set_mode_inout(this)>out</button>\n"\
+        "</div>\n"\
+        "<a id=\"mode_ext_str\"></a><br>\n"\
+        "<br>\n"\
+        "<fieldset>\n"\
+            "<legend>Temperatures</legend>\n"\
+            "term_vacation <input type=\"number\" min=10 max=35 id = \"term_vacation\"> &#8451;<br>\n"\
+            "term_night <input type=\"number\" min=10 max=35 id = \"term_night\"> &#8451;<br>\n"\
+            "term_day <input type=\"number\" min=10 max=35 id = \"term_day\"> &#8451;<br>\n"\
+            "term_max <a id = \"term_max\"></a> &#8451;<br>\n"\
+            "<button onclick=MainConfigSave()>Save</button>\n"\
+            "<button onclick=MainConfigLoad()>Load</button>\n"\
+        "</fieldset>\n"\
         "<fieldset>\n"\
             "<legend>Presets</legend>\n"\
             "<ul id=PresetsList> </ul>\n"\
             "<button onclick=PresetSave()>Save</button>\n"\
             "<button onclick=PresetLoad()>Load</button>\n"\
-          "</fieldset>\n"\
+        "</fieldset>\n"\
       "</fieldset>\n"\
     "</body>\n"\
 "</html>\n"\
@@ -155,6 +173,46 @@ const char* _frontend_term_main_js_ PROGMEM ={\
     "xmlHttp.send(data);\n"\
     "console.log(data);\n"\
   "}\n"\
+"}\n"\
+\
+"function MainConfigLoad(){\n"\
+    "var xh = new XMLHttpRequest();\n"\
+    "xh.onreadystatechange = function(){\n"\
+      "if (xh.readyState == 4){\n"\
+        "if(xh.status == 200) {\n"\
+          "var res = JSON.parse(xh.responseText);\n"\
+          "console.log(res);\n"\
+          "document.getElementById(\"heat_mode\").innerHTML=res[\"heat_mode\"];\n"\
+          "document.getElementById(\"term_vacation\").value=res[\"term_vacation\"];\n"\
+          "document.getElementById(\"term_night\").value=res[\"term_night\"];\n"\
+          "document.getElementById(\"term_day\").value=res[\"term_day\"];\n"\
+          "document.getElementById(\"term_max\").innerHTML=res[\"term_max\"];\n"\
+        "}\n"\
+      "}\n"\
+    "};\n"\
+    "xh.open(\"GET\", \"/ConfigLoad?name=mainconfig\", true);\n"\
+    "xh.send(null);\n"\
+  "}\n"\
+\
+"function MainConfigSave(){\n"\
+"if(xmlHttp.readyState==0||xmlHttp.readyState==4){\n"\
+    "xmlHttp.onreadystatechange=function(){\n"\
+      "if(xmlHttp.readyState==4&&xmlHttp.status==200){\n"\
+          "console.log(\"saved ok\");\n"\
+      "}\n"\
+    "}\n"\
+    "let myJSON = new Object;\n"\
+"//    document.getElementById(\"heat_mode\").innerHTML=res[\"heat_mode\"];\n"\
+"//    document.getElementById(\"term_vacation\").innerHTML=res[\"term_vacation\"];\n"\
+"//    document.getElementById(\"term_night\").innerHTML=res[\"term_night\"];\n"\
+"//    document.getElementById(\"term_day\").innerHTML=res[\"term_day\"];\n"\
+"//    document.getElementById(\"term_max\").innerHTML=res[\"term_max\"];\n"\
+  "var data = JSON.stringify(myJSON);\n"\
+    "xmlHttp.open(\'PUT\',\"/ConfigSave?name=mainconfig\",true);\n"\
+    "xmlHttp.setRequestHeader(\"Content-Type\", \"application/json\");\n"\
+    "xmlHttp.send(data);\n"\
+    "console.log(data);\n"\
+"}\n"\
 "}\n"\
 \
 "function selectionList(parent,valList,initial){\n"\
@@ -293,6 +351,7 @@ const char* _frontend_term_main_js_ PROGMEM ={\
 "}\n"\
 \
 "function init(){\n"\
+    "MainConfigLoad();\n"\
     "PresetLoad();\n"\
     "StatusLoad();\n"\
     "setInterval(\'StatusLoad()\', 5000);\n"\

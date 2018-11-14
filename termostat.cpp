@@ -284,11 +284,11 @@ void sensor_loop() {
   nextSensor = now + SENSOR_REFRESH_PERIOD;
 
   const auto air_term = dht.getTemperature();
-  if (NAN != air_term) {
+  if (!isnan(air_term)) {
     Config.status_.air_term_ = air_term;
   }
   const auto air_humm = dht.getHumidity();
-  if (NAN != air_humm) {
+  if (!isnan(air_humm)) {
     Config.status_.air_humm_ = air_humm;
   }
   const auto ADCvalue = analogRead(TermistorPin);

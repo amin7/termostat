@@ -1,4 +1,7 @@
 {
-"offset": 0,
-"points": [{177:24}]
+   "heat_mode": 0,
+   "term_vacation":10,
+   "term_night":16,
+   "term_day":24,
+   "term_max":40
 }

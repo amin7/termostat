@@ -4,6 +4,9 @@
 	{"entry":"/"			,"file":"../../frontend/term_main.html",	"type":"text/html"},	
 	{"entry":"/ScanWifi"	,"file":"xmlScanWifi.xml"},
     {"entry":"/ConnectWifi"	,"file":"xmlConnectWifi.xml"},
-    {"entry":"/saveSchedule"}
+    {"entry":"/saveSchedule"},
+    {"entry":"/ConfigLoad?name=mainconfig" ,"file":"../../frontend/def_main_config.json"},
+    {"entry":"/ConfigLoad?name=status" ,"file":"status_nan.json"}
+    
 ]
 }

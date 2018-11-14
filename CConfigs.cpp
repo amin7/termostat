@@ -16,8 +16,9 @@ CConfigs::CConfigs(ESP8266WebServer &server) :
 ;
 
 void CConfigs::onLoad() {
-  Serial.println(__FUNCTION__);
+  Serial.print(__FUNCTION__);
   const auto name = server.arg("name");
+  Serial.print("?");
   Serial.println(name);
   auto it = items_.find(name);
   if (it == items_.end()) {

@@ -25,7 +25,7 @@ class CMainConfig: public CPItem {
   float term_vacation_;
   float term_night_;
   float term_day_;
-  const float term_max = 40;
+  const float term_max_ = 40;
 public:
   virtual bool serialize(JsonObject& root) const override;
   virtual bool deSerialize(const JsonObject& root) override;

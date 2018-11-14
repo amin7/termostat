@@ -26,7 +26,7 @@ class CConfigs: public CConfigFile {
     add("presets", _frontend_def_preset_json_, presets_, "/presets.json");
     add("termistor", _frontend_def_termistor_json_, termistor_, "/termistor.json");
     add("mainconfig", _frontend_def_main_config_json_, mainConfig_, "/mainconfig.json");
-    add("status", _frontend_def_main_config_json_, status_, NULL);
+    add("status", NULL, status_, NULL);
   }
 public:
   CPresets presets_;

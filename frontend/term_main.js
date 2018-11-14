@@ -1,5 +1,11 @@
 let dayOfWeekStr=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+const colorSelected="#fc6400";
+const colorSelection="#fc0000";
+const colorNotSelected="#00a3fc";        	
+const colorNotSelection="#0800fc";
 
+let heat_mode_ids=["mode_off","mode_schedule","mode_vocation","mode_in","mode_out"];
+	
 xmlHttp=createXmlHttpObject();
 
   function createXmlHttpObject(){
@@ -75,12 +81,60 @@ function PresetSave(){
 	console.log(data);	
   }
 }
+
+var heat_mode=0;
+function SetHeatMode(mode){
+	heat_mode=mode;
+	for(let ind=0;ind<heat_mode_ids.length;ind++){		
+		document.getElementById(heat_mode_ids[ind]).style.backgroundColor = (ind==mode)?colorSelection:document.body.style.backgroundColor;				
+	}
+}
+
+
+function MainConfigLoad(){
+    var xh = new XMLHttpRequest();
+    xh.onreadystatechange = function(){
+      if (xh.readyState == 4){
+        if(xh.status == 200) {
+          var res = JSON.parse(xh.responseText);
+          console.log(res);
+          let mode=res["heat_mode"];
+          SetHeatMode(mode)
+          document.getElementById("heat_mode").innerHTML=heat_mode_ids[mode];          
+          document.getElementById("term_vacation").value=res["term_vacation"];
+          document.getElementById("term_night").value=res["term_night"];
+          document.getElementById("term_day").value=res["term_day"];
+          document.getElementById("term_max").innerHTML=res["term_max"];
+        }
+      }
+    };
+    xh.open("GET", "/ConfigLoad?name=mainconfig", true);
+    xh.send(null);
+  }
+
+function MainConfigSave(){
+if(xmlHttp.readyState==0||xmlHttp.readyState==4){
+	xmlHttp.onreadystatechange=function(){
+	  if(xmlHttp.readyState==4&&xmlHttp.status==200){  
+		  console.log("saved ok");
+	  }
+	}
+	let myJSON = new Object;		
+	myJSON["heat_mode"]=heat_mode;
+	myJSON["term_vacation"]=document.getElementById("term_vacation").value;
+	myJSON["term_night"]=document.getElementById("term_night").value;
+	myJSON["term_day"]=document.getElementById("term_day").value;
+	
+	var data = JSON.stringify(myJSON);
+	xmlHttp.open('PUT',"/ConfigSave?name=mainconfig",true); 
+	xmlHttp.setRequestHeader("Content-Type", "application/json");				
+	xmlHttp.send(data);
+	console.log(data);	
+	MainConfigLoad(); //loopback
+}
+}
       
 function selectionList(parent,valList,initial){	
-	const colorSelected="#fc6400";
-	const colorSelection="#fc0000";
-	const colorNotSelected="#00a3fc";        	
-	const colorNotSelection="#0800fc";
     var isPressed=false;
     var isSelected=false;
     var selBeg,selEnd;
@@ -212,6 +266,7 @@ function add_Presets(config){
 }
 
 function init(){
+	MainConfigLoad();
 	PresetLoad();
 	StatusLoad();
 	setInterval('StatusLoad()', 5000);
