@@ -90,6 +90,40 @@ function SetHeatMode(mode){
 	}
 }
 
+var in_out_mode=0;
+function SetInOutMode(mode,val){
+	let node = document.getElementById("mode_in_out_time_bt");	
+	if(mode==in_out_mode){
+		mode=0;				
+	}	
+	in_out_mode=mode;	
+	document.getElementById("mode_in").style.backgroundColor = (1==mode)?colorSelection:document.body.style.backgroundColor;
+	document.getElementById("mode_out").style.backgroundColor = (2==mode)?colorSelection:document.body.style.backgroundColor;
+}
+
+function createInOutMode(){
+	let node = document.getElementById("mode_in_out_time_bt");
+	for(let x=1;x!=9;x++){
+		 let button=document.createElement("button")
+	   	 button.innerHTML = x;
+		 button.setAttribute("id", "button_in_out_"+x);
+	   	 button.setAttribute("class", "button");
+	   	button.setAttribute("onclick", "in_out_time_bt_click("+x+")");	   	
+	    node.appendChild(button);
+		}
+	SetInOutMode(0,0);
+}
+var InOut_Shift=0;
+function in_out_time_bt_click(shift){
+	if(InOut_Shift==shift){
+		shift=0;
+	}
+	console.log("bt_click "+shift);	
+	InOut_Shift=shift;
+	for(let x=1;x!=9;x++){		 
+		 document.getElementById("button_in_out_"+x).style.backgroundColor = (x==shift)?colorSelection:document.body.style.backgroundColor;
+	}
+}
 
 
 function MainConfigLoad(){
@@ -266,7 +300,8 @@ function add_Presets(config){
 	}
 }
 
-function init(){
+function init(){	
+	createInOutMode();
 	MainConfigLoad();
 	PresetLoad();
 	StatusLoad();

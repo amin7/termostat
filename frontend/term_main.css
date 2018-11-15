@@ -12,3 +12,11 @@
     font-size: 32px;        
 }
 
+#mode_in_out_mode_bt{	
+    float: left;
+    padding:2px;
+}
+
+#mode_in_out_time_bt{    
+    padding:2px;
+}

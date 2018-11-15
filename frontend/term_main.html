@@ -19,10 +19,16 @@
   
        <fieldset>
 	      <legend>Scheduler</legend>
-	      <button class="btn" id="mode_in" onclick=SetHeatMode(3)>in</button>
-	         <button class="btn" id="mode_out" onclick=SetHeatMode(4)>out</button>
-	         <br>
-	      <input type="checkbox" onclick=SetHeatMode(2)>vocation<br>
+	           <div id="mode_in_out">
+	           <div id="mode_in_out_mode_bt">
+	            <button class="btn" id="mode_in" onclick=SetInOutMode(1)>in</button>
+                <button class="btn" id="mode_out" onclick=SetInOutMode(2)>out</button>
+                </div>
+                <div id="mode_in_out_time_bt"></div>
+	           </div>	         
+	      <div id="vocation">
+	        <input type="checkbox" onclick=SetHeatMode(2)>vocation<br>
+	      </div>
        </fieldset>
        <fieldset>
           <legend>Presets</legend>
