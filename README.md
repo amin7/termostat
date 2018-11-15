@@ -23,7 +23,7 @@ https://github.com/ChipTechno/ESP8266OTA
  https://github.com/knolleary/pubsubclient.git
  git@github.com:amin7/libpack.git
  git@github.com:amin7/acus.git
- 
+ https://github.com/br3ttb/Arduino-PID-Library.git"
 
 #Pins
 
