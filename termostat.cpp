@@ -99,7 +99,7 @@ DHTesp dht;
 CConfigs Config(server);
 ESP8266OTA otaUpdater;
 CMQTT mqtt;
-CRelayPID RelayPID;
+CRelayPID RelayPID(RelayPin);
 
 
 #include "cli_cmd_list.h"
@@ -111,9 +111,8 @@ CRelayPID RelayPID;
 void setup() {
   WiFi.persistent(false);
   pinMode(LED_BUILTIN, OUTPUT);
-  pinMode(RelayPin, OUTPUT);
-  digitalWrite(RelayPin, 0); //off
   pinMode(DHTPin, INPUT);
+  RelayPID.setup();
   Serial.begin(115200);
   delay(100);
   Serial.println("\n\nBOOTING ESP8266 ...");
@@ -225,4 +224,7 @@ void loop() {
   wifi_loop();
   mqtt_loop();
   sensor_loop();
+  RelayPID.setInput(Config.status_.floor_term_);
+  RelayPID.setTarget(Config.status_.desired_temperature_);
+  RelayPID.loop();
 }

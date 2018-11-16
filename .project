@@ -17,4 +17,10 @@
 		<nature>org.eclipse.cdt.core.ccnature</nature>
 		<nature>org.eclipse.cdt.arduino.core.arduinoNature</nature>
 	</natures>
+	<variableList>
+		<variable>
+			<name>libs</name>
+			<value>file:/D:/personal/git/termostat/libs</value>
+		</variable>
+	</variableList>
 </projectDescription>

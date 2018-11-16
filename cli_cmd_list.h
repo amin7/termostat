@@ -7,7 +7,7 @@
 
 #ifndef CLI_CMD_LIST_H_
 #define CLI_CMD_LIST_H_
-#include "cmd.h"
+#include "./libs/cmd.h"
 
 void cli_info(int argc, char **argv) {
   Config.info();
@@ -31,20 +31,17 @@ void cli_ifconfig(int argc, char **argv) {
     Serial.println(myIP);
   }
 }
+
 void cli_format(int argc, char **argv) {
   bool result = SPIFFS.format();
   Serial.print("SPIFFS format: ");
   Serial.println(result);
 }
-void cli_relay(int argc, char **argv) {
+
+void cli_pid(int argc, char **argv) {
   if (2 == argc) {
-    switch (*argv[1]) {
-      case '0':
-        digitalWrite(RelayPin, 0);
-        break;
-      case '1':
-        digitalWrite(RelayPin, 1);
-        break;
+    if (false == RelayPID.set_mode(static_cast<CRelayPID::mode_t>(*argv[1] - '0'))) {
+      Serial.println("err");
     }
   }
 }
@@ -86,7 +83,7 @@ void cli_cmd_list_setup() {
   cmdInit();
   cmdAdd("info", cli_info);
   cmdAdd("ifconfig", cli_ifconfig);
-  cmdAdd("relay", cli_relay);
+  cmdAdd("pid", cli_pid);
   cmdAdd("term", cli_termo);
   cmdAdd("freset", cli_freset);
   cmdAdd("format", cli_format);
