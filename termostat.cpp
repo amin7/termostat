@@ -215,16 +215,28 @@ void sensor_loop() {
   const auto ADCvalue = analogRead(TermistorPin);
   Config.status_.floor_term_ = Config.termistor_.convert(ADCvalue);
 
+  RelayPID.setInput(Config.status_.floor_term_);
+}
+
+void loop_scheduler() {
+  const long now = millis();
+  static long next_loop_scheduler = 0;
+  if (next_loop_scheduler >= now) {
+    return;
+  }
+  next_loop_scheduler = now + 15 * 1000;
+  const auto temperature = Config.mainConfig_.getDesiredTemperature();
+  Config.status_.desired_temperature_ = temperature;
+  RelayPID.setTarget(temperature);
 }
 
 void loop() {
+  loop_scheduler();
   server.handleClient();
   cmdPoll();
   CFilterLoop::loops();
   wifi_loop();
   mqtt_loop();
   sensor_loop();
-  RelayPID.setInput(Config.status_.floor_term_);
-  RelayPID.setTarget(Config.status_.desired_temperature_);
   RelayPID.loop();
 }

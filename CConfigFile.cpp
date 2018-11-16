@@ -14,7 +14,7 @@ void CConfigFile::factoryReset() {
   for (auto item : items_) {
     Serial.println(item.first);
     if (!item.second.defvalue) {
-      Serial.println("no init file");
+      Serial.println("no init file,use from class def");
       continue;
     }
     auto err = deserializeJson(doc, item.second.defvalue);

@@ -12,21 +12,29 @@
 //https://github.com/bblanchon/ArduinoJson.git
 						//https://bblanchon.github.io/ArduinoJson/assistant/
 #include "CPItem.h"
+#include "CPresets.h"
 
 class CMainConfig: public CPItem {
   typedef enum {
     mode_off = 0,
-    mode_vacation,
     mode_night,
     mode_day,
-    mode_auto
-  } heat_mode_t;
-  heat_mode_t heat_mode_;
-  float term_vacation_;
-  float term_night_;
-  float term_day_;
+  } in_out_mode_t;
+  bool isOn_ = false;
+  bool isVacationSet_ = false;
+  in_out_mode_t in_out_mode_ = mode_off;
+  float term_vacation_ = 16;
+  float term_night_ = 18;
+  float term_day_ = 24;
   const float term_max_ = 40;
+  bool is_err_cooling_ = false;
+  const float term_err_cooling_ = 20;
+  const CPresets &presets_;
 public:
+  CMainConfig(const CPresets &presets) :
+      presets_(presets) {
+  }
+  float getDesiredTemperature();
   virtual bool serialize(JsonObject& root) const override;
   virtual bool deSerialize(const JsonObject& root) override;
 };

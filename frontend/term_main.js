@@ -82,14 +82,6 @@ function PresetSave(){
   }
 }
 
-var heat_mode=0;
-function SetHeatMode(mode){
-	heat_mode=mode;
-	for(let ind=0;ind<heat_mode_ids.length;ind++){		
-		document.getElementById(heat_mode_ids[ind]).style.backgroundColor = (ind==mode)?colorSelection:document.body.style.backgroundColor;				
-	}
-}
-
 var in_out_mode=0;
 function SetInOutMode(mode,val){
 	let node = document.getElementById("mode_in_out_time_bt");	
@@ -133,13 +125,16 @@ function MainConfigLoad(){
         if(xh.status == 200) {
           var res = JSON.parse(xh.responseText);
           console.log(res);
-          let mode=res["heat_mode"];
-          SetHeatMode(mode)
-          document.getElementById("heat_mode").innerHTML=heat_mode_ids[mode];          
+          SetInOutMode(res["in_out_mode"],res["in_out_mode_value"]);
           document.getElementById("term_vacation").value=res["term_vacation"];
           document.getElementById("term_night").value=res["term_night"];
           document.getElementById("term_day").value=res["term_day"];
           document.getElementById("term_max").innerHTML=res["term_max"];
+          document.getElementById("control_is_on").innerHTML=res["isOn"];
+          document.getElementById("isVacationSet").checked=root["isVacationSet"] ;
+          
+//          root["is_err_cooling"] = is_err_cooling_;
+//          root["term_err_cooling"] = term_err_cooling_;
         }
       }
     };

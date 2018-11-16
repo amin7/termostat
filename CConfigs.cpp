@@ -8,7 +8,8 @@
 #include "CConfigs.h"
 
 CConfigs::CConfigs(ESP8266WebServer &server) :
-    server(server) {
+    server(server),
+        mainConfig_(presets_) {
   server.on("/ConfigSave", std::bind(&CConfigs::onSave, this));
   server.on("/ConfigLoad", std::bind(&CConfigs::onLoad, this));
   addItems();

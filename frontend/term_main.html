@@ -27,7 +27,7 @@
                 <div id="mode_in_out_time_bt"></div>
 	           </div>	         
 	      <div id="vocation">
-	        <input type="checkbox" onclick=SetHeatMode(2)>vocation<br>
+	        <input type="checkbox" id="isVacationSet">vocation<br>
 	      </div>
        </fieldset>
        <fieldset>
@@ -38,7 +38,7 @@
     </fieldset>
     <fieldset>
    <legend>Control</legend>
-      <input type="checkbox" onclick=SetHeatMode(0)>On<br>
+      <input type="checkbox" id="control_is_on">On<br>
        term_vacation <input type="number" min=10 max=35 id = "term_vacation"> &#8451;<br>
        term_night <input type="number" min=10 max=35 id = "term_night"> &#8451;<br>
        term_day <input type="number" min=10 max=35 id = "term_day"> &#8451;<br>
