@@ -12,7 +12,9 @@
 #include <FS.h>
 #include "DHTesp.h"
 #include "unsorted.h"
-#include <ESP8266OTA.h>
+//#include "./libs/ESP8266OTA.h"
+#include <ESP8266HTTPUpdateServer.h>
+
 #include <Time.h>
 #include <TimeLib.h>
 #include <Timezone.h>
@@ -29,7 +31,7 @@
 
 //#define DEBUG
 
-#if 1
+#if 0
 #define WIFI_SERVER
 #include "secret.h_ex"
 #else
@@ -41,6 +43,7 @@ const auto TermistorPin = A0;
 
 const char* update_path = "/firmware";
 const char* DEVICE_NAME = "termostat";
+const char* DEVICE_VERSION = __DATE__" " __TIME__;
 const unsigned long SYNK_NTP_PERIOD = 24 * 60 * 60 * 1000; // one per day
 #ifndef DEBUG
 const long MQTT_REFRESH_PERIOD = 15 * 60 * 1000;
@@ -97,7 +100,7 @@ ESP8266WebServer server(80);
 WebFaceWiFiConfig WiFiConfig(server);
 DHTesp dht;
 CConfigs Config(server);
-ESP8266OTA otaUpdater;
+ESP8266HTTPUpdateServer otaUpdater;
 CMQTT mqtt;
 CRelayPID RelayPID(RelayPin);
 
@@ -115,7 +118,9 @@ void setup() {
   RelayPID.setup();
   Serial.begin(115200);
   delay(100);
-  Serial.println("\n\nBOOTING ESP8266 ...");
+  Serial.print("\n\nBOOTING ESP8266 ...");
+  Serial.print("Buid ");
+  Serial.println(DEVICE_VERSION);
   dht.setup(DHTPin, DHTesp::DHT22);
 #ifdef WIFI_SERVER //cliend
 	Serial.print("Configuring access point...");
@@ -142,7 +147,7 @@ void setup() {
 			Serial.println(server.uri());
 	});
 
-  otaUpdater.setUpdaterUi("Title", "Banner", "Build : 0.01", "Branch : master", "Device info : ukn", "footer");
+  //otaUpdater.setUpdaterUi("Title", "Banner", __DATE__" "__TIME__, "Branch : master", "Device info : ukn", "footer");
   otaUpdater.setup(&server, update_path, ota_username, ota_password);
 
   server.begin();
@@ -213,6 +218,7 @@ void sensor_loop() {
     Config.status_.air_humm_ = air_humm;
   }
   const auto ADCvalue = analogRead(TermistorPin);
+  Config.status_.adc_ = ADCvalue;
   Config.status_.floor_term_ = Config.termistor_.convert(ADCvalue);
 
   RelayPID.setInput(Config.status_.floor_term_);

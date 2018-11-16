@@ -1,16 +1,7 @@
 #ifndef _FRONT_END_
 #define _FRONT_END_
-//converted  date time= 2018-11-14 19:38:33.551184
+//converted  date time= 2018-11-16 21:40:50.226453
 //cmd gen: D:\user\hobby\git\termostat\text2code.py -D frontend/
-const char* _frontend_def_main_config_json_ PROGMEM ={\
-"{\n"\
-   "\"heat_mode\": 0,\n"\
-   "\"term_vacation\":10,\n"\
-   "\"term_night\":16,\n"\
-   "\"term_day\":24,\n"\
-   "\"term_max\":40\n"\
-"}\n"\
-};
 const char* _frontend_def_preset_json_ PROGMEM ={\
 "{\n"\
   "\"Presets\": [\n"\
@@ -29,7 +20,7 @@ const char* _frontend_def_termistor_json_ PROGMEM ={\
 "{\n"\
 "\"offset\": 0,\n"\
  "\"points\": [\n"\
- "{177:24.4},{183:26.10},{235:36.6}]\n"\
+ "{85:4},{177:24.4},{183:26.10},{235:36.6}]\n"\
 "}\n"\
 };
 const char* _frontend_term_main_css_ PROGMEM ={\
@@ -47,6 +38,14 @@ const char* _frontend_term_main_css_ PROGMEM ={\
     "font-size: 32px;\n"\
 "}\n"\
 \
+"#mode_in_out_mode_bt{\n"\
+    "float: left;\n"\
+    "padding:2px;\n"\
+"}\n"\
+\
+"#mode_in_out_time_bt{\n"\
+    "padding:2px;\n"\
+"}\n"\
 };
 const char* _frontend_term_main_html_ PROGMEM ={\
 "<!DOCTYPE html>\n"\
@@ -67,38 +66,36 @@ const char* _frontend_term_main_html_ PROGMEM ={\
         "heater:<a id=\"heater_on\"></a><br>\n"\
         "time_status: <a id=\"time_status\"></a> <a id=\"time\"></a><br>\n"\
     "</fieldset>\n"\
-   "<fieldset>\n"\
-        "<legend>Control</legend>\n"\
-        "<div class=\"btn-group\">\n"\
-          "<button  class=\"btn\" id=\"mode_off\" onclick=SetHeatMode(0)>Off</button>\n"\
-          "<button  class=\"btn\" id=\"mode_schedule\" onclick=SetHeatMode(1)>Schedule</button>\n"\
-          "<button  class=\"btn\" id=\"mode_vocation\" onclick=SetHeatMode(2)>Vocation</button>\n"\
-          "<button  class=\"btn\" id=\"mode_in\" onclick=SetHeatMode(3)>in</button>\n"\
-          "<button  class=\"btn\" id=\"mode_out\" onclick=document.getElementById(\"myDialog\").showModal()>out</button>\n"\
-        "</div>\n"\
-        "<a id=\"mode_ext_str\"></a><br>\n"\
-        "<br>\n"\
-        "<fieldset>\n"\
-            "<legend>Temperatures</legend>\n"\
-            "term_vacation <input type=\"number\" min=10 max=35 id = \"term_vacation\"> &#8451;<br>\n"\
-            "term_night <input type=\"number\" min=10 max=35 id = \"term_night\"> &#8451;<br>\n"\
-            "term_day <input type=\"number\" min=10 max=35 id = \"term_day\"> &#8451;<br>\n"\
-            "term_max <a id = \"term_max\"></a> &#8451;<br>\n"\
-        "</fieldset>\n"\
+    "<fieldset>\n"\
+   "<legend>Control</legend>\n"\
+      "<input type=\"checkbox\" id=\"control_is_on\">On<br>\n"\
+       "term_vacation <input type=\"number\" min=10 max=35 id = \"term_vacation\"> &#8451;<br>\n"\
+       "term_night <input type=\"number\" min=10 max=35 id = \"term_night\"> &#8451;<br>\n"\
+       "term_day <input type=\"number\" min=10 max=35 id = \"term_day\"> &#8451;<br>\n"\
+       "term_max <a id = \"term_max\"></a> &#8451;<br>\n"\
+       "<br>\n"\
+              "<fieldset>\n"\
+          "<legend>Scheduler</legend>\n"\
+               "<div id=\"mode_in_out\">\n"\
+               "<div id=\"mode_in_out_mode_bt\">\n"\
+                "<button class=\"btn\" id=\"mode_in\" onclick=SetInOutMode(1)>in</button>\n"\
+                "<button class=\"btn\" id=\"mode_out\" onclick=SetInOutMode(2)>out</button>\n"\
+                "</div>\n"\
+                "<div id=\"mode_in_out_time_bt\"></div>\n"\
+               "</div>\n"\
+          "<div id=\"vocation\">\n"\
+            "<input type=\"checkbox\" id=\"isVacationSet\">vocation<br>\n"\
+          "</div>\n"\
+       "</fieldset>\n"\
        "<button onclick=MainConfigSave()>Save</button>\n"\
        "<button onclick=MainConfigLoad()>Load</button>\n"\
-       "</fieldset>\n"\
-       "<fieldset>\n"\
-           "<legend>Presets</legend>\n"\
-           "<ul id=PresetsList> </ul>\n"\
-           "<button onclick=PresetSave()>Save</button>\n"\
-           "<button onclick=PresetLoad()>Load</button>\n"\
-       "</fieldset>\n"\
-\
-      "<dialog id=\"myDialog\">This is a dialog window\n"\
-        "<button >Show dialog esc exit</button>\n"\
-        "</dialog>\n"\
-\
+   "</fieldset>\n"\
+          "<fieldset>\n"\
+          "<legend>Presets</legend>\n"\
+          "<ul id=PresetsList> </ul>\n"\
+          "<button onclick=PresetSave()>Save</button>\n"\
+          "<button onclick=PresetLoad()>Load</button>\n"\
+    "</fieldset>\n"\
     "</body>\n"\
 "</html>\n"\
 };
@@ -187,11 +184,38 @@ const char* _frontend_term_main_js_ PROGMEM ={\
   "}\n"\
 "}\n"\
 \
-"var heat_mode=0;\n"\
-"function SetHeatMode(mode){\n"\
-    "heat_mode=mode;\n"\
-    "for(let ind=0;ind<heat_mode_ids.length;ind++){\n"\
-        "document.getElementById(heat_mode_ids[ind]).style.backgroundColor = (ind==mode)?colorSelection:document.body.style.backgroundColor;\n"\
+"var in_out_mode=0;\n"\
+"function SetInOutMode(mode,val){\n"\
+    "let node = document.getElementById(\"mode_in_out_time_bt\");\n"\
+    "if(mode==in_out_mode){\n"\
+        "mode=0;\n"\
+    "}\n"\
+    "in_out_mode=mode;\n"\
+    "document.getElementById(\"mode_in\").style.backgroundColor = (1==mode)?colorSelection:document.body.style.backgroundColor;\n"\
+    "document.getElementById(\"mode_out\").style.backgroundColor = (2==mode)?colorSelection:document.body.style.backgroundColor;\n"\
+"}\n"\
+\
+"function createInOutMode(){\n"\
+    "let node = document.getElementById(\"mode_in_out_time_bt\");\n"\
+    "for(let x=1;x!=9;x++){\n"\
+         "let button=document.createElement(\"button\")\n"\
+            "button.innerHTML = x;\n"\
+         "button.setAttribute(\"id\", \"button_in_out_\"+x);\n"\
+            "button.setAttribute(\"class\", \"button\");\n"\
+           "button.setAttribute(\"onclick\", \"in_out_time_bt_click(\"+x+\")\");\n"\
+        "node.appendChild(button);\n"\
+        "}\n"\
+    "SetInOutMode(0,0);\n"\
+"}\n"\
+"var InOut_Shift=0;\n"\
+"function in_out_time_bt_click(shift){\n"\
+    "if(InOut_Shift==shift){\n"\
+        "shift=0;\n"\
+    "}\n"\
+    "console.log(\"bt_click \"+shift);\n"\
+    "InOut_Shift=shift;\n"\
+    "for(let x=1;x!=9;x++){\n"\
+         "document.getElementById(\"button_in_out_\"+x).style.backgroundColor = (x==shift)?colorSelection:document.body.style.backgroundColor;\n"\
     "}\n"\
 "}\n"\
 \
@@ -203,13 +227,16 @@ const char* _frontend_term_main_js_ PROGMEM ={\
         "if(xh.status == 200) {\n"\
           "var res = JSON.parse(xh.responseText);\n"\
           "console.log(res);\n"\
-          "let mode=res[\"heat_mode\"];\n"\
-          "SetHeatMode(mode)\n"\
-          "document.getElementById(\"heat_mode\").innerHTML=heat_mode_ids[mode];\n"\
+          "SetInOutMode(res[\"in_out_mode\"],res[\"in_out_mode_value\"]);\n"\
           "document.getElementById(\"term_vacation\").value=res[\"term_vacation\"];\n"\
           "document.getElementById(\"term_night\").value=res[\"term_night\"];\n"\
           "document.getElementById(\"term_day\").value=res[\"term_day\"];\n"\
           "document.getElementById(\"term_max\").innerHTML=res[\"term_max\"];\n"\
+          "document.getElementById(\"control_is_on\").innerHTML=res[\"isOn\"];\n"\
+          "document.getElementById(\"isVacationSet\").checked=root[\"isVacationSet\"] ;\n"\
+\
+"//          root[\"is_err_cooling\"] = is_err_cooling_;\n"\
+"//          root[\"term_err_cooling\"] = term_err_cooling_;\n"\
         "}\n"\
       "}\n"\
     "};\n"\
@@ -371,6 +398,7 @@ const char* _frontend_term_main_js_ PROGMEM ={\
 "}\n"\
 \
 "function init(){\n"\
+    "createInOutMode();\n"\
     "MainConfigLoad();\n"\
     "PresetLoad();\n"\
     "StatusLoad();\n"\
@@ -592,7 +620,6 @@ const char* _frontend_WiFiConfigEntry_html_ PROGMEM ={\
 };
 
 //converted list
-//  CFrontendFS::add(server, "/def_main_config.json", ct_json,_frontend_def_main_config_json_);
 //  CFrontendFS::add(server, "/def_preset.json", ct_json,_frontend_def_preset_json_);
 //  CFrontendFS::add(server, "/def_termistor.json", ct_json,_frontend_def_termistor_json_);
 //  CFrontendFS::add(server, "/term_main.css", ct_css,_frontend_term_main_css_);

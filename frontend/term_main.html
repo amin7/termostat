@@ -16,26 +16,6 @@
 		heater:<a id="heater_on"></a><br>
 		time_status: <a id="time_status"></a> <a id="time"></a><br>
 	</fieldset>
-  
-       <fieldset>
-	      <legend>Scheduler</legend>
-	           <div id="mode_in_out">
-	           <div id="mode_in_out_mode_bt">
-	            <button class="btn" id="mode_in" onclick=SetInOutMode(1)>in</button>
-                <button class="btn" id="mode_out" onclick=SetInOutMode(2)>out</button>
-                </div>
-                <div id="mode_in_out_time_bt"></div>
-	           </div>	         
-	      <div id="vocation">
-	        <input type="checkbox" id="isVacationSet">vocation<br>
-	      </div>
-       </fieldset>
-       <fieldset>
-          <legend>Presets</legend>
-          <ul id=PresetsList> </ul>
-          <button onclick=PresetSave()>Save</button>
-          <button onclick=PresetLoad()>Load</button>
-    </fieldset>
     <fieldset>
    <legend>Control</legend>
       <input type="checkbox" id="control_is_on">On<br>
@@ -44,8 +24,27 @@
        term_day <input type="number" min=10 max=35 id = "term_day"> &#8451;<br>
        term_max <a id = "term_max"></a> &#8451;<br>
        <br>
+              <fieldset>
+          <legend>Scheduler</legend>
+               <div id="mode_in_out">
+               <div id="mode_in_out_mode_bt">
+                <button class="btn" id="mode_in" onclick=SetInOutMode(1)>in</button>
+                <button class="btn" id="mode_out" onclick=SetInOutMode(2)>out</button>
+                </div>
+                <div id="mode_in_out_time_bt"></div>
+               </div>            
+          <div id="vocation">
+            <input type="checkbox" id="isVacationSet">vocation<br>
+          </div>
+       </fieldset>
        <button onclick=MainConfigSave()>Save</button>
        <button onclick=MainConfigLoad()>Load</button>
    </fieldset>
+          <fieldset>
+          <legend>Presets</legend>
+          <ul id=PresetsList> </ul>
+          <button onclick=PresetSave()>Save</button>
+          <button onclick=PresetLoad()>Load</button>
+    </fieldset>
     </body>
 </html>

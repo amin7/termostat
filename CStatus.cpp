@@ -10,7 +10,8 @@
 #include <math.h>
 
 extern time_t get_local_time();
-
+extern const char* DEVICE_NAME;
+extern const char* DEVICE_VERSION;
 bool CStatus::deSerialize(const JsonObject& root) {
   //not expected
   return false;
@@ -23,8 +24,11 @@ bool CStatus::serialize(JsonObject& root) const {
     root["air_humm"] = air_humm_;
   }
   root["floor_term"] = floor_term_;
+  root["adc_"] = adc_;
   root["desired_temperature"] = desired_temperature_;
   root["time_status"] = static_cast<int8_t>(timeStatus());
   root["time"] = get_local_time(); //to ms
+  root["device_name"] = DEVICE_NAME;
+  root["device_version"] = DEVICE_VERSION;
   return true;
 }
