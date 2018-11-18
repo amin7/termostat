@@ -44,11 +44,11 @@ xmlHttp=createXmlHttpObject();
           if(xh.status == 200) {
             var res = JSON.parse(xh.responseText);
             console.log(res);
-            document.getElementById("air_term").innerHTML=res["air_term"];
+            document.getElementById("air_term").innerHTML=res["air_term"].toFixed(2);
             document.getElementById("air_humm").innerHTML=res["air_humm"];
-            document.getElementById("floor_term").innerHTML=res["floor_term"];
-            document.getElementById("target_term").innerHTML=res["target_term"];
+            document.getElementById("floor_term").innerHTML=res["floor_term"].toFixed(2);
             document.getElementById("time_status").innerHTML=res["time_status"];
+            document.getElementById("desired_temperature").innerHTML=res["desired_temperature"];
             updateCurrDateTime(res["time"]*1000);
             document.getElementById("heater_on").innerHTML=res["heater_on"];
           }
@@ -130,8 +130,8 @@ function MainConfigLoad(){
           document.getElementById("term_night").value=res["term_night"];
           document.getElementById("term_day").value=res["term_day"];
           document.getElementById("term_max").innerHTML=res["term_max"];
-          document.getElementById("control_is_on").innerHTML=res["isOn"];
-          document.getElementById("isVacationSet").checked=root["isVacationSet"] ;
+          document.getElementById("control_is_on").checked=res["isOn"];
+          document.getElementById("isVacationSet").checked=res["isVacationSet"] ;
           
 //          root["is_err_cooling"] = is_err_cooling_;
 //          root["term_err_cooling"] = term_err_cooling_;
@@ -149,7 +149,9 @@ if(xmlHttp.readyState==0||xmlHttp.readyState==4){
 		  console.log("saved ok");
 	  }
 	}
-	let myJSON = new Object;		
+	let myJSON = new Object;	
+	
+	myJSON["isOn"]=document.getElementById("control_is_on").checked;
 	myJSON["heat_mode"]=heat_mode;
 	myJSON["term_vacation"]=document.getElementById("term_vacation").value;
 	myJSON["term_night"]=document.getElementById("term_night").value;

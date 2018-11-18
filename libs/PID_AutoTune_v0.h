@@ -23,6 +23,9 @@ class PID_ATune
 	
 	void SetNoiseBand(double);							// * the autotune will ignore signal chatter smaller than this value
 	double GetNoiseBand();								//   this should be acurately set
+  int getPeakCount() {
+    return peakCount;
+  }
 	
 	double GetKp();										// * once autotune is complete, these functions contain the
 	double GetKi();										//   computed tuning parameters.  

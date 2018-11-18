@@ -6,6 +6,7 @@
  */
 
 #include "CMainConfig.h"
+#include <timeLib.h>
 extern time_t get_local_time();
 float CMainConfig::getDesiredTemperature() {
   if (false == isOn_) {
@@ -20,7 +21,18 @@ float CMainConfig::getDesiredTemperature() {
   }
   if (isVacationSet_) {
     //check vacation period
-    return term_vacation_;
+    //convert 1-7 (sanday=1) to 0-6 (sanday=6)
+    auto day_of_week = weekday(now) - 2;
+    if (-1 == day_of_week) {
+      day_of_week = 6;
+    }
+    auto preset = presets_.find(day_of_week);
+    if (preset) {
+      if (preset->isInHome(hour(now) - 1)) {
+          return term_day_;
+        }
+      }
+      return term_night_;
   }
 
 

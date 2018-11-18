@@ -11,6 +11,7 @@
 #include "CPItem.h"
 
 class CStatus: public CPItem {
+  const uint8_t config_version_ = 0;
 public:
   float air_term_;
   float air_humm_;

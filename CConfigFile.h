@@ -27,10 +27,13 @@ public:
       items_( { }) {
 
   }
-
+  void add(const String name, CPItem &item) {
+    add(name, NULL, item, NULL);
+  }
   void add(const String name, const char *defvalue, CPItem &item, const char *file_name) {
     items_[name] = {&item, defvalue, file_name};
   }
+  
   void factoryReset();
   void begin();
   void info();

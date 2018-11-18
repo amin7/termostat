@@ -13,8 +13,11 @@ CRelayPID::CRelayPID(uint8_t RelayPin) :
 }
 
 void CRelayPID::setRelayOut(bool isHigh) {
-  RelayOutState_ = isHigh;
-  digitalWrite(RelayPin_, isHigh);
+  if (isHigh != RelayOutState_) {
+    relaySwitchCount++;
+    RelayOutState_ = isHigh;
+    digitalWrite(RelayPin_, isHigh);
+  }
 }
 void CRelayPID::setup() {
   pinMode(RelayPin_, OUTPUT);
@@ -28,24 +31,21 @@ void CRelayPID::setup() {
 bool CRelayPID::set_mode(mode_t mode) {
   switch (mode) {
     case relay_off:
-      setRelayOut( LOW);
+      setRelayOut(LOW);
       break;
-    case relay_on:
-      setRelayOut( HIGH);
+    case relay_power:
+      output_ = 0;
       break;
     case relay_auto:
-      relaySwitchCount = 2;
-      windowStartTime = millis();
       break;
     case pid_tune:
       if (relay_off != mode_) {
         return false;
       }
       setupAutoTune();
-      relaySwitchCount = 2;
-      windowStartTime = millis();
       break;
   }
+  windowStartTime = 0;
   mode_ = mode;
   Serial.print(__FUNCTION__);
   Serial.print(" setmode ");
@@ -56,26 +56,15 @@ bool CRelayPID::set_mode(mode_t mode) {
 void CRelayPID::setupAutoTune() {
   //Set the output to the desired starting frequency.
   aTune.Cancel();
-  output_ = 0; //aTuneStartValue;
+  output_ = WindowSize / 2; //aTuneStartValue;
   aTune.SetNoiseBand(0.25);
-  aTune.SetOutputStep(WindowSize);
+  aTune.SetOutputStep(WindowSize / 2);
   aTune.SetControlType(1); //PID
-  aTune.SetLookbackSec(20);
+  aTune.SetLookbackSec(60 * 10);
 }
 
 void CRelayPID::loop_tune()
 {
-  const auto now = millis();
-  static long next_info = 0;
-  if (next_info < now) {
-    next_info = now + 5 * 1000; //once in 5 sec
-    Serial.print("tuning mode (input: ");
-    Serial.print(input_);
-    Serial.print(" output: ");
-    Serial.print(output_);
-    Serial.println(")");
-  }
-
   if (aTune.Runtime()) {
     Serial.println("auto tune is done");
     Serial.print("kp: ");
@@ -88,10 +77,25 @@ void CRelayPID::loop_tune()
     Serial.print(aTune.GetKd());
     Serial.println();
     set_mode(relay_off);
+    return;
   }
+  const auto now = millis();
+  static long next_info = 0;
+  if (next_info < now) {
+    next_info = now + 5 * 1000; //once in 5 sec
+    Serial.print("tuning mode (input: ");
+    Serial.print(input_);
+    Serial.print(" output: ");
+    Serial.print(output_);
+    Serial.println(")");
+  }
+
 }
 
 void CRelayPID::loop_relay() {
+  if (relay_off == mode_) {
+    return;
+  }
   const auto now = millis();
   auto inWindow = now - windowStartTime;
   /************************************************
@@ -99,13 +103,9 @@ void CRelayPID::loop_relay() {
    ************************************************/
   if (inWindow > WindowSize) { //time to shift the Relay Window
     windowStartTime = now;
-    relaySwitchCount = RelayOutState_ ? 1 : 2; //of on allowed off only
     inWindow = 0;
   }
   const bool isRequestOn = (output_ >= inWindow);
-  if (isRequestOn == RelayOutState_) {
-    return;
-  }
   if (isRequestOn) {
     if (output_ < RelayMinSample) { //do not on on short period
       return;
@@ -115,21 +115,18 @@ void CRelayPID::loop_relay() {
       return;
     }
   }
-  if (relaySwitchCount) {
-    relaySwitchCount--;
-    setRelayOut(isRequestOn);
-  }
+  setRelayOut(isRequestOn);
+
 }
 
 void CRelayPID::loop() {
   switch (mode_) {
     case pid_tune:
       loop_tune();
-      loop_relay();
       break;
     case relay_auto:
       myPID.Compute();
-      loop_relay();
       break;
   }
+  loop_relay();
 }

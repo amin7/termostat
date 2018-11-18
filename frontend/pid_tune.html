@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>PID_Tune</title>
+        <script src="pid_tune.js"></script>
+    </head>
+    <body onload="init()">
+
+        pid_mode: <a id="pid_mode"></a><br>
+        time_status: <a id="time_status"></a> <a id="time"></a><br>      
+       <button class="btn"  onclick=SetMode(0)>off</button>
+       <button class="btn"  onclick=SetMode(1)>on</button>
+       <button class="btn"  onclick=SetMode(2)>auto</button>
+       <button class="btn"  onclick=SetMode(3)>pid</button>
+       <br>
+       status   <br>
+       <textarea id="myTextArea" cols=50 rows=10></textarea><br>
+       send<br>
+       <textarea id="send_data" cols=50 rows=10></textarea>  <br>
+        <button class="btn" onclick=SendData()>SendData</button>  <br>
+     </body>
+</html>

@@ -13,8 +13,10 @@ extern time_t get_local_time();
 extern const char* DEVICE_NAME;
 extern const char* DEVICE_VERSION;
 bool CStatus::deSerialize(const JsonObject& root) {
-  //not expected
-  return false;
+  if (config_version_ != root["config_version"]) {
+    return false; //used for reset device
+  }
+  return true;
 }
 bool CStatus::serialize(JsonObject& root) const {
   if (!isnan(air_term_)) {
@@ -30,5 +32,6 @@ bool CStatus::serialize(JsonObject& root) const {
   root["time"] = get_local_time(); //to ms
   root["device_name"] = DEVICE_NAME;
   root["device_version"] = DEVICE_VERSION;
+  root["config_version"] = config_version_;
   return true;
 }

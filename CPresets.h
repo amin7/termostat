@@ -56,6 +56,12 @@ class CPI_byWeekDay: public CPItem {
 public:
   CPI_BitField<7> weekDay;
   CPI_BitField<24> hours;
+  bool isConsis(int8_t day_of_week) const {
+    return weekDay[day_of_week];
+  }
+  bool isInHome(int8_t hour) const {
+    return hours[hour];
+  }
   virtual bool serialize(JsonObject& root) const override;
   virtual bool deSerialize(const JsonObject& root) override;
   CPI_byWeekDay() :
@@ -68,6 +74,7 @@ public:
 class CPresets: public CPItem {
   vector<CPI_byWeekDay> items;
   public:
+  const CPI_byWeekDay *find(int8_t day_of_week) const;
   virtual bool serialize(JsonObject& root) const override;
   virtual bool deSerialize(const JsonObject& root) override;
 	friend class presetsTest_deserialize_Test;

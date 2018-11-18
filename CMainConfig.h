@@ -34,6 +34,9 @@ public:
   CMainConfig(const CPresets &presets) :
       presets_(presets) {
   }
+  bool isOn() {
+    return isOn_;
+  }
   float getDesiredTemperature();
   virtual bool serialize(JsonObject& root) const override;
   virtual bool deSerialize(const JsonObject& root) override;

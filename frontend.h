@@ -1,6 +1,6 @@
 #ifndef _FRONT_END_
 #define _FRONT_END_
-//converted  date time= 2018-11-16 21:40:50.226453
+//converted  date time= 2018-11-18 11:22:06.908438
 //cmd gen: D:\user\hobby\git\termostat\text2code.py -D frontend/
 const char* _frontend_def_preset_json_ PROGMEM ={\
 "{\n"\
@@ -22,6 +22,93 @@ const char* _frontend_def_termistor_json_ PROGMEM ={\
  "\"points\": [\n"\
  "{85:4},{177:24.4},{183:26.10},{235:36.6}]\n"\
 "}\n"\
+};
+const char* _frontend_pid_tune_html_ PROGMEM ={\
+"<!DOCTYPE html>\n"\
+"<html>\n"\
+    "<head>\n"\
+        "<title>PID_Tune</title>\n"\
+        "<script src=\"pid_tune.js\"></script>\n"\
+    "</head>\n"\
+    "<body onload=\"init()\">\n"\
+\
+        "pid_mode: <a id=\"pid_mode\"></a><br>\n"\
+        "time_status: <a id=\"time_status\"></a> <a id=\"time\"></a><br>\n"\
+       "<button class=\"btn\"  onclick=SetMode(0)>off</button>\n"\
+       "<button class=\"btn\"  onclick=SetMode(1)>on</button>\n"\
+       "<button class=\"btn\"  onclick=SetMode(2)>auto</button>\n"\
+       "<button class=\"btn\"  onclick=SetMode(3)>pid</button>\n"\
+       "<br>\n"\
+       "status   <br>\n"\
+       "<textarea id=\"myTextArea\" cols=50 rows=10></textarea><br>\n"\
+       "send<br>\n"\
+       "<textarea id=\"send_data\" cols=50 rows=10></textarea>  <br>\n"\
+        "<button class=\"btn\" onclick=SendData()>SendData</button>  <br>\n"\
+     "</body>\n"\
+"</html>\n"\
+};
+const char* _frontend_pid_tune_js_ PROGMEM ={\
+"var set_pid_mode;\n"\
+"function PidStatusLoad(){\n"\
+      "var xh = new XMLHttpRequest();\n"\
+      "xh.onreadystatechange = function(){\n"\
+        "if (xh.readyState == 4){\n"\
+          "if(xh.status == 200) {\n"\
+            "var res = JSON.parse(xh.responseText);\n"\
+            "console.log(res);\n"\
+          "document.getElementById(\"pid_mode\").innerHTML=res[\"mode\"];\n"\
+          "}\n"\
+          "var pretty = JSON.stringify(res, undefined, 4);\n"\
+          "document.getElementById(\'myTextArea\').value = pretty;\n"\
+        "}\n"\
+      "};\n"\
+      "xh.open(\"GET\", \"/ConfigLoad?name=PID_tune\", true);\n"\
+      "xh.send(null);\n"\
+    "}\n"\
+\
+"function SetMode(mode){\n"\
+    "set_pid_mode=mode;\n"\
+    "PidStatusSave()\n"\
+ "}\n"\
+ "function PidStatusSave(){\n"\
+     "var xh = new XMLHttpRequest();\n"\
+      "if(xh.readyState==0||xh.readyState==4){\n"\
+          "xh.onreadystatechange=function(){\n"\
+          "if(xh.readyState==4&&xh.status==200){\n"\
+              "console.log(\"saved ok\");\n"\
+          "}\n"\
+        "}\n"\
+        "let myJSON = new Object;\n"\
+        "myJSON[\"mode\"]=set_pid_mode;\n"\
+        "var data = JSON.stringify(myJSON);\n"\
+        "xh.open(\'PUT\',\"/ConfigSave?name=PID_tune\",true);\n"\
+        "xh.setRequestHeader(\"Content-Type\", \"application/json\");\n"\
+        "xh.send(data);\n"\
+        "console.log(data);\n"\
+      "}\n"\
+    "}\n"\
+\
+ "function SendData(){\n"\
+ "var xh = new XMLHttpRequest();\n"\
+  "if(xh.readyState==0||xh.readyState==4){\n"\
+      "xh.onreadystatechange=function(){\n"\
+      "if(xh.readyState==4&&xh.status==200){\n"\
+          "console.log(\"saved ok\");\n"\
+      "}\n"\
+    "}\n"\
+    "var res = JSON.parse(document.getElementById(\"send_data\").value );\n"\
+    "var data = JSON.stringify(res);\n"\
+    "xh.open(\'PUT\',\"/ConfigSave?name=PID_tune\",true);\n"\
+    "xh.setRequestHeader(\"Content-Type\", \"application/json\");\n"\
+    "xh.send(data);\n"\
+    "console.log(data);\n"\
+  "}\n"\
+"}\n"\
+\
+ "function init(){\n"\
+     "PidStatusLoad();\n"\
+     "setInterval(\'PidStatusLoad()\', 5000);\n"\
+ "}\n"\
 };
 const char* _frontend_term_main_css_ PROGMEM ={\
   "#button_schedule_hour{\n"\
@@ -62,7 +149,7 @@ const char* _frontend_term_main_html_ PROGMEM ={\
         "air_term: <a id=\"air_term\"></a>  &#8451;\n"\
         "air_humm: <a id=\"air_humm\"></a> %<br>\n"\
         "floor_term: <a id=\"floor_term\"></a> &#8451;<br>\n"\
-        "target_term: <a id=\"target_term\"></a> &#8451;<br>\n"\
+        "desired_term: <a id=\"desired_temperature\"></a> &#8451;<br>\n"\
         "heater:<a id=\"heater_on\"></a><br>\n"\
         "time_status: <a id=\"time_status\"></a> <a id=\"time\"></a><br>\n"\
     "</fieldset>\n"\
@@ -146,11 +233,11 @@ const char* _frontend_term_main_js_ PROGMEM ={\
           "if(xh.status == 200) {\n"\
             "var res = JSON.parse(xh.responseText);\n"\
             "console.log(res);\n"\
-            "document.getElementById(\"air_term\").innerHTML=res[\"air_term\"];\n"\
+            "document.getElementById(\"air_term\").innerHTML=res[\"air_term\"].toFixed(2);\n"\
             "document.getElementById(\"air_humm\").innerHTML=res[\"air_humm\"];\n"\
-            "document.getElementById(\"floor_term\").innerHTML=res[\"floor_term\"];\n"\
-            "document.getElementById(\"target_term\").innerHTML=res[\"target_term\"];\n"\
+            "document.getElementById(\"floor_term\").innerHTML=res[\"floor_term\"].toFixed(2);\n"\
             "document.getElementById(\"time_status\").innerHTML=res[\"time_status\"];\n"\
+            "document.getElementById(\"desired_temperature\").innerHTML=res[\"desired_temperature\"];\n"\
             "updateCurrDateTime(res[\"time\"]*1000);\n"\
             "document.getElementById(\"heater_on\").innerHTML=res[\"heater_on\"];\n"\
           "}\n"\
@@ -232,8 +319,8 @@ const char* _frontend_term_main_js_ PROGMEM ={\
           "document.getElementById(\"term_night\").value=res[\"term_night\"];\n"\
           "document.getElementById(\"term_day\").value=res[\"term_day\"];\n"\
           "document.getElementById(\"term_max\").innerHTML=res[\"term_max\"];\n"\
-          "document.getElementById(\"control_is_on\").innerHTML=res[\"isOn\"];\n"\
-          "document.getElementById(\"isVacationSet\").checked=root[\"isVacationSet\"] ;\n"\
+          "document.getElementById(\"control_is_on\").checked=res[\"isOn\"];\n"\
+          "document.getElementById(\"isVacationSet\").checked=res[\"isVacationSet\"] ;\n"\
 \
 "//          root[\"is_err_cooling\"] = is_err_cooling_;\n"\
 "//          root[\"term_err_cooling\"] = term_err_cooling_;\n"\
@@ -252,6 +339,8 @@ const char* _frontend_term_main_js_ PROGMEM ={\
       "}\n"\
     "}\n"\
     "let myJSON = new Object;\n"\
+\
+    "myJSON[\"isOn\"]=document.getElementById(\"control_is_on\").checked;\n"\
     "myJSON[\"heat_mode\"]=heat_mode;\n"\
     "myJSON[\"term_vacation\"]=document.getElementById(\"term_vacation\").value;\n"\
     "myJSON[\"term_night\"]=document.getElementById(\"term_night\").value;\n"\
@@ -622,6 +711,8 @@ const char* _frontend_WiFiConfigEntry_html_ PROGMEM ={\
 //converted list
 //  CFrontendFS::add(server, "/def_preset.json", ct_json,_frontend_def_preset_json_);
 //  CFrontendFS::add(server, "/def_termistor.json", ct_json,_frontend_def_termistor_json_);
+//  CFrontendFS::add(server, "/pid_tune.html", ct_html,_frontend_pid_tune_html_);
+//  CFrontendFS::add(server, "/pid_tune.js", ct_js,_frontend_pid_tune_js_);
 //  CFrontendFS::add(server, "/term_main.css", ct_css,_frontend_term_main_css_);
 //  CFrontendFS::add(server, "/term_main.html", ct_html,_frontend_term_main_html_);
 //  CFrontendFS::add(server, "/term_main.js", ct_js,_frontend_term_main_js_);

@@ -28,7 +28,7 @@
 #include "NTPtime.h"
 #include "CMQTT.h"
 #include "CRelayPID.h"
-
+#include "CPIDtune.h"
 //#define DEBUG
 
 #if 0
@@ -103,7 +103,7 @@ CConfigs Config(server);
 ESP8266HTTPUpdateServer otaUpdater;
 CMQTT mqtt;
 CRelayPID RelayPID(RelayPin);
-
+CPID_tune PID_tune(RelayPID);
 
 #include "cli_cmd_list.h"
 
@@ -111,6 +111,10 @@ CRelayPID RelayPID(RelayPin);
 /***
  *
  */
+void esp_restart() {
+  ESP.restart();
+}
+
 void setup() {
   WiFi.persistent(false);
   pinMode(LED_BUILTIN, OUTPUT);
@@ -140,8 +144,10 @@ void setup() {
 	CFrontendFS::add(server, "/term_main.css", ct_css,_frontend_term_main_css_);
 	CFrontendFS::add(server, "/", ct_html,_frontend_term_main_html_);
 	CFrontendFS::add(server, "/WiFiConfigEntry.html", ct_html,_frontend_WiFiConfigEntry_html_);
+  CFrontendFS::add(server, "/pid_tune.html", ct_html, _frontend_pid_tune_html_);
+  CFrontendFS::add(server, "/pid_tune.js", ct_js, _frontend_pid_tune_js_);
 //	CFrontendFS::add(server, "/favicon.ico.html", ct_html,_frontend_WiFiConfigEntry_html_);
-
+  server.on("/restart", esp_restart);
 	server.onNotFound([]{
 			Serial.println("Error no handler");
 			Serial.println(server.uri());
@@ -149,7 +155,7 @@ void setup() {
 
   //otaUpdater.setUpdaterUi("Title", "Banner", __DATE__" "__TIME__, "Branch : master", "Device info : ukn", "footer");
   otaUpdater.setup(&server, update_path, ota_username, ota_password);
-
+  Config.add("PID_tune", PID_tune);
   server.begin();
   Config.begin();
 
@@ -225,6 +231,9 @@ void sensor_loop() {
 }
 
 void loop_scheduler() {
+  if (false == Config.mainConfig_.isOn()) {
+    return;
+  }
   const long now = millis();
   static long next_loop_scheduler = 0;
   if (next_loop_scheduler >= now) {

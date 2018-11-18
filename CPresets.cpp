@@ -23,6 +23,14 @@ bool CPI_byWeekDay::deSerialize(const JsonObject& root) {
  *
  */
 
+const CPI_byWeekDay* CPresets::find(int8_t day_of_week) const {
+  for (const auto &day : items) {
+    if (day.isConsis(day_of_week)) {
+      return &day;
+    }
+  }
+  return NULL;
+}
 bool CPresets::serialize(JsonObject& root) const {
   JsonArray array = root.createNestedArray("Presets");
   for (auto day : items) {
