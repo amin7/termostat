@@ -56,11 +56,11 @@ bool CRelayPID::set_mode(mode_t mode) {
 void CRelayPID::setupAutoTune() {
   //Set the output to the desired starting frequency.
   aTune.Cancel();
-  output_ = WindowSize / 2; //aTuneStartValue;
+  aTune.SetOutputRange(0, WindowSize);
   aTune.SetNoiseBand(0.25);
-  aTune.SetOutputStep(WindowSize / 2);
   aTune.SetControlType(1); //PID
   aTune.SetLookbackSec(60 * 10);
+  aTune.Start(30);
 }
 
 void CRelayPID::loop_tune()

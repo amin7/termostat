@@ -7,63 +7,98 @@
 #include "PID_AutoTune_v0.h"
 
 
-PID_ATune::PID_ATune(double* Input, double* Output)
+PID_ATune::PID_ATune(double* Input, double* Output, double in_max_error) :
+    in_max_error_(in_max_error)
 {
 	input = Input;
 	output = Output;
 	controlType =0 ; //default to PI
 	noiseBand = 0.5;
-	running = false;
-	oStep = 30;
+  running = false;
 	SetLookbackSec(10);
 	lastTime = millis();
 	
 }
+void PID_ATune::SetOutputRange(double min, double max) {
+  out_min_ = min;
+  out_max_ = max;
+}
 
+void PID_ATune::Start(double setpoint) {
+  //initialize working variables the first time around
+  peakType = 0;
+  peakCount = 0;
+  justchanged = false;
+  setpoint_ = setpoint;
+  running = true;
+  if (in_max_error_ < setpoint_) {
+    Serial.println("in_max_error_<setpoint_");
+    return;
+  }
+  *output = out_max_;
+  mode_ = mode_starting;
+  
+}
 
 
 void PID_ATune::Cancel()
 {
-	running = false;
+  mode_ = mode_off;
+  *output = out_min_;
 } 
+
  
 int PID_ATune::Runtime()
 {
-	justevaled=false;
-	if(peakCount>9 && running)
-	{
-		running = false;
-		FinishUp();
-		return 1;
-	}
-	unsigned long now = millis();
+  const auto refVal = *input;
+  if (mode_starting != mode_
+      || mode_run != mode_) {
+    return 0;
+  }
+
+  if (in_max_error_ < refVal) {
+    Serial.println("in_max_error_ < refVal,stoped");
+    mode_ = mode_err;
+    *output = out_min_;
+    return 1;
+  }
+
+  unsigned long now = millis();
+	if (now < lastTime)
+    return 0;
+
+  if (peakCount > 9)
+      {
+    running = false;
+    FinishUp();
+    return 1;
+  }
+  lastTime = now + sampleTime;
+
+  if ((refVal < setpoint_ + noiseBand)
+      && (refVal > setpoint_ - noiseBand)) {
+    //we are in mesured window
+    absMax = refVal;
+    absMin = refVal;
+    mode_ = mode_run;
+  }
+
+  if (mode_run != mode_) {
+    return 0;
+  }
+
+  if (refVal > absMax)
+    absMax = refVal;
+  if (refVal < absMin)
+    absMin = refVal;
 	
-	if((now-lastTime)<sampleTime) return false;
-	lastTime = now;
-	double refVal = *input;
-	justevaled=true;
-	if(!running)
-	{ //initialize working variables the first time around
-		peakType = 0;
-		peakCount=0;
-		justchanged=false;
-		absMax=refVal;
-		absMin=refVal;
-		setpoint = refVal;
-		running = true;
-		outputStart = *output;
-		*output = outputStart+oStep;
-	}
-	else
-	{
-		if(refVal>absMax)absMax=refVal;
-		if(refVal<absMin)absMin=refVal;
-	}
 	
 	//oscillate the output base on the input's relation to the setpoint
 	
-	if(refVal>setpoint+noiseBand) *output = outputStart-oStep;
-	else if (refVal<setpoint-noiseBand) *output = outputStart+oStep;
+	if (refVal > setpoint_ + noiseBand)
+    *output = out_min_;
+  else if (refVal < setpoint_ - noiseBand)
+    *output = out_max_;
 	
 	
   //bool isMax=true, isMin=true;
@@ -113,8 +148,7 @@ int PID_ATune::Runtime()
     double avgSeparation = (abs(peaks[peakCount-1]-peaks[peakCount-2])+abs(peaks[peakCount-2]-peaks[peakCount-3]))/2;
     if( avgSeparation < 0.05*(absMax-absMin))
     {
-		FinishUp();
-      running = false;
+      FinishUp();
 	  return 1;
 	 
     }
@@ -124,10 +158,11 @@ int PID_ATune::Runtime()
 }
 void PID_ATune::FinishUp()
 {
-	  *output = outputStart;
-      //we can generate tuning parameters!
-      Ku = 4*(2*oStep)/((absMax-absMin)*3.14159);
-      Pu = (double)(peak1-peak2) / 1000;
+  *output = out_min_;
+  //we can generate tuning parameters!
+  Ku = 4 * (2 * (out_max_ - out_min_)) / ((absMax - absMin) * 3.14159);
+  Pu = (double) (peak1 - peak2) / 1000;
+  mode_ = mode_done;
 }
 
 double PID_ATune::GetKp()
@@ -143,16 +178,6 @@ double PID_ATune::GetKi()
 double PID_ATune::GetKd()
 {
 	return controlType==1? 0.075 * Ku * Pu : 0;  //Kd = Kc * Td
-}
-
-void PID_ATune::SetOutputStep(double Step)
-{
-	oStep = Step;
-}
-
-double PID_ATune::GetOutputStep()
-{
-	return oStep;
 }
 
 void PID_ATune::SetControlType(int Type) //0=PI, 1=PID
