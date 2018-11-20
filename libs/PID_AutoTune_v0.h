@@ -18,7 +18,7 @@ class PID_ATune
   /***
    * in_max_error - if reach - stop tune
    */
-  PID_ATune(double*, double*, double in_max_error = 40);            // * Constructor.  links the Autotune to a given PID
+  PID_ATune(double*, double*, double in_max_error);            // * Constructor.  links the Autotune to a given PID
   int Runtime();						   			   	// * Similar to the PID Compue function, returns non 0 when done
   void Start(double setpoint);
 	void Cancel();									   	// * Stops the AutoTune	
@@ -41,6 +41,9 @@ class PID_ATune
 	double GetKi();										//   computed tuning parameters.  
 	double GetKd();										//
 	
+	int getMode() {
+    return mode_;
+  }
   private:
     void FinishUp();
   mode_t mode_ = mode_off;
@@ -63,7 +66,7 @@ class PID_ATune
   double out_max_ = 0;
 	double Ku, Pu;
   const double in_max_error_;
-
+  friend class CPID_tune;
 };
 #endif
 

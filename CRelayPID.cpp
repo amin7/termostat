@@ -8,7 +8,7 @@
 
 CRelayPID::CRelayPID(uint8_t RelayPin) :
     RelayPin_(RelayPin),
-        aTune(&input_, &output_),
+        aTune(&input_, &output_, 40),
         myPID(&input_, &output_, &setpoint_, Kp, Ki, Kd, DIRECT) {
 }
 
@@ -57,9 +57,9 @@ void CRelayPID::setupAutoTune() {
   //Set the output to the desired starting frequency.
   aTune.Cancel();
   aTune.SetOutputRange(0, WindowSize);
-  aTune.SetNoiseBand(0.25);
+  aTune.SetNoiseBand(0.5);
   aTune.SetControlType(1); //PID
-  aTune.SetLookbackSec(60 * 10);
+  aTune.SetLookbackSec(100);
   aTune.Start(30);
 }
 

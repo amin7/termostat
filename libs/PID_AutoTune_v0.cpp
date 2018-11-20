@@ -51,8 +51,8 @@ void PID_ATune::Cancel()
 int PID_ATune::Runtime()
 {
   const auto refVal = *input;
-  if (mode_starting != mode_
-      || mode_run != mode_) {
+  if (!(mode_starting == mode_
+      || mode_run == mode_)) {
     return 0;
   }
 
@@ -76,8 +76,10 @@ int PID_ATune::Runtime()
   lastTime = now + sampleTime;
 
   if ((refVal < setpoint_ + noiseBand)
-      && (refVal > setpoint_ - noiseBand)) {
-    //we are in mesured window
+      && (refVal > setpoint_ - noiseBand)
+      && (mode_starting == mode_)
+      ) {
+    //we are in mesured window, start
     absMax = refVal;
     absMin = refVal;
     mode_ = mode_run;
