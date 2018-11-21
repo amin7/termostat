@@ -26,7 +26,8 @@ MKDIR_P = mkdir -p
 
 LIB_TEST=
 
-MODULES =  CTransformLine
+MODULES =  CTransformLine \
+			CPresets
 SOURCES =  $(addprefix ../,$(MODULES))
   
 TESTS   =$(addsuffix _test,$(MODULES))

@@ -4,28 +4,60 @@
  *  Created on: Nov 2, 2017
  *      Author: ominenko
  */
-#ifdef TEST
+//#ifdef TEST
+#if 1
 #include "../CPresets.h"
 #include "gtest/gtest.h"
 
 
 class presetsTest : public testing::Test {
-
+public:
+  CPresets presets_;
+  void deserialize(const char *json) {
+    StaticJsonDocument<1024> doc;
+    deserializeJson(doc, json);
+    JsonObject root = doc.as<JsonObject>();
+    presets_.deSerialize(root);
+  }
 };
+const char *preset_v1 = "{\
+  'Presets': [{\
+      'weekDay': 1,\
+      'hours': 2\
+    },{\
+      'weekDay': 3,\
+      'hours': 1\
+    }]\
+}";
 
 TEST_F (presetsTest, deserialize) {
-	CPresets pr;
-	pr.addFromJSON("{\"isActive\":false,\"data\":{\"type\":\"WeekDay\",\"weekDay\":{\"Value\":[false,false,false,false,false,false,false]},\"hours\":{\"Value\":[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false]}}}");
+  deserialize(preset_v1);
+  EXPECT_EQ(presets_.items.size(), 2);
 
-	EXPECT_EQ(pr.items.size(), 1);
+}
 
-	EXPECT_EQ(((CPIIsActive*)pr.items.back())->isIsActive(), false);
+TEST_F (presetsTest, weekDay) {
+  deserialize(preset_v1);
+  auto day=presets_.find(0);
+  EXPECT_FALSE(day==NULL);
+  day=presets_.find(1);
+  EXPECT_FALSE(day==NULL);
+  day=presets_.find(2);
+  EXPECT_TRUE(day==NULL);
+}
 
+TEST_F (presetsTest, hours) {
+  deserialize(preset_v1);
+  auto day=presets_.find(0);
+  EXPECT_FALSE(day==NULL);
+  EXPECT_FALSE(day->isInHome(0));
+  EXPECT_TRUE(day->isInHome(1));
+  EXPECT_FALSE(day->isInHome(23));
 
-	pr.addFromJSON("{\"isActive\":true,\"data\":{\"type\":\"WeekDay\",\"weekDay\":{\"Value\":[false,false,false,false,false,false,false]},\"hours\":{\"Value\":[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false]}}}");
-
-	EXPECT_EQ(pr.items.size(), 2);
-	EXPECT_EQ(((CPIIsActive*)pr.items.back())->isIsActive(), true);
+  day=presets_.find(1);
+  EXPECT_FALSE(day==NULL);
+  EXPECT_TRUE(day->isInHome(0));
+  EXPECT_FALSE(day->isInHome(23));
 }
 
 #endif
