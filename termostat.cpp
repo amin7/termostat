@@ -68,34 +68,9 @@ public:
     setTime(value);
   }
 };
-/***
- *
- */
-class CClock: public Observer<time_t>, CSubjectPeriodic<time_t> {
-  virtual uint32_t getTimeInMs() {
-    return now();
-  }
-  void update(const Subject<time_t> &time) {
-    setValue(time.getValue());
-  }
-public:
-
-  bool readValue(time_t &time) override {
-    if (timeNotSet == timeStatus())
-      return false;
-    time = now();
-    return true;
-  }
-
-  CClock(uint32_t aperiod) :
-      CSubjectPeriodic<time_t>(aperiod) {
-  }
-  ;
-};
 
 NTPtime ntpTime(SYNK_NTP_PERIOD);
 CSetClock setClock;
-CClock Clock1sec(1000);
 
 ESP8266WebServer server(80);
 WebFaceWiFiConfig WiFiConfig(server);
@@ -147,7 +122,7 @@ void setup() {
 	CFrontendFS::add(server, "/WiFiConfigEntry.html", ct_html,_frontend_WiFiConfigEntry_html_);
   CFrontendFS::add(server, "/pid_tune.html", ct_html, _frontend_pid_tune_html_);
   CFrontendFS::add(server, "/pid_tune.js", ct_js, _frontend_pid_tune_js_);
-//	CFrontendFS::add(server, "/favicon.ico.html", ct_html,_frontend_WiFiConfigEntry_html_);
+//CFrontendFS::add(server, "/favicon.ico", ct_png, _frontend_termostat_png_);
   server.on("/restart", esp_restart);
 	server.onNotFound([]{
 			Serial.println("Error no handler");
@@ -165,7 +140,6 @@ void setup() {
 
   ntpTime.init();
   ntpTime.addListener(setClock);
-  ntpTime.addListener(Clock1sec);
 
   cli_cmd_list_setup();
   Serial.println("Started");

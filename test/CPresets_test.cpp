@@ -5,7 +5,7 @@
  *      Author: ominenko
  */
 //#ifdef TEST
-#if 1
+#if TEST
 #include "../CPresets.h"
 #include "gtest/gtest.h"
 

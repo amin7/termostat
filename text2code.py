@@ -9,8 +9,10 @@ fileExt={
     "xml"   :"text/xml",
     "js"    :"application/javascript",
     "css"   :"text/css",
-    "json"  :"application/json"
-#    ,"png"   :"image/x-icon"
+    "json"  :"application/json"    
+}
+fileExtBinary={
+    "png"  :"image/x-icon"
 }
 
 def convertFileName(fileName):
@@ -47,6 +49,20 @@ def convertFile(fileName):
 
     print( "};")
 
+def convertFileBinary(fileName):
+    fo = open(fileName, "rb")
+    filesize=os.path.getsize(fileName);
+    print( "const char ",convertFileName(fileName),'[] PROGMEM ={',sep='')
+
+    ba = bytearray(fo.read())
+    leng =len(ba);
+    for x in ba:    
+        print (''.join('0x{:02x}'.format(x)),sep='', end = '')
+        leng=leng-1;
+        if leng:
+            print (',',sep='', end = '')
+    print( "};")
+
 #convertFile(FileName);
 
 parser = argparse.ArgumentParser(description='no')
@@ -56,6 +72,7 @@ parser.add_argument('-D', dest='dir',   help='directory')
 args = parser.parse_args()
 #print(args)
 fileList=[]
+fileListBinary=[]
 ignoredFiles=[]
 for file in args.files:
     fileList.append(file)
@@ -65,6 +82,8 @@ if(args.dir!="None"):
         extension = os.path.splitext(file)[1][1:]
         if extension in fileExt:
             fileList.append(args.dir+file)
+        if extension in fileExtBinary:
+            fileListBinary.append(args.dir+file)
         else:
             ignoredFiles.append(args.dir + file)
 
@@ -79,15 +98,16 @@ print (cmdline)
 
 for file in fileList:
     convertFile(file)
+#for file in fileListBinary:
+#    convertFileBinary(file)
 print("\n//converted list")
-for file in fileList:
+for file in (fileList+fileListBinary):
     extension = os.path.splitext(file)[1][1:]
     # file = file.strip("/")
     # try:
     #     content_type = fileExt[extension]
     # except:
     print ('//  CFrontendFS::add(server, "/'+os.path.split(file)[1]+ '", ct_'+extension+","+convertFileName(file)+");")
-
 for file in ignoredFiles:
     print ("//file ignored "+file)
 print("#endif")

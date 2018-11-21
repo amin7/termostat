@@ -11,7 +11,8 @@ const char* strContentType[] PROGMEM={
     "text/xml",
     "application/javascript",
     "text/css",
-    "application/json"
+    "application/json",
+    "image/x-icon"
 };
 
 void CFrontendFS::send(){
