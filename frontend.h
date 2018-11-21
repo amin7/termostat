@@ -1,8 +1,8 @@
 #ifndef _FRONT_END_
 #define _FRONT_END_
-//converted  date time= 2018-11-21 17:58:42.710067
-//cmd gen: D:\personal\git\termostat\text2code.py -D frontend/
-const char* _frontend_def_preset_json_ PROGMEM ={\
+//converted  date time= 2018-11-21 21:00:14.872945
+//cmd gen: D:\user\hobby\git\termostat\text2code.py -D frontend/
+const char* _frontend_def_preset_json_ PROGMEM ={
 "{\n"\
   "\"Presets\": [\n"\
     "{\n"\
@@ -16,14 +16,14 @@ const char* _frontend_def_preset_json_ PROGMEM ={\
   "]\n"\
 "}\n"\
 };
-const char* _frontend_def_termistor_json_ PROGMEM ={\
+const char* _frontend_def_termistor_json_ PROGMEM ={
 "{\n"\
 "\"offset\": 0,\n"\
  "\"points\": [\n"\
  "{85:4},{177:24.4},{183:26.10},{235:36.6}]\n"\
 "}\n"\
 };
-const char* _frontend_pid_tune_html_ PROGMEM ={\
+const char* _frontend_pid_tune_html_ PROGMEM ={
 "<!DOCTYPE html>\n"\
 "<html>\n"\
     "<head>\n"\
@@ -37,7 +37,7 @@ const char* _frontend_pid_tune_html_ PROGMEM ={\
        "<button class=\"btn\"  onclick=SetMode(0)>off</button>\n"\
        "<button class=\"btn\"  onclick=SetMode(1)>on</button>\n"\
        "<button class=\"btn\"  onclick=SetMode(2)>auto</button>\n"\
-       "<button class=\"btn\"  onclick=SetMode(3)>pid</button>\n"\
+       "<button class=\"btn\"  onclick=SetMode(3)>pid_tune</button>\n"\
        "<br>\n"\
        "status   <br>\n"\
        "<textarea id=\"myTextArea\" cols=50 rows=10></textarea><br>\n"\
@@ -47,7 +47,7 @@ const char* _frontend_pid_tune_html_ PROGMEM ={\
      "</body>\n"\
 "</html>\n"\
 };
-const char* _frontend_pid_tune_js_ PROGMEM ={\
+const char* _frontend_pid_tune_js_ PROGMEM ={
 "var set_pid_mode;\n"\
 "function PidStatusLoad(){\n"\
       "var xh = new XMLHttpRequest();\n"\
@@ -110,7 +110,7 @@ const char* _frontend_pid_tune_js_ PROGMEM ={\
      "setInterval(\'PidStatusLoad()\', 5000);\n"\
  "}\n"\
 };
-const char* _frontend_term_main_css_ PROGMEM ={\
+const char* _frontend_term_main_css_ PROGMEM ={
   "#button_schedule_hour{\n"\
     "border: 0px solid black;\n"\
     "color: black;\n"\
@@ -134,7 +134,7 @@ const char* _frontend_term_main_css_ PROGMEM ={\
     "padding:2px;\n"\
 "}\n"\
 };
-const char* _frontend_term_main_html_ PROGMEM ={\
+const char* _frontend_term_main_html_ PROGMEM ={
 "<!DOCTYPE html>\n"\
 "<html>\n"\
     "<head>\n"\
@@ -186,7 +186,7 @@ const char* _frontend_term_main_html_ PROGMEM ={\
     "</body>\n"\
 "</html>\n"\
 };
-const char* _frontend_term_main_js_ PROGMEM ={\
+const char* _frontend_term_main_js_ PROGMEM ={
 "let dayOfWeekStr=[\"Monday\",\"Tuesday\",\"Wednesday\",\"Thursday\",\"Friday\",\"Saturday\",\"Sunday\"];\n"\
 "const colorSelected=\"#fc6400\";\n"\
 "const colorSelection=\"#fc0000\";\n"\
@@ -494,7 +494,7 @@ const char* _frontend_term_main_js_ PROGMEM ={\
     "setInterval(\'StatusLoad()\', 5000);\n"\
 "}\n"\
 };
-const char* _frontend_thtml1_html_ PROGMEM ={\
+const char* _frontend_thtml1_html_ PROGMEM ={
   "<!DOCTYPE HTML>\n"\
   "<html>\n"\
   "<META name=\'viewport\' content=\'width=device-width, initial-scale=1\'>\n"\
@@ -590,7 +590,7 @@ const char* _frontend_thtml1_html_ PROGMEM ={\
   "</BODY>\n"\
   "</HTML>\n"\
 };
-const char* _frontend_WiFiConfigEntry_html_ PROGMEM ={\
+const char* _frontend_WiFiConfigEntry_html_ PROGMEM ={
   "<!DOCTYPE HTML>\n"\
   "<html>\n"\
   "<META name=\'viewport\' content=\'width=device-width, initial-scale=1\'>\n"\

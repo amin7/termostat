@@ -40,7 +40,7 @@
 const auto RelayPin = D6;
 const auto DHTPin = D4;
 const auto TermistorPin = A0;
-ADC_MODE(ADC_TOUT_3V3);
+ADC_MODE(ADC_TOUT);
 
 const char* update_path = "/firmware";
 const char* DEVICE_NAME = "termostat";
@@ -122,7 +122,8 @@ void setup() {
 	CFrontendFS::add(server, "/WiFiConfigEntry.html", ct_html,_frontend_WiFiConfigEntry_html_);
   CFrontendFS::add(server, "/pid_tune.html", ct_html, _frontend_pid_tune_html_);
   CFrontendFS::add(server, "/pid_tune.js", ct_js, _frontend_pid_tune_js_);
-//CFrontendFS::add(server, "/favicon.ico", ct_png, _frontend_termostat_png_);
+//  CFrontendFS::add(server, "/favicon.ico", ct_png, _frontend_termostat_png_);
+  // server.on()
   server.on("/restart", esp_restart);
 	server.onNotFound([]{
 			Serial.println("Error no handler");

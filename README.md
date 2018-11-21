@@ -46,8 +46,18 @@ G   |	Ground    |	GND|
 3V3 |	3.3V  |	3.3V|
 RST |	Reset |	RST|
 
+
+#ADC wemos
+ -----A0
+  |
+ 220K
+  |--- ADC
+ 100K
+  |
+ GND
+ 
 #termistor
-(+3.3) -termistor- (A0) -resistor 2k- (GND)
+(+5) -termistor- (A0) -resistor 10k- (GND)
 
 #DHT
 1 vcc (5V)

@@ -14,9 +14,9 @@
 #include "CPresets.h"
 #include "CStatus.h"
 
-extern const char* _frontend_def_preset_json_ PROGMEM;
-extern const char* _frontend_def_termistor_json_ PROGMEM;
-extern const char* _frontend_def_main_config_json_ PROGMEM;
+extern const char* _frontend_def_preset_json_;
+extern const char* _frontend_def_termistor_json_;
+extern const char* _frontend_def_main_config_json_;
 
 class CConfigs: public CConfigFile {
   ESP8266WebServer &server;

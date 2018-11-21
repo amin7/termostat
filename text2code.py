@@ -21,7 +21,7 @@ def convertFileName(fileName):
 def convertFile(fileName):
     fo = open(fileName, "r")
     filesize=os.path.getsize(fileName);
-    print( "const char* ",convertFileName(fileName),' PROGMEM ={\\',sep='')
+    print( "const char* ",convertFileName(fileName),' PROGMEM ={',sep='')
 
     writedsz=0;
     for line in fo:
@@ -52,7 +52,7 @@ def convertFile(fileName):
 def convertFileBinary(fileName):
     fo = open(fileName, "rb")
     filesize=os.path.getsize(fileName);
-    print( "const char ",convertFileName(fileName),'[] PROGMEM ={',sep='')
+    print( "const char PROGMEM ",convertFileName(fileName),'[] ={',sep='')
 
     ba = bytearray(fo.read())
     leng =len(ba);
