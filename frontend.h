@@ -1,7 +1,7 @@
 #ifndef _FRONT_END_
 #define _FRONT_END_
-//converted  date time= 2018-11-18 11:22:06.908438
-//cmd gen: D:\user\hobby\git\termostat\text2code.py -D frontend/
+//converted  date time= 2018-11-21 17:58:42.710067
+//cmd gen: D:\personal\git\termostat\text2code.py -D frontend/
 const char* _frontend_def_preset_json_ PROGMEM ={\
 "{\n"\
   "\"Presets\": [\n"\
@@ -718,6 +718,15 @@ const char* _frontend_WiFiConfigEntry_html_ PROGMEM ={\
 //  CFrontendFS::add(server, "/term_main.js", ct_js,_frontend_term_main_js_);
 //  CFrontendFS::add(server, "/thtml1.html", ct_html,_frontend_thtml1_html_);
 //  CFrontendFS::add(server, "/WiFiConfigEntry.html", ct_html,_frontend_WiFiConfigEntry_html_);
-//file ignored frontend/termostat.png
+//  CFrontendFS::add(server, "/termostat.png", ct_png,_frontend_termostat_png_);
+//file ignored frontend/def_preset.json
+//file ignored frontend/def_termistor.json
+//file ignored frontend/pid_tune.html
+//file ignored frontend/pid_tune.js
+//file ignored frontend/term_main.css
+//file ignored frontend/term_main.html
+//file ignored frontend/term_main.js
+//file ignored frontend/thtml1.html
+//file ignored frontend/WiFiConfigEntry.html
 #endif
 //EOF

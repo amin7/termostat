@@ -67,13 +67,10 @@ void cli_freset(int argc, char **argv) {
 
 void cli_time(int argc, char **argv) {
   Serial.print("timeStatus ");
-  auto stat = timeStatus();
+  const auto stat = timeStatus();
   Serial.println(stat);
-  time_t value;
-  if (Clock1sec.readValue(value)) {
-    Serial.printf("GMT %02u:%02u:%02u done\r\n", hour(value), minute(value),
-        second(value));
-    auto local = get_local_time();
+  if (timeNotSet != stat) {
+    const auto local = get_local_time();
     Serial.printf("local %02u:%02u:%02u done\r\n", hour(local), minute(local),
         second(local));
   }

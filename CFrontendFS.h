@@ -15,7 +15,8 @@ typedef enum{
 	 ct_js,
 	 ct_css,
 	 ct_json,
-	 ct_last
+  ct_png,
+  ct_last
 }tContent;
 /***
  *  wrapper to discover web pages
