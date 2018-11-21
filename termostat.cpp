@@ -40,6 +40,7 @@
 const auto RelayPin = D6;
 const auto DHTPin = D4;
 const auto TermistorPin = A0;
+ADC_MODE(ADC_TOUT_3V3);
 
 const char* update_path = "/firmware";
 const char* DEVICE_NAME = "termostat";
@@ -224,9 +225,11 @@ void sensor_loop() {
     Config.status_.air_humm_ = air_humm;
   }
   const auto ADCvalue = analogRead(TermistorPin);
-  Config.status_.adc_ = ADCvalue;
-  Config.status_.floor_term_ = Config.termistor_.convert(ADCvalue);
-
+  static int16_t prevADCvalue = 0;
+  const auto averADCvalue = (ADCvalue + prevADCvalue) / 2;
+  Config.status_.adc_ = averADCvalue;
+  Config.status_.floor_term_ = Config.termistor_.convert(averADCvalue);
+  prevADCvalue = ADCvalue;
   RelayPID.setInput(Config.status_.floor_term_);
 }
 

@@ -37,8 +37,8 @@ bool CTransformLine::serialize(JsonObject& root) const {
   }
   return true;
 }
-float CTransformLine::convert(const uint8_t adc) {
-  std::pair<const uint8_t, float> *beg = NULL, *end = NULL;
+float CTransformLine::convert(const int16_t adc) {
+  std::pair<const int16_t, float> *beg = NULL, *end = NULL;
   for (auto& point : adc2c) {
     if (adc == point.first) {
       return point.second + result_offset;
