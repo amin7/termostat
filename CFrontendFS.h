@@ -15,7 +15,7 @@ typedef enum{
 	 ct_js,
 	 ct_css,
 	 ct_json,
-  ct_png,
+  ct_ico,
   ct_last
 }tContent;
 /***

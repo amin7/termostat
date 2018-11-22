@@ -11,8 +11,7 @@ fileExt={
     "css"   :"text/css",
     "json"  :"application/json"    
 }
-fileExtBinary={
-    "png"  :"image/x-icon",
+fileExtBinary={    
     "ico"  :"image/x-icon"
 }
 
@@ -56,9 +55,11 @@ def convertFileBinary(fileName):
     print( "const char *",convertFileName(fileName),' PROGMEM ={"',sep='', end = '')
 
     ba = bytearray(fo.read())
+    leng=len(ba);
     for x in ba:    
         print (''.join('\\x{:02x}'.format(x)),sep='', end = '')        
     print( '"};')
+    print( "const auto ",convertFileName(fileName),"SZ=",leng,";",sep='')
 
 #convertFile(FileName);
 

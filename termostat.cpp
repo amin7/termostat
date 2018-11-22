@@ -122,7 +122,7 @@ void setup() {
 	CFrontendFS::add(server, "/WiFiConfigEntry.html", ct_html,_frontend_WiFiConfigEntry_html_);
   CFrontendFS::add(server, "/pid_tune.html", ct_html, _frontend_pid_tune_html_);
   CFrontendFS::add(server, "/pid_tune.js", ct_js, _frontend_pid_tune_js_);
-  CFrontendFS::add(server, "/favicon.ico", ct_png, _frontend_favicon_ico_, sizeof(_frontend_favicon_ico_) - 1);
+  CFrontendFS::add(server, "/favicon.ico", ct_ico, _frontend_favicon_ico_, _frontend_favicon_ico_SZ);
   // server.on()
   server.on("/restart", esp_restart);
 	server.onNotFound([]{
