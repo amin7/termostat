@@ -1,20 +1,12 @@
 #ifndef _FRONT_END_
 #define _FRONT_END_
-//converted  date time= 2018-11-22 16:32:13.411228
-//cmd gen: D:\personal\git\termostat\text2code.py -D frontend/
+//converted  date time= 2018-11-22 21:20:28.922292
+//cmd gen: D:\user\hobby\git\termostat\text2code.py -D frontend/
 const char* _frontend_def_preset_json_ PROGMEM ={
-"{\n"\
-  "\"Presets\": [\n"\
-    "{\n"\
-      "\"weekDay\": 1,\n"\
-      "\"hours\": 2\n"\
-    "},\n"\
-    "{\n"\
-      "\"weekDay\": 3,\n"\
-      "\"hours\": 0\n"\
-    "}\n"\
-  "]\n"\
-"}\n"\
+"{\"Presets\":[\n"\
+"{\"weekDay\":31,\"hours\":4063616},\n"\
+"{\"weekDay\":96,\"hours\":4163328}\n"\
+"]}\n"\
 };
 const char* _frontend_def_termistor_json_ PROGMEM ={
 "{\n"\

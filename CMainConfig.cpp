@@ -13,29 +13,32 @@ float CMainConfig::getDesiredTemperature() {
     return 0;
   }
   const auto now = get_local_time();
-  if (mode_night != in_out_mode_) {
-    return term_night_;
+  if (mode_off != in_out_mode_) {
+    //check period
+    switch (in_out_mode_) {
+      case mode_night:
+        return term_night_;
+      case mode_day:
+        return term_day_;
+    }
   }
-  if (mode_day != in_out_mode_) {
-    return term_day_;
-  }
+
   if (isVacationSet_) {
     //check vacation period
-    //convert 1-7 (sanday=1) to 0-6 (sanday=6)
-    auto day_of_week = weekday(now) - 2;
-    if (-1 == day_of_week) {
-      day_of_week = 6;
-    }
-    auto preset = presets_.find(day_of_week);
-    if (preset) {
-      if (preset->isInHome(hour(now) - 1)) {
-          return term_day_;
-        }
-      }
-      return term_night_;
   }
 
-
+    //convert 1-7 (sanday=1) to 0-6 (sanday=6)
+  auto day_of_week = weekday(now) - 2;
+  if (-1 == day_of_week) {
+    day_of_week = 6;
+  }
+  auto preset = presets_.find(day_of_week);
+  if (preset) {
+    if (preset->isInHome(hour(now) - 1)) {
+      return term_day_;
+    }
+  }
+  return term_night_;
 }
 
 bool CMainConfig::serialize(JsonObject& root) const {

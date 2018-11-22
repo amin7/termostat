@@ -1,12 +1,4 @@
-{
-  "Presets": [
-    {
-      "weekDay": 1,
-      "hours": 2
-    },
-    {
-      "weekDay": 3,
-      "hours": 0
-    }
-  ]
-}
+{"Presets":[
+{"weekDay":31,"hours":4063616},
+{"weekDay":96,"hours":4163328}
+]}
