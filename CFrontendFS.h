@@ -26,10 +26,11 @@ class CFrontendFS {
 	ESP8266WebServer &server;
 	const char* contentType;
 	const char* pContent;
+  const size_t contentLength_;
 	void send();
-	CFrontendFS(ESP8266WebServer &server,const char* URI,const char* contentType ,const char* pContent);
+  CFrontendFS(ESP8266WebServer &server, const char* URI, const char* contentType, const char* pContent, size_t contentLength);
 public:
-	static bool add(ESP8266WebServer &server,const char* URI,tContent contentType,const char* pContent);
+  static bool add(ESP8266WebServer &server, const char* URI, tContent contentType, const char* pContent, size_t contentLength = 0);
 	virtual ~CFrontendFS();
 };
 

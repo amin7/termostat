@@ -12,7 +12,8 @@ fileExt={
     "json"  :"application/json"    
 }
 fileExtBinary={
-    "png"  :"image/x-icon"
+    "png"  :"image/x-icon",
+    "ico"  :"image/x-icon"
 }
 
 def convertFileName(fileName):
@@ -52,16 +53,12 @@ def convertFile(fileName):
 def convertFileBinary(fileName):
     fo = open(fileName, "rb")
     filesize=os.path.getsize(fileName);
-    print( "const char PROGMEM ",convertFileName(fileName),'[] ={',sep='')
+    print( "const char *",convertFileName(fileName),' PROGMEM ={"',sep='', end = '')
 
     ba = bytearray(fo.read())
-    leng =len(ba);
     for x in ba:    
-        print (''.join('0x{:02x}'.format(x)),sep='', end = '')
-        leng=leng-1;
-        if leng:
-            print (',',sep='', end = '')
-    print( "};")
+        print (''.join('\\x{:02x}'.format(x)),sep='', end = '')        
+    print( '"};')
 
 #convertFile(FileName);
 
@@ -82,10 +79,11 @@ if(args.dir!="None"):
         extension = os.path.splitext(file)[1][1:]
         if extension in fileExt:
             fileList.append(args.dir+file)
-        if extension in fileExtBinary:
-            fileListBinary.append(args.dir+file)
         else:
-            ignoredFiles.append(args.dir + file)
+            if extension in fileExtBinary:
+                fileListBinary.append(args.dir+file)
+            else:
+                ignoredFiles.append(args.dir + file)
 
 
 print("#ifndef _FRONT_END_")
@@ -98,8 +96,8 @@ print (cmdline)
 
 for file in fileList:
     convertFile(file)
-#for file in fileListBinary:
-#    convertFileBinary(file)
+for file in fileListBinary:
+    convertFileBinary(file)
 print("\n//converted list")
 for file in (fileList+fileListBinary):
     extension = os.path.splitext(file)[1][1:]

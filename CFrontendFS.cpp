@@ -16,20 +16,24 @@ const char* strContentType[] PROGMEM={
 };
 
 void CFrontendFS::send(){
-	server.send(200, contentType, pContent);
+  if (contentLength_) {
+    server.send_P(200, contentType, pContent, contentLength_);
+  } else {
+    server.send_P(200, contentType, pContent);
+  }
 }
-CFrontendFS::CFrontendFS(ESP8266WebServer &server,const char* URI,const char* contentType,const char* pContent):
-		server(server),contentType(contentType),pContent(pContent){
+CFrontendFS::CFrontendFS(ESP8266WebServer &server, const char* URI, const char* contentType, const char* pContent, size_t contentLength) :
+    server(server), contentType(contentType), pContent(pContent), contentLength_(contentLength) {
 	server.on(URI,std::bind(&CFrontendFS::send, this));
 
 }
 CFrontendFS::~CFrontendFS(){
 
 }
-bool CFrontendFS::add(ESP8266WebServer &server,const char* URI,tContent contentType,const char* pContent){
+bool CFrontendFS::add(ESP8266WebServer &server, const char* URI, tContent contentType, const char* pContent, size_t contentLength) {
 	if(contentType>=ct_last){
 		return 1;
 	}
-	auto handler =new CFrontendFS(server,URI,strContentType[contentType],pContent);
+  auto handler = new CFrontendFS(server, URI, strContentType[contentType], pContent, contentLength);
 	return 0;
 }

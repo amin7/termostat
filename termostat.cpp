@@ -31,7 +31,7 @@
 #include "CPIDtune.h"
 //#define DEBUG
 
-#if 0
+#if 1
 #define WIFI_SERVER
 #include "secret.h_ex"
 #else
@@ -51,7 +51,7 @@ const long MQTT_REFRESH_PERIOD = 15 * 60 * 1000;
 #else
 const long MQTT_REFRESH_PERIOD=5*1000;
 #endif
-const auto SENSOR_REFRESH_PERIOD = 5 * 1000;
+const auto SENSOR_REFRESH_PERIOD = 3 * 1000;
 
 Timezone myTZ((TimeChangeRule ) { "DST", Last, Sun, Mar, 3, +3 * 60 },
     (TimeChangeRule ) { "STD", Last, Sun, Oct, 4, +2 * 60 });
@@ -122,7 +122,7 @@ void setup() {
 	CFrontendFS::add(server, "/WiFiConfigEntry.html", ct_html,_frontend_WiFiConfigEntry_html_);
   CFrontendFS::add(server, "/pid_tune.html", ct_html, _frontend_pid_tune_html_);
   CFrontendFS::add(server, "/pid_tune.js", ct_js, _frontend_pid_tune_js_);
-//  CFrontendFS::add(server, "/favicon.ico", ct_png, _frontend_termostat_png_);
+  CFrontendFS::add(server, "/favicon.ico", ct_png, _frontend_favicon_ico_, sizeof(_frontend_favicon_ico_) - 1);
   // server.on()
   server.on("/restart", esp_restart);
 	server.onNotFound([]{
@@ -183,6 +183,8 @@ void mqtt_loop() {
   Serial.print(data);
   Serial.println("]");
 }
+
+std::array<int, 3> ADC_filter { 0 };
 void sensor_loop() {
   const long now = millis();
   static long nextSensor = 0;
@@ -199,12 +201,13 @@ void sensor_loop() {
   if (!isnan(air_humm)) {
     Config.status_.air_humm_ = air_humm;
   }
-  const auto ADCvalue = analogRead(TermistorPin);
-  static int16_t prevADCvalue = 0;
-  const auto averADCvalue = (ADCvalue + prevADCvalue) / 2;
+
+  std::rotate(ADC_filter.rbegin(), ADC_filter.rbegin() + 1, ADC_filter.rend());
+  ADC_filter[0] = analogRead(TermistorPin);
+  const auto averADCvalue = accumulate(ADC_filter.begin(), ADC_filter.end(), 0) / ADC_filter.size();
+
   Config.status_.adc_ = averADCvalue;
   Config.status_.floor_term_ = Config.termistor_.convert(averADCvalue);
-  prevADCvalue = ADCvalue;
   RelayPID.setInput(Config.status_.floor_term_);
 }
 
