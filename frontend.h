@@ -1,7 +1,7 @@
 #ifndef _FRONT_END_
 #define _FRONT_END_
-//converted  date time= 2018-11-22 21:20:28.922292
-//cmd gen: D:\user\hobby\git\termostat\text2code.py -D frontend/
+//converted  date time= 2018-11-23 11:48:43.211323
+//cmd gen: D:\personal\git\termostat\text2code.py -D frontend/
 const char* _frontend_def_preset_json_ PROGMEM ={
 "{\"Presets\":[\n"\
 "{\"weekDay\":31,\"hours\":4063616},\n"\
@@ -24,93 +24,6 @@ const char* _frontend_def_termistor_json_ PROGMEM ={
 "{\"1023\": 40}\n"\
 "]\n"\
 "}\n"\
-};
-const char* _frontend_pid_tune_html_ PROGMEM ={
-"<!DOCTYPE html>\n"\
-"<html>\n"\
-    "<head>\n"\
-        "<title>PID_Tune</title>\n"\
-        "<script src=\"pid_tune.js\"></script>\n"\
-    "</head>\n"\
-    "<body onload=\"init()\">\n"\
-\
-        "pid_mode: <a id=\"pid_mode\"></a><br>\n"\
-        "time_status: <a id=\"time_status\"></a> <a id=\"time\"></a><br>\n"\
-       "<button class=\"btn\"  onclick=SetMode(0)>off</button>\n"\
-       "<button class=\"btn\"  onclick=SetMode(1)>on</button>\n"\
-       "<button class=\"btn\"  onclick=SetMode(2)>auto</button>\n"\
-       "<button class=\"btn\"  onclick=SetMode(3)>pid_tune</button>\n"\
-       "<br>\n"\
-       "status   <br>\n"\
-       "<textarea id=\"myTextArea\" cols=50 rows=10></textarea><br>\n"\
-       "send<br>\n"\
-       "<textarea id=\"send_data\" cols=50 rows=10></textarea>  <br>\n"\
-        "<button class=\"btn\" onclick=SendData()>SendData</button>  <br>\n"\
-     "</body>\n"\
-"</html>\n"\
-};
-const char* _frontend_pid_tune_js_ PROGMEM ={
-"var set_pid_mode;\n"\
-"function PidStatusLoad(){\n"\
-      "var xh = new XMLHttpRequest();\n"\
-      "xh.onreadystatechange = function(){\n"\
-        "if (xh.readyState == 4){\n"\
-          "if(xh.status == 200) {\n"\
-            "var res = JSON.parse(xh.responseText);\n"\
-            "console.log(res);\n"\
-          "document.getElementById(\"pid_mode\").innerHTML=res[\"mode\"];\n"\
-          "}\n"\
-          "var pretty = JSON.stringify(res, undefined, 4);\n"\
-          "document.getElementById(\'myTextArea\').value = pretty;\n"\
-        "}\n"\
-      "};\n"\
-      "xh.open(\"GET\", \"/ConfigLoad?name=PID_tune\", true);\n"\
-      "xh.send(null);\n"\
-    "}\n"\
-\
-"function SetMode(mode){\n"\
-    "set_pid_mode=mode;\n"\
-    "PidStatusSave()\n"\
- "}\n"\
- "function PidStatusSave(){\n"\
-     "var xh = new XMLHttpRequest();\n"\
-      "if(xh.readyState==0||xh.readyState==4){\n"\
-          "xh.onreadystatechange=function(){\n"\
-          "if(xh.readyState==4&&xh.status==200){\n"\
-              "console.log(\"saved ok\");\n"\
-          "}\n"\
-        "}\n"\
-        "let myJSON = new Object;\n"\
-        "myJSON[\"mode\"]=set_pid_mode;\n"\
-        "var data = JSON.stringify(myJSON);\n"\
-        "xh.open(\'PUT\',\"/ConfigSave?name=PID_tune\",true);\n"\
-        "xh.setRequestHeader(\"Content-Type\", \"application/json\");\n"\
-        "xh.send(data);\n"\
-        "console.log(data);\n"\
-      "}\n"\
-    "}\n"\
-\
- "function SendData(){\n"\
- "var xh = new XMLHttpRequest();\n"\
-  "if(xh.readyState==0||xh.readyState==4){\n"\
-      "xh.onreadystatechange=function(){\n"\
-      "if(xh.readyState==4&&xh.status==200){\n"\
-          "console.log(\"saved ok\");\n"\
-      "}\n"\
-    "}\n"\
-    "var res = JSON.parse(document.getElementById(\"send_data\").value );\n"\
-    "var data = JSON.stringify(res);\n"\
-    "xh.open(\'PUT\',\"/ConfigSave?name=PID_tune\",true);\n"\
-    "xh.setRequestHeader(\"Content-Type\", \"application/json\");\n"\
-    "xh.send(data);\n"\
-    "console.log(data);\n"\
-  "}\n"\
-"}\n"\
-\
- "function init(){\n"\
-     "PidStatusLoad();\n"\
-     "setInterval(\'PidStatusLoad()\', 5000);\n"\
- "}\n"\
 };
 const char* _frontend_term_main_css_ PROGMEM ={
   "#button_schedule_hour{\n"\
@@ -496,102 +409,6 @@ const char* _frontend_term_main_js_ PROGMEM ={
     "setInterval(\'StatusLoad()\', 5000);\n"\
 "}\n"\
 };
-const char* _frontend_thtml1_html_ PROGMEM ={
-  "<!DOCTYPE HTML>\n"\
-  "<html>\n"\
-  "<META name=\'viewport\' content=\'width=device-width, initial-scale=1\'>\n"\
-        "<title>Termostat</title>\n"\
-  "<SCRIPT>\n"\
-  "xmlHttp=createXmlHttpObject();\n"\
-\
-  "function createXmlHttpObject(){\n"\
-    "if(window.XMLHttpRequest){\n"\
-      "xmlHttp=new XMLHttpRequest();\n"\
-    "}else{\n"\
-      "xmlHttp=new ActiveXObject(\'Microsoft.XMLHTTP\');\n"\
-    "}\n"\
-    "return xmlHttp;\n"\
-  "}\n"\
-\
-  "function process(){\n"\
-    "if(xmlHttp.readyState==0||xmlHttp.readyState==4){\n"\
-      "xmlHttp.onreadystatechange=function(){\n"\
-        "if(xmlHttp.readyState==4&&xmlHttp.status==200){\n"\
-          "xmlDoc=xmlHttp.responseXML;\n"\
-          "xmlmsg=xmlDoc.getElementsByTagName(\'millistime\')[0].firstChild.nodeValue;\n"\
-          "document.getElementById(\'runtime\').innerHTML=xmlmsg;\n"\
-          "xmlmsg=xmlDoc.getElementsByTagName(\'sliderval0\')[0].firstChild.nodeValue;\n"\
-          "document.getElementById(\'slider0\').value=xmlmsg;\n"\
-          "document.getElementById(\'Sliderval0\').innerHTML=xmlmsg;\n"\
-          "xmlmsg=xmlDoc.getElementsByTagName(\'ESPval0\')[0].firstChild.nodeValue;\n"\
-          "document.getElementById(\'ESPval0\').innerHTML=xmlmsg;\n"\
-        "}\n"\
-      "}\n"\
-      "xmlHttp.open(\'PUT\',\'xml\',true);\n"\
-      "xmlHttp.send(null);\n"\
-    "}\n"\
-    "setTimeout(\'process()\',1000);\n"\
-  "}\n"\
-\
-  "function Slider(cnt){\n"\
-    "sliderVal=document.getElementById(\'slider\'+cnt).value;\n"\
-    "document.getElementById(\'Sliderval\'+cnt).innerHTML=sliderVal;\n"\
-    "document.getElementById(\'ESPval\'+cnt).innerHTML=9*(100-sliderVal)+100;\n"\
-    "if(xmlHttp.readyState==0||xmlHttp.readyState==4){\n"\
-      "xmlHttp.open(\'PUT\',\'setESPval?cnt=\'+cnt+\'&val=\'+sliderVal,true);\n"\
-      "xmlHttp.send(null);\n"\
-    "}\n"\
-  "}\n"\
-\
-  "function myFunction(){\n"\
-      "var myNode = document.getElementById(\"list\");\n"\
-      "var text = \"l\"+myNode.childNodes.length;\n"\
-      "var li = document.createElement(\"LI\");\n"\
-      "var att = document.createAttribute(\"onclick\");\n"\
-      "att.value = \"myFunction()\";\n"\
-      "li.setAttributeNode(att);\n"\
-      "var node = document.createTextNode(text+\"***\");\n"\
-      "li.appendChild(node);\n"\
-\
-      "myNode.appendChild(li);\n"\
-\
-    "}\n"\
-\
-  "function myFunctionClear(){\n"\
-      "var myNode = document.getElementById(\"list\");\n"\
-      "while (myNode.firstChild) {\n"\
-          "myNode.removeChild(myNode.firstChild);\n"\
-      "}\n"\
-\
-    "}\n"\
-\
-  "</SCRIPT>\n"\
-\
-  "<BODY onload=\'process()\'>\n"\
-  "<BR>Change slider0 to control LED blink...<BR>\n"\
-  "Runtime = <A ID=\'runtime\'></A><BR><BR>\n"\
-  "<TABLE BORDER=1 style=\'text-align:center;border-collapse:collapse\'>\n"\
-    "<TR>\n"\
-    "<TD><BR><INPUT ID=\'slider0\' TYPE=\'range\' ONCHANGE=\'Slider(0)\'></TD>\n"\
-    "<TD>Slidervalue0= <A ID=\'Sliderval0\'></A><BR>\n"\
-    "ESPval0 = <A ID=\'ESPval0\'></A> milliseconds</TD>\n"\
-    "</TR>\n"\
-  "</TABLE>\n"\
-"<form id=\"check_LEDs\" name=\"LED_form\">\n"\
-    "<input type=\"checkbox\" name=\"chk_group[]\" value=\"value1\" />Value 1<br />\n"\
-    "<input type=\"checkbox\" name=\"chk_group[]\" value=\"value2\" />Value 2<br />\n"\
-    "<input type=\"checkbox\" name=\"chk_group[]\" value=\"value3\" />Value 3<br />\n"\
-"</form>\n"\
-\
-    "Wifi networks list <button onclick=\"myFunction()\">refresh</button>\n"\
-"<div id=\"container\">\n"\
-  "<ul id=\"list\"></ul>\n"\
-"</div>\n"\
-    "<button onclick=\"myFunctionClear()\">clear </button><BR/>\n"\
-    "Selected= <A ID=\'Selected\'></A><BR/>\n"\
-  "</BODY>\n"\
-  "</HTML>\n"\
-};
 const char* _frontend_WiFiConfigEntry_html_ PROGMEM ={
   "<!DOCTYPE HTML>\n"\
   "<html>\n"\
@@ -715,12 +532,9 @@ const auto _frontend_favicon_ico_SZ=1150;
 //converted list
 //  CFrontendFS::add(server, "/def_preset.json", ct_json,_frontend_def_preset_json_);
 //  CFrontendFS::add(server, "/def_termistor.json", ct_json,_frontend_def_termistor_json_);
-//  CFrontendFS::add(server, "/pid_tune.html", ct_html,_frontend_pid_tune_html_);
-//  CFrontendFS::add(server, "/pid_tune.js", ct_js,_frontend_pid_tune_js_);
 //  CFrontendFS::add(server, "/term_main.css", ct_css,_frontend_term_main_css_);
 //  CFrontendFS::add(server, "/term_main.html", ct_html,_frontend_term_main_html_);
 //  CFrontendFS::add(server, "/term_main.js", ct_js,_frontend_term_main_js_);
-//  CFrontendFS::add(server, "/thtml1.html", ct_html,_frontend_thtml1_html_);
 //  CFrontendFS::add(server, "/WiFiConfigEntry.html", ct_html,_frontend_WiFiConfigEntry_html_);
 //  CFrontendFS::add(server, "/favicon.ico", ct_ico,_frontend_favicon_ico_);
 #endif

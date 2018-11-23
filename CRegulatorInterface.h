@@ -5,16 +5,16 @@
  *      Author: User
  */
 
-#ifndef CPIDTUNE_H_
-#define CPIDTUNE_H_
+#ifndef CREGULATORINTERFACE_H_
+#define CREGULATORINTERFACE_H_
 #include <stdint.h>
 #include "CPItem.h"
-#include "CRelayPID.h"
+#include "CRelayBangBang.h"
 using namespace std;
-class CPID_tune: public CPItem {
-  CRelayPID &RelayPID;
+class CRegulatorInterface: public CPItem {
+  CRelayBangBang &retulator_;
   public:
-  CPID_tune(CRelayPID &);
+  CRegulatorInterface(CRelayBangBang &);
   virtual bool deSerialize(const JsonObject& root);
   virtual bool serialize(JsonObject& root) const;
 };

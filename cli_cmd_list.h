@@ -40,7 +40,7 @@ void cli_format(int argc, char **argv) {
 
 void cli_pid(int argc, char **argv) {
   if (2 == argc) {
-    if (false == RelayPID.set_mode(static_cast<CRelayPID::mode_t>(*argv[1] - '0'))) {
+    if (false == RelayPID.set_mode(static_cast<CRelayBangBang::mode_t>(*argv[1] - '0'))) {
       Serial.println("err");
     }
   }

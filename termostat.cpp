@@ -27,8 +27,8 @@
 #include "CFilter.h"
 #include "NTPtime.h"
 #include "CMQTT.h"
-#include "CRelayPID.h"
-#include "CPIDtune.h"
+#include "CRelayBangBang.h"
+#include "CRegulatorInterface.h"
 //#define DEBUG
 
 #if 1
@@ -78,8 +78,8 @@ DHTesp dht;
 CConfigs Config(server);
 ESP8266HTTPUpdateServer otaUpdater;
 CMQTT mqtt;
-CRelayPID RelayPID(RelayPin);
-CPID_tune PID_tune(RelayPID);
+CRelayBangBang RelayPID(RelayPin);
+CRegulatorInterface PID_tune(RelayPID);
 
 #include "cli_cmd_list.h"
 
@@ -115,13 +115,10 @@ void setup() {
   mqtt.setClientID(DEVICE_NAME);
   cli_ifconfig(0, NULL);
 
-	CFrontendFS::add(server, "/thtml1.html", ct_html,_frontend_thtml1_html_);
 	CFrontendFS::add(server, "/term_main.js", ct_js,_frontend_term_main_js_);
 	CFrontendFS::add(server, "/term_main.css", ct_css,_frontend_term_main_css_);
 	CFrontendFS::add(server, "/", ct_html,_frontend_term_main_html_);
-	CFrontendFS::add(server, "/WiFiConfigEntry.html", ct_html,_frontend_WiFiConfigEntry_html_);
-  CFrontendFS::add(server, "/pid_tune.html", ct_html, _frontend_pid_tune_html_);
-  CFrontendFS::add(server, "/pid_tune.js", ct_js, _frontend_pid_tune_js_);
+  CFrontendFS::add(server, "/WiFiConfigEntry.html", ct_html, _frontend_WiFiConfigEntry_html_);
   CFrontendFS::add(server, "/favicon.ico", ct_ico, _frontend_favicon_ico_, _frontend_favicon_ico_SZ);
   // server.on()
   server.on("/restart", esp_restart);
@@ -184,7 +181,7 @@ void mqtt_loop() {
   Serial.println("]");
 }
 
-std::array<int, 3> ADC_filter { 0 };
+std::array<int, 6> ADC_filter { 0 };
 void sensor_loop() {
   const long now = millis();
   static long nextSensor = 0;
