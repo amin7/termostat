@@ -20,9 +20,11 @@ class CMainConfig: public CPItem {
     mode_night,
     mode_day,
   } in_out_mode_t;
+
   bool isOn_ = false;
   bool isVacationSet_ = false;
   in_out_mode_t in_out_mode_ = mode_off;
+  time_t in_out_time_;
   float term_vacation_ = 16;
   float term_night_ = 18;
   float term_day_ = 24;

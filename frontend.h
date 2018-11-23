@@ -1,6 +1,6 @@
 #ifndef _FRONT_END_
 #define _FRONT_END_
-//converted  date time= 2018-11-23 11:48:43.211323
+//converted  date time= 2018-11-23 17:53:35.237323
 //cmd gen: D:\personal\git\termostat\text2code.py -D frontend/
 const char* _frontend_def_preset_json_ PROGMEM ={
 "{\"Presets\":[\n"\
@@ -79,11 +79,8 @@ const char* _frontend_term_main_html_ PROGMEM ={
               "<fieldset>\n"\
           "<legend>Scheduler</legend>\n"\
                "<div id=\"mode_in_out\">\n"\
-               "<div id=\"mode_in_out_mode_bt\">\n"\
-                "<button class=\"btn\" id=\"mode_in\" onclick=SetInOutMode(1)>in</button>\n"\
-                "<button class=\"btn\" id=\"mode_out\" onclick=SetInOutMode(2)>out</button>\n"\
-                "</div>\n"\
-                "<div id=\"mode_in_out_time_bt\"></div>\n"\
+                "in <div id=\"mode_in\"></div>\n"\
+                "out <div id=\"mode_out\"></div>\n"\
                "</div>\n"\
           "<div id=\"vocation\">\n"\
             "<input type=\"checkbox\" id=\"isVacationSet\">vocation<br>\n"\
@@ -141,6 +138,23 @@ const char* _frontend_term_main_js_ PROGMEM ={
       "xh.send(null);\n"\
     "}\n"\
 \
+"function SinkTime(){\n"\
+  "var xh = new XMLHttpRequest();\n"\
+  "xh.onreadystatechange = function(){\n"\
+  "if(xh.readyState==4&&xmlHttp.status==200){\n"\
+      "console.log(\"SinkTime ok\");\n"\
+  "}\n"\
+  "}\n"\
+    "let myJSON = new Object;\n"\
+    "var curdate = new Date();\n"\
+    "myJSON.time=curdate.getTime();\n"\
+    "var data = JSON.stringify(myJSON);\n"\
+    "xmlHttp.open(\'PUT\',\"/ConfigSave?name=status\",true);\n"\
+    "xmlHttp.setRequestHeader(\"Content-Type\", \"application/json\");\n"\
+    "xmlHttp.send(data);\n"\
+    "console.log(data);\n"\
+  "}\n"\
+\
   "function StatusLoad(){\n"\
       "var xh = new XMLHttpRequest();\n"\
       "xh.onreadystatechange = function(){\n"\
@@ -153,8 +167,11 @@ const char* _frontend_term_main_js_ PROGMEM ={
             "document.getElementById(\"floor_term\").innerHTML=res[\"floor_term\"].toFixed(2);\n"\
             "document.getElementById(\"time_status\").innerHTML=res[\"time_status\"];\n"\
             "document.getElementById(\"desired_temperature\").innerHTML=res[\"desired_temperature\"];\n"\
-            "updateCurrDateTime(res[\"time\"]*1000);\n"\
+            "updateCurrDateTime(res[\"time\"]);\n"\
             "document.getElementById(\"heater_on\").innerHTML=res[\"heater_on\"];\n"\
+            "if(2!=res[\"time_status\"]){\n"\
+                "SinkTime();\n"\
+            "}\n"\
           "}\n"\
         "}\n"\
       "};\n"\
@@ -197,28 +214,51 @@ const char* _frontend_term_main_js_ PROGMEM ={
     "document.getElementById(\"mode_out\").style.backgroundColor = (2==mode)?colorSelection:document.body.style.backgroundColor;\n"\
 "}\n"\
 \
-"function createInOutMode(){\n"\
-    "let node = document.getElementById(\"mode_in_out_time_bt\");\n"\
-    "for(let x=1;x!=9;x++){\n"\
-         "let button=document.createElement(\"button\")\n"\
-            "button.innerHTML = x;\n"\
-         "button.setAttribute(\"id\", \"button_in_out_\"+x);\n"\
+"function createInOutMode(node_id){\n"\
+    "let node = document.getElementById(node_id);\n"\
+    "while (node.firstChild) {\n"\
+        "presetsList.removeChild(presetsList.firstChild);\n"\
+      "}\n"\
+    "var curdate = new Date();\n"\
+    "for(let x=0;x!=9;x++){\n"\
+         "let button=document.createElement(\"button\")	;\n"\
+         "if(x){\n"\
+             "var tmpdate = new Date(curdate.getFullYear(),curdate.getMonth()\n"\
+                     ",curdate.getDate(),curdate.getHours()+x,0,0);\n"\
+             "button.innerHTML = tmpdate.getHours()+\":00\";\n"\
+             "button.value= tmpdate.getTime();\n"\
+             "button.mode=node_id;\n"\
+\
+         "}else{\n"\
+             "button.innerHTML = \"off\";\n"\
+             "button.value= 0;\n"\
+         "}\n"\
             "button.setAttribute(\"class\", \"button\");\n"\
-           "button.setAttribute(\"onclick\", \"in_out_time_bt_click(\"+x+\")\");\n"\
+            "button.setAttribute(\"onclick\", \"in_out_time_bt_click(this)\");\n"\
         "node.appendChild(button);\n"\
         "}\n"\
     "SetInOutMode(0,0);\n"\
 "}\n"\
-"var InOut_Shift=0;\n"\
-"function in_out_time_bt_click(shift){\n"\
-    "if(InOut_Shift==shift){\n"\
-        "shift=0;\n"\
+"var selected_InOut=0;\n"\
+"function in_out_time_bt_click(button){\n"\
+    "let node = document.getElementById(\"mode_in\");\n"\
+    "node.childNodes.forEach(function(element){\n"\
+        "element.style.backgroundColor=document.body.style.backgroundColor;\n"\
+    "});\n"\
+    "node = document.getElementById(\"mode_out\");\n"\
+    "node.childNodes.forEach(function(element){\n"\
+        "element.style.backgroundColor=document.body.style.backgroundColor;\n"\
+    "});\n"\
+    "selected_InOut=0;\n"\
+    "if(button.value!=\"0\"){\n"\
+        "button.style.backgroundColor = colorSelection;\n"\
+        "selected_InOut=button;\n"\
     "}\n"\
-    "console.log(\"bt_click \"+shift);\n"\
-    "InOut_Shift=shift;\n"\
-    "for(let x=1;x!=9;x++){\n"\
-         "document.getElementById(\"button_in_out_\"+x).style.backgroundColor = (x==shift)?colorSelection:document.body.style.backgroundColor;\n"\
-    "}\n"\
+"//	console.log(\"bt_click \"+shift);\n"\
+"//	InOut_Shift=shift;\n"\
+"//	for(let x=1;x!=9;x++){\n"\
+"//		 document.getElementById(\"button_in_out_\"+x).style.backgroundColor = (x==shift)?colorSelection:document.body.style.backgroundColor;\n"\
+"//	}\n"\
 "}\n"\
 \
 \
@@ -260,10 +300,17 @@ const char* _frontend_term_main_js_ PROGMEM ={
     "myJSON[\"term_vacation\"]=document.getElementById(\"term_vacation\").value;\n"\
     "myJSON[\"term_night\"]=document.getElementById(\"term_night\").value;\n"\
     "myJSON[\"term_day\"]=document.getElementById(\"term_day\").value;\n"\
+    "if(selected_InOut){\n"\
+        "myJSON[\"in_out_mode\"]=(selected_InOut.mode==\"mode_out\")?1:2;\n"\
+        "myJSON[\"in_out_time\"]=selected_InOut.value;\n"\
+    "}else{\n"\
+        "myJSON[\"in_out_mode\"]=0;\n"\
+    "}\n"\
 \
     "var data = JSON.stringify(myJSON);\n"\
     "xmlHttp.open(\'PUT\',\"/ConfigSave?name=mainconfig\",true);\n"\
     "xmlHttp.setRequestHeader(\"Content-Type\", \"application/json\");\n"\
+\
     "xmlHttp.send(data);\n"\
     "console.log(data);\n"\
     "MainConfigLoad(); //loopback\n"\
@@ -402,7 +449,8 @@ const char* _frontend_term_main_js_ PROGMEM ={
 "}\n"\
 \
 "function init(){\n"\
-    "createInOutMode();\n"\
+    "createInOutMode(\"mode_in\");\n"\
+    "createInOutMode(\"mode_out\");\n"\
     "MainConfigLoad();\n"\
     "PresetLoad();\n"\
     "StatusLoad();\n"\

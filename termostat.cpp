@@ -59,6 +59,10 @@ Timezone myTZ((TimeChangeRule ) { "DST", Last, Sun, Mar, 3, +3 * 60 },
 time_t get_local_time() {
   return myTZ.toLocal(now());
 }
+void set_local_time(time_t time) {
+  setTime(myTZ.toUTC(time));
+}
+
 class CSetClock: public ObserverWrite<time_t> {
 public:
   virtual void writeValue(time_t value) {
@@ -168,7 +172,7 @@ void mqtt_loop() {
   data += "&field2=" + String(Config.status_.air_humm_, 1);
   data += "&field3=" + String(Config.status_.floor_term_, 1);
   data += "&field4=" + String(Config.status_.desired_temperature_, 1);
-  data += "&field6=" + String(Config.status_.heater_on_);
+  //data += "&field6=" + String(Config.status_.heater_on_);
   data += "&field7=" + String(Config.status_.adc_);
   Config.status_.adc_++;
 #ifndef WIFI_SERVER

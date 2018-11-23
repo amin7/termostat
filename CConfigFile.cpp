@@ -15,19 +15,17 @@ void CConfigFile::factoryReset() {
     Serial.println(item.first);
     if (!item.second.defvalue) {
       Serial.println("no init file,use from class def");
-      continue;
+    } else { //load def value
+      auto err = deserializeJson(doc, item.second.defvalue);
+      if (err) {
+        Serial.print(F("deserializeJson() failed: "));
+        Serial.println(err.c_str());
+        Serial.println(item.second.defvalue);
+        return;
+      }
+      JsonObject root = doc.as<JsonObject>();
+      item.second.handler->deSerialize(root);
     }
-    auto err = deserializeJson(doc, item.second.defvalue);
-    if (err) {
-      Serial.print(F("deserializeJson() failed: "));
-      Serial.println(err.c_str());
-      Serial.println(item.second.defvalue);
-      return;
-    }
-    serializeJsonPretty(doc, Serial);
-    Serial.println();
-    JsonObject root = doc.as<JsonObject>();
-    item.second.handler->deSerialize(root);
     if (item.second.file_name)
       save(item.second.file_name, *item.second.handler);
   }
@@ -48,7 +46,6 @@ bool CConfigFile::load(const char *file_name, CPItem &handler) {
     Serial.println(err.c_str());
     return false;
   }
-  serializeJsonPretty(doc, Serial);
   JsonObject root = doc.as<JsonObject>();
   return handler.deSerialize(root);
 }
@@ -72,6 +69,7 @@ bool CConfigFile::save(const char *file_name, CPItem &handler) {
 }
 
 void CConfigFile::begin() {
+  Serial.println(__FUNCTION__);
   bool result = SPIFFS.begin();
   Serial.print("SPIFFS opened: ");
   Serial.println(result);
@@ -88,6 +86,8 @@ void CConfigFile::begin() {
   }
   if (err)
     factoryReset();
+  Serial.print(__FUNCTION__);
+  Serial.println(" done");
 }
   
 void CConfigFile::info() {

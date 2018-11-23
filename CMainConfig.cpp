@@ -43,6 +43,9 @@ float CMainConfig::getDesiredTemperature() {
 
 bool CMainConfig::serialize(JsonObject& root) const {
   root["in_out_mode"] = static_cast<uint8_t>(in_out_mode_);
+  if (mode_off != in_out_mode_) {
+    root["in_out_time"] = static_cast<uint32_t>(in_out_time_) * 1000;
+  }
   root["term_vacation"] = term_vacation_;
   root["term_night"] = term_night_;
   root["term_day"] = term_day_;
@@ -56,6 +59,9 @@ bool CMainConfig::serialize(JsonObject& root) const {
 
 bool CMainConfig::deSerialize(const JsonObject& root) {
   in_out_mode_ = static_cast<in_out_mode_t>(root["in_out_mode"].as<uint8_t>());
+  if (mode_off != in_out_mode_) {
+    in_out_time_ = root["in_out_time"].as<uint32_t>() / 1000;
+  }
   term_vacation_ = root["term_vacation"];
   term_night_ = root["term_night"];
   term_day_ = root["term_day"];

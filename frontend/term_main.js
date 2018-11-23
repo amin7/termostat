@@ -37,6 +37,23 @@ xmlHttp=createXmlHttpObject();
       xh.send(null);
 	}
 
+function SinkTime(){
+  var xh = new XMLHttpRequest();
+  xh.onreadystatechange = function(){
+  if(xh.readyState==4&&xmlHttp.status==200){  
+	  console.log("SinkTime ok");
+  }
+  }
+	let myJSON = new Object;	
+	var curdate = new Date();
+	myJSON.time=curdate.getTime();
+    var data = JSON.stringify(myJSON);
+	xmlHttp.open('PUT',"/ConfigSave?name=status",true); 
+	xmlHttp.setRequestHeader("Content-Type", "application/json");				
+	xmlHttp.send(data);
+	console.log(data);	  
+  }
+
   function StatusLoad(){
       var xh = new XMLHttpRequest();
       xh.onreadystatechange = function(){
@@ -49,8 +66,11 @@ xmlHttp=createXmlHttpObject();
             document.getElementById("floor_term").innerHTML=res["floor_term"].toFixed(2);
             document.getElementById("time_status").innerHTML=res["time_status"];
             document.getElementById("desired_temperature").innerHTML=res["desired_temperature"];
-            updateCurrDateTime(res["time"]*1000);
+            updateCurrDateTime(res["time"]);
             document.getElementById("heater_on").innerHTML=res["heater_on"];
+            if(2!=res["time_status"]){
+            	SinkTime();
+            }
           }
         }
       };
@@ -86,35 +106,58 @@ var in_out_mode=0;
 function SetInOutMode(mode,val){
 	let node = document.getElementById("mode_in_out_time_bt");	
 	if(mode==in_out_mode){
-		mode=0;				
+		mode=0;
 	}	
 	in_out_mode=mode;	
 	document.getElementById("mode_in").style.backgroundColor = (1==mode)?colorSelection:document.body.style.backgroundColor;
 	document.getElementById("mode_out").style.backgroundColor = (2==mode)?colorSelection:document.body.style.backgroundColor;
 }
 
-function createInOutMode(){
-	let node = document.getElementById("mode_in_out_time_bt");
-	for(let x=1;x!=9;x++){
-		 let button=document.createElement("button")
-	   	 button.innerHTML = x;
-		 button.setAttribute("id", "button_in_out_"+x);
+function createInOutMode(node_id){
+	let node = document.getElementById(node_id);
+	while (node.firstChild) {
+    	presetsList.removeChild(presetsList.firstChild);
+      }
+	var curdate = new Date();	
+	for(let x=0;x!=9;x++){	
+		 let button=document.createElement("button")	;	 
+		 if(x){
+			 var tmpdate = new Date(curdate.getFullYear(),curdate.getMonth()
+					 ,curdate.getDate(),curdate.getHours()+x,0,0);
+			 button.innerHTML = tmpdate.getHours()+":00";
+		     button.value= tmpdate.getTime();
+		     button.mode=node_id;
+		     
+		 }else{
+			 button.innerHTML = "off";
+			 button.value= 0;
+		 }
 	   	 button.setAttribute("class", "button");
-	   	button.setAttribute("onclick", "in_out_time_bt_click("+x+")");	   	
+	   	 button.setAttribute("onclick", "in_out_time_bt_click(this)");	   	
 	    node.appendChild(button);
 		}
 	SetInOutMode(0,0);
 }
-var InOut_Shift=0;
-function in_out_time_bt_click(shift){
-	if(InOut_Shift==shift){
-		shift=0;
+var selected_InOut=0;
+function in_out_time_bt_click(button){
+	let node = document.getElementById("mode_in");
+	node.childNodes.forEach(function(element){
+		element.style.backgroundColor=document.body.style.backgroundColor;
+	});
+	node = document.getElementById("mode_out");
+	node.childNodes.forEach(function(element){
+		element.style.backgroundColor=document.body.style.backgroundColor;
+	});
+	selected_InOut=0;	
+	if(button.value!="0"){
+		button.style.backgroundColor = colorSelection;
+		selected_InOut=button;
 	}
-	console.log("bt_click "+shift);	
-	InOut_Shift=shift;
-	for(let x=1;x!=9;x++){		 
-		 document.getElementById("button_in_out_"+x).style.backgroundColor = (x==shift)?colorSelection:document.body.style.backgroundColor;
-	}
+//	console.log("bt_click "+shift);	
+//	InOut_Shift=shift;
+//	for(let x=1;x!=9;x++){		 
+//		 document.getElementById("button_in_out_"+x).style.backgroundColor = (x==shift)?colorSelection:document.body.style.backgroundColor;
+//	}
 }
 
 
@@ -156,10 +199,17 @@ if(xmlHttp.readyState==0||xmlHttp.readyState==4){
 	myJSON["term_vacation"]=document.getElementById("term_vacation").value;
 	myJSON["term_night"]=document.getElementById("term_night").value;
 	myJSON["term_day"]=document.getElementById("term_day").value;
+	if(selected_InOut){
+		myJSON["in_out_mode"]=(selected_InOut.mode=="mode_out")?1:2;			
+		myJSON["in_out_time"]=selected_InOut.value;
+	}else{
+		myJSON["in_out_mode"]=0;
+	}
 	
 	var data = JSON.stringify(myJSON);
 	xmlHttp.open('PUT',"/ConfigSave?name=mainconfig",true); 
-	xmlHttp.setRequestHeader("Content-Type", "application/json");				
+	xmlHttp.setRequestHeader("Content-Type", "application/json");
+	
 	xmlHttp.send(data);
 	console.log(data);	
 	MainConfigLoad(); //loopback
@@ -298,7 +348,8 @@ function add_Presets(config){
 }
 
 function init(){	
-	createInOutMode();
+	createInOutMode("mode_in");
+	createInOutMode("mode_out");
 	MainConfigLoad();
 	PresetLoad();
 	StatusLoad();
