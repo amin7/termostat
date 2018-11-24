@@ -31,7 +31,7 @@
 #include "CRegulatorInterface.h"
 //#define DEBUG
 
-#if 1
+#if 0
 #define WIFI_SERVER
 #include "secret.h_ex"
 #else
@@ -82,8 +82,8 @@ DHTesp dht;
 CConfigs Config(server);
 ESP8266HTTPUpdateServer otaUpdater;
 CMQTT mqtt;
-CRelayBangBang RelayPID(RelayPin);
-CRegulatorInterface PID_tune(RelayPID);
+CRelayBangBang regulator(RelayPin);
+CRegulatorInterface PID_tune(regulator);
 
 #include "cli_cmd_list.h"
 
@@ -99,7 +99,8 @@ void setup() {
   WiFi.persistent(false);
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(DHTPin, INPUT);
-  RelayPID.setup();
+  regulator.setup();
+  regulator.set_mode(CRelayBangBang::relay_auto);
   Serial.begin(115200);
   delay(100);
   Serial.print("\n\nBOOTING ESP8266 ...");
@@ -133,7 +134,7 @@ void setup() {
 
   //otaUpdater.setUpdaterUi("Title", "Banner", __DATE__" "__TIME__, "Branch : master", "Device info : ukn", "footer");
   otaUpdater.setup(&server, update_path, ota_username, ota_password);
-  Config.add("PID_tune", PID_tune);
+  Config.add("regulator", PID_tune);
   server.begin();
   Config.begin();
 
@@ -172,9 +173,6 @@ void mqtt_loop() {
   data += "&field2=" + String(Config.status_.air_humm_, 1);
   data += "&field3=" + String(Config.status_.floor_term_, 1);
   data += "&field4=" + String(Config.status_.desired_temperature_, 1);
-  //data += "&field6=" + String(Config.status_.heater_on_);
-  data += "&field7=" + String(Config.status_.adc_);
-  Config.status_.adc_++;
 #ifndef WIFI_SERVER
   mqtt.publish(topic, data);
 #endif
@@ -209,11 +207,14 @@ void sensor_loop() {
 
   Config.status_.adc_ = averADCvalue;
   Config.status_.floor_term_ = Config.termistor_.convert(averADCvalue);
-  RelayPID.setInput(Config.status_.floor_term_);
+  regulator.setInput(Config.status_.floor_term_);
 }
 
 void loop_scheduler() {
   if (false == Config.mainConfig_.isOn()) {
+    return;
+  }
+  if (timeNotSet == timeStatus()) {
     return;
   }
   const long now = millis();
@@ -224,7 +225,7 @@ void loop_scheduler() {
   next_loop_scheduler = now + 15 * 1000;
   const auto temperature = Config.mainConfig_.getDesiredTemperature();
   Config.status_.desired_temperature_ = temperature;
-  RelayPID.setTarget(temperature);
+  regulator.setTarget(temperature);
 }
 
 void loop() {
@@ -235,5 +236,5 @@ void loop() {
   wifi_loop();
   mqtt_loop();
   sensor_loop();
-  RelayPID.loop();
+  regulator.loop();
 }

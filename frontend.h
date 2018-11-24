@@ -1,7 +1,7 @@
 #ifndef _FRONT_END_
 #define _FRONT_END_
-//converted  date time= 2018-11-23 17:53:35.237323
-//cmd gen: D:\personal\git\termostat\text2code.py -D frontend/
+//converted  date time= 2018-11-24 16:20:01.745337
+//cmd gen: D:\user\hobby\git\termostat\text2code.py -D frontend/
 const char* _frontend_def_preset_json_ PROGMEM ={
 "{\"Presets\":[\n"\
 "{\"weekDay\":31,\"hours\":4063616},\n"\
@@ -95,6 +95,14 @@ const char* _frontend_term_main_html_ PROGMEM ={
           "<button onclick=PresetSave()>Save</button>\n"\
           "<button onclick=PresetLoad()>Load</button>\n"\
     "</fieldset>\n"\
+          "<fieldset>\n"\
+          "<legend>Regulator</legend>\n"\
+          "<input type=\"checkbox\" id=\"isRegulatorOn\">On<br>\n"\
+          "temperature <input type=\"number\" min=10 max=35 id = \"term_regulator\"> &#8451;<br>\n"\
+          "hysteresis <input type=\"number\" min=10 max=35 id = \"term_hysteresis\"> &#8451;<br>\n"\
+          "<button onclick=RegulatorSave()>Save</button>\n"\
+          "<button onclick=RegulatorLoad()>Load</button>\n"\
+    "</fieldset>\n"\
     "</body>\n"\
 "</html>\n"\
 };
@@ -105,82 +113,68 @@ const char* _frontend_term_main_js_ PROGMEM ={
 "const colorNotSelected=\"#00a3fc\";\n"\
 "const colorNotSelection=\"#0800fc\";\n"\
 \
-"let heat_mode_ids=[\"mode_off\",\"mode_schedule\",\"mode_vocation\",\"mode_in\",\"mode_out\"];\n"\
-\
-"xmlHttp=createXmlHttpObject();\n"\
-\
-  "function createXmlHttpObject(){\n"\
-    "if(window.XMLHttpRequest){\n"\
-      "xmlHttp=new XMLHttpRequest();\n"\
-    "}else{\n"\
-      "xmlHttp=new ActiveXObject(\'Microsoft.XMLHTTP\');\n"\
-    "}\n"\
-    "return xmlHttp;\n"\
-  "}\n"\
-\
   "function PresetLoad(){\n"\
-      "let presetsList = document.getElementById(\"PresetsList\");\n"\
-        "while (presetsList.firstChild) {\n"\
-            "presetsList.removeChild(presetsList.firstChild);\n"\
-          "}\n"\
-\
-      "var xh = new XMLHttpRequest();\n"\
-      "xh.onreadystatechange = function(){\n"\
-        "if (xh.readyState == 4){\n"\
-          "if(xh.status == 200) {\n"\
-            "var res = JSON.parse(xh.responseText);\n"\
-            "console.log(res);\n"\
-            "add_Presets(res);\n"\
-          "}\n"\
-        "}\n"\
-      "};\n"\
-      "xh.open(\"GET\", \"/ConfigLoad?name=presets\", true);\n"\
-      "xh.send(null);\n"\
+    "var xmlHttp = new XMLHttpRequest();\n"\
+    "xmlHttp.onreadystatechange = function(){\n"\
+    "if (xmlHttp.readyState == 4){\n"\
+      "if(xmlHttp.status == 200) {\n"\
+          "let presetsList = document.getElementById(\"PresetsList\");\n"\
+          "while (presetsList.firstChild) {\n"\
+              "presetsList.removeChild(presetsList.firstChild);\n"\
+            "}\n"\
+        "var res = JSON.parse(xmlHttp.responseText);\n"\
+        "console.log(res);\n"\
+        "add_Presets(res);\n"\
+      "}\n"\
     "}\n"\
+  "};\n"\
+  "xmlHttp.open(\"GET\", \"/ConfigLoad?name=presets\", true);\n"\
+  "xmlHttp.send(null);\n"\
+"}\n"\
 \
 "function SinkTime(){\n"\
-  "var xh = new XMLHttpRequest();\n"\
-  "xh.onreadystatechange = function(){\n"\
-  "if(xh.readyState==4&&xmlHttp.status==200){\n"\
-      "console.log(\"SinkTime ok\");\n"\
-  "}\n"\
-  "}\n"\
+    "var xmlHttp = new XMLHttpRequest();\n"\
+    "xmlHttp.onreadystatechange = function(){\n"\
+      "if(xmlHttp.readyState==4&&xmlHttp.status==200){\n"\
+          "console.log(\"SinkTime ok\");\n"\
+          "}\n"\
+      "}\n"\
     "let myJSON = new Object;\n"\
     "var curdate = new Date();\n"\
-    "myJSON.time=curdate.getTime();\n"\
+    "myJSON.time=curdate.getTime()/1000;\n"\
     "var data = JSON.stringify(myJSON);\n"\
     "xmlHttp.open(\'PUT\',\"/ConfigSave?name=status\",true);\n"\
     "xmlHttp.setRequestHeader(\"Content-Type\", \"application/json\");\n"\
     "xmlHttp.send(data);\n"\
     "console.log(data);\n"\
-  "}\n"\
+"}\n"\
 \
   "function StatusLoad(){\n"\
-      "var xh = new XMLHttpRequest();\n"\
-      "xh.onreadystatechange = function(){\n"\
-        "if (xh.readyState == 4){\n"\
-          "if(xh.status == 200) {\n"\
-            "var res = JSON.parse(xh.responseText);\n"\
-            "console.log(res);\n"\
-            "document.getElementById(\"air_term\").innerHTML=res[\"air_term\"].toFixed(2);\n"\
-            "document.getElementById(\"air_humm\").innerHTML=res[\"air_humm\"];\n"\
-            "document.getElementById(\"floor_term\").innerHTML=res[\"floor_term\"].toFixed(2);\n"\
-            "document.getElementById(\"time_status\").innerHTML=res[\"time_status\"];\n"\
-            "document.getElementById(\"desired_temperature\").innerHTML=res[\"desired_temperature\"];\n"\
-            "updateCurrDateTime(res[\"time\"]);\n"\
-            "document.getElementById(\"heater_on\").innerHTML=res[\"heater_on\"];\n"\
-            "if(2!=res[\"time_status\"]){\n"\
-                "SinkTime();\n"\
-            "}\n"\
-          "}\n"\
+      "var xmlHttp = new XMLHttpRequest();\n"\
+      "xmlHttp.onreadystatechange = function(){\n"\
+    "if (xmlHttp.readyState == 4){\n"\
+      "if(xmlHttp.status == 200) {\n"\
+        "var res = JSON.parse(xmlHttp.responseText);\n"\
+        "console.log(res);\n"\
+        "document.getElementById(\"air_term\").innerHTML=res[\"air_term\"].toFixed(2);\n"\
+        "document.getElementById(\"air_humm\").innerHTML=res[\"air_humm\"];\n"\
+        "document.getElementById(\"floor_term\").innerHTML=res[\"floor_term\"].toFixed(2);\n"\
+        "document.getElementById(\"time_status\").innerHTML=res[\"time_status\"];\n"\
+        "document.getElementById(\"desired_temperature\").innerHTML=res[\"desired_temperature\"];\n"\
+        "updateCurrDateTime(res[\"time\"]*1000);\n"\
+        "document.getElementById(\"heater_on\").innerHTML=res[\"heater_on\"];\n"\
+        "if(2!=res[\"time_status\"]){\n"\
+            "SinkTime();\n"\
         "}\n"\
-      "};\n"\
-      "xh.open(\"GET\", \"/ConfigLoad?name=status\", true);\n"\
-      "xh.send(null);\n"\
+      "}\n"\
     "}\n"\
+  "};\n"\
+  "xmlHttp.open(\"GET\", \"/ConfigLoad?name=status\", true);\n"\
+  "xmlHttp.send(null);\n"\
+  "}\n"\
 \
 "function PresetSave(){\n"\
-  "if(xmlHttp.readyState==0||xmlHttp.readyState==4){\n"\
+    "var xmlHttp = new XMLHttpRequest();\n"\
     "xmlHttp.onreadystatechange=function(){\n"\
       "if(xmlHttp.readyState==4&&xmlHttp.status==200){\n"\
           "console.log(\"saved ok\");\n"\
@@ -200,29 +194,17 @@ const char* _frontend_term_main_js_ PROGMEM ={
     "xmlHttp.setRequestHeader(\"Content-Type\", \"application/json\");\n"\
     "xmlHttp.send(data);\n"\
     "console.log(data);\n"\
-  "}\n"\
-"}\n"\
-\
-"var in_out_mode=0;\n"\
-"function SetInOutMode(mode,val){\n"\
-    "let node = document.getElementById(\"mode_in_out_time_bt\");\n"\
-    "if(mode==in_out_mode){\n"\
-        "mode=0;\n"\
-    "}\n"\
-    "in_out_mode=mode;\n"\
-    "document.getElementById(\"mode_in\").style.backgroundColor = (1==mode)?colorSelection:document.body.style.backgroundColor;\n"\
-    "document.getElementById(\"mode_out\").style.backgroundColor = (2==mode)?colorSelection:document.body.style.backgroundColor;\n"\
 "}\n"\
 \
 "function createInOutMode(node_id){\n"\
     "let node = document.getElementById(node_id);\n"\
     "while (node.firstChild) {\n"\
-        "presetsList.removeChild(presetsList.firstChild);\n"\
+        "node.removeChild(node.firstChild);\n"\
       "}\n"\
     "var curdate = new Date();\n"\
-    "for(let x=0;x!=9;x++){\n"\
+    "for(let x=-1;x!=9;x++){\n"\
          "let button=document.createElement(\"button\")	;\n"\
-         "if(x){\n"\
+         "if(-1!=x){\n"\
              "var tmpdate = new Date(curdate.getFullYear(),curdate.getMonth()\n"\
                      ",curdate.getDate(),curdate.getHours()+x,0,0);\n"\
              "button.innerHTML = tmpdate.getHours()+\":00\";\n"\
@@ -237,7 +219,6 @@ const char* _frontend_term_main_js_ PROGMEM ={
             "button.setAttribute(\"onclick\", \"in_out_time_bt_click(this)\");\n"\
         "node.appendChild(button);\n"\
         "}\n"\
-    "SetInOutMode(0,0);\n"\
 "}\n"\
 "var selected_InOut=0;\n"\
 "function in_out_time_bt_click(button){\n"\
@@ -251,43 +232,53 @@ const char* _frontend_term_main_js_ PROGMEM ={
     "});\n"\
     "selected_InOut=0;\n"\
     "if(button.value!=\"0\"){\n"\
-        "button.style.backgroundColor = colorSelection;\n"\
-        "selected_InOut=button;\n"\
+        "in_out_time_bt_set(button.mode,button.value);\n"\
     "}\n"\
-"//	console.log(\"bt_click \"+shift);\n"\
-"//	InOut_Shift=shift;\n"\
-"//	for(let x=1;x!=9;x++){\n"\
-"//		 document.getElementById(\"button_in_out_\"+x).style.backgroundColor = (x==shift)?colorSelection:document.body.style.backgroundColor;\n"\
-"//	}\n"\
+"}\n"\
+"function in_out_time_bt_set(node_id,time){\n"\
+    "selected_InOut=0;\n"\
+    "let node = document.getElementById(node_id);\n"\
+    "node.childNodes.forEach(function(element){\n"\
+        "if(element.value<=time\n"\
+                "&& element.value!=0){\n"\
+            "element.style.backgroundColor = node_id==\"mode_in\"?colorSelected:colorNotSelected;\n"\
+            "selected_InOut=element;\n"\
+            "return;\n"\
+        "}\n"\
+    "});\n"\
 "}\n"\
 \
-\
 "function MainConfigLoad(){\n"\
-    "var xh = new XMLHttpRequest();\n"\
-    "xh.onreadystatechange = function(){\n"\
-      "if (xh.readyState == 4){\n"\
-        "if(xh.status == 200) {\n"\
-          "var res = JSON.parse(xh.responseText);\n"\
-          "console.log(res);\n"\
-          "SetInOutMode(res[\"in_out_mode\"],res[\"in_out_mode_value\"]);\n"\
-          "document.getElementById(\"term_vacation\").value=res[\"term_vacation\"];\n"\
-          "document.getElementById(\"term_night\").value=res[\"term_night\"];\n"\
-          "document.getElementById(\"term_day\").value=res[\"term_day\"];\n"\
-          "document.getElementById(\"term_max\").innerHTML=res[\"term_max\"];\n"\
-          "document.getElementById(\"control_is_on\").checked=res[\"isOn\"];\n"\
-          "document.getElementById(\"isVacationSet\").checked=res[\"isVacationSet\"] ;\n"\
-\
-"//          root[\"is_err_cooling\"] = is_err_cooling_;\n"\
-"//          root[\"term_err_cooling\"] = term_err_cooling_;\n"\
+    "var xmlHttp = new XMLHttpRequest();\n"\
+    "xmlHttp.onreadystatechange=function(){\n"\
+      "if(xmlHttp.readyState==4&&xmlHttp.status==200){\n"\
+      "var res = JSON.parse(xmlHttp.responseText);\n"\
+      "console.log(res);\n"\
+      "document.getElementById(\"term_vacation\").value=res[\"term_vacation\"];\n"\
+      "document.getElementById(\"term_night\").value=res[\"term_night\"];\n"\
+      "document.getElementById(\"term_day\").value=res[\"term_day\"];\n"\
+      "document.getElementById(\"term_max\").innerHTML=res[\"term_max\"];\n"\
+      "document.getElementById(\"control_is_on\").checked=res[\"isOn\"];\n"\
+      "document.getElementById(\"isVacationSet\").checked=res[\"isVacationSet\"] ;\n"\
+        "createInOutMode(\"mode_in\");\n"\
+        "createInOutMode(\"mode_out\");\n"\
+        "selected_InOut=0\n"\
+        "if(res.hasOwnProperty(\"mode_in\")){\n"\
+            "in_out_time_bt_set(\"mode_in\",res[\"mode_in\"]*1000);\n"\
         "}\n"\
-      "}\n"\
-    "};\n"\
-    "xh.open(\"GET\", \"/ConfigLoad?name=mainconfig\", true);\n"\
-    "xh.send(null);\n"\
-  "}\n"\
+        "if(res.hasOwnProperty(\"mode_out\")){\n"\
+            "in_out_time_bt_set(\"mode_out\",res[\"mode_out\"]*1000);\n"\
+        "}\n"\
+\
+    "}\n"\
+  "};\n"\
+  "xmlHttp.open(\"GET\", \"/ConfigLoad?name=mainconfig\", true);\n"\
+  "xmlHttp.send(null);\n"\
+\
+"}\n"\
 \
 "function MainConfigSave(){\n"\
-"if(xmlHttp.readyState==0||xmlHttp.readyState==4){\n"\
+    "var xmlHttp = new XMLHttpRequest();\n"\
     "xmlHttp.onreadystatechange=function(){\n"\
       "if(xmlHttp.readyState==4&&xmlHttp.status==200){\n"\
           "console.log(\"saved ok\");\n"\
@@ -296,15 +287,11 @@ const char* _frontend_term_main_js_ PROGMEM ={
     "let myJSON = new Object;\n"\
 \
     "myJSON[\"isOn\"]=document.getElementById(\"control_is_on\").checked;\n"\
-    "myJSON[\"heat_mode\"]=heat_mode;\n"\
     "myJSON[\"term_vacation\"]=document.getElementById(\"term_vacation\").value;\n"\
     "myJSON[\"term_night\"]=document.getElementById(\"term_night\").value;\n"\
     "myJSON[\"term_day\"]=document.getElementById(\"term_day\").value;\n"\
     "if(selected_InOut){\n"\
-        "myJSON[\"in_out_mode\"]=(selected_InOut.mode==\"mode_out\")?1:2;\n"\
-        "myJSON[\"in_out_time\"]=selected_InOut.value;\n"\
-    "}else{\n"\
-        "myJSON[\"in_out_mode\"]=0;\n"\
+        "myJSON[selected_InOut.mode]=selected_InOut.value/1000;//in sec ardujson limitation\n"\
     "}\n"\
 \
     "var data = JSON.stringify(myJSON);\n"\
@@ -314,7 +301,6 @@ const char* _frontend_term_main_js_ PROGMEM ={
     "xmlHttp.send(data);\n"\
     "console.log(data);\n"\
     "MainConfigLoad(); //loopback\n"\
-"}\n"\
 "}\n"\
 \
 "function selectionList(parent,valList,initial){\n"\
@@ -417,7 +403,7 @@ const char* _frontend_term_main_js_ PROGMEM ={
             "day: \"numeric\", hour: \"2-digit\", minute: \"2-digit\",hour12: false\n"\
         "};\n"\
     "var date=new Date(timestamt);\n"\
-    "document.getElementById(\"time\").innerHTML = date.toUTCString([], options);\n"\
+    "document.getElementById(\"time\").innerHTML = date.toString([], options);\n"\
 "}\n"\
 "function htmlObj(html){\n"\
     "let el = document.createElement(\"span\");\n"\
@@ -448,12 +434,51 @@ const char* _frontend_term_main_js_ PROGMEM ={
     "}\n"\
 "}\n"\
 \
+\
+"function RegulatorLoad(){\n"\
+    "var xmlHttp = new XMLHttpRequest();\n"\
+    "xmlHttp.onreadystatechange=function(){\n"\
+      "if(xmlHttp.readyState==4&&xmlHttp.status==200){\n"\
+      "var res = JSON.parse(xmlHttp.responseText);\n"\
+      "console.log(res);\n"\
+      "document.getElementById(\"isRegulatorOn\").checked=res[\"mode\"];\n"\
+      "document.getElementById(\"term_regulator\").value=res[\"setpoint\"];\n"\
+      "document.getElementById(\"term_hysteresis\").value=res[\"hysteresis\"];\n"\
+    "}\n"\
+  "};\n"\
+  "xmlHttp.open(\"GET\", \"/ConfigLoad?name=regulator\", true);\n"\
+  "xmlHttp.send(null);\n"\
+"}\n"\
+\
+"function RegulatorSave(){\n"\
+    "var xmlHttp = new XMLHttpRequest();\n"\
+    "xmlHttp.onreadystatechange=function(){\n"\
+      "if(xmlHttp.readyState==4&&xmlHttp.status==200){\n"\
+          "console.log(\"saved ok\");\n"\
+      "}\n"\
+    "}\n"\
+    "let myJSON = new Object;\n"\
+\
+    "myJSON[\"mode\"]=document.getElementById(\"isRegulatorOn\").checked;\n"\
+    "myJSON[\"setpoint\"]=document.getElementById(\"term_regulator\").value;\n"\
+    "myJSON[\"hysteresis\"]=document.getElementById(\"term_hysteresis\").value;\n"\
+\
+    "var data = JSON.stringify(myJSON);\n"\
+    "xmlHttp.open(\'PUT\',\"/ConfigSave?name=regulator\",true);\n"\
+    "xmlHttp.setRequestHeader(\"Content-Type\", \"application/json\");\n"\
+\
+    "xmlHttp.send(data);\n"\
+    "console.log(data);\n"\
+"}\n"\
+\
 "function init(){\n"\
     "createInOutMode(\"mode_in\");\n"\
     "createInOutMode(\"mode_out\");\n"\
+    "selected_InOut=0\n"\
     "MainConfigLoad();\n"\
     "PresetLoad();\n"\
     "StatusLoad();\n"\
+    "RegulatorLoad();\n"\
     "setInterval(\'StatusLoad()\', 5000);\n"\
 "}\n"\
 };

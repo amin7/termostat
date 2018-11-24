@@ -3,83 +3,69 @@ const colorSelected="#fc6400";
 const colorSelection="#fc0000";
 const colorNotSelected="#00a3fc";        	
 const colorNotSelection="#0800fc";
-
-let heat_mode_ids=["mode_off","mode_schedule","mode_vocation","mode_in","mode_out"];
-	
-xmlHttp=createXmlHttpObject();
-
-  function createXmlHttpObject(){
-    if(window.XMLHttpRequest){
-      xmlHttp=new XMLHttpRequest();
-    }else{
-      xmlHttp=new ActiveXObject('Microsoft.XMLHTTP');
-    }
-    return xmlHttp;
-  }
   
-  function PresetLoad(){
-	  let presetsList = document.getElementById("PresetsList");
-	    while (presetsList.firstChild) {
-	    	presetsList.removeChild(presetsList.firstChild);
-	      }
-	  
-      var xh = new XMLHttpRequest();
-      xh.onreadystatechange = function(){
-        if (xh.readyState == 4){
-          if(xh.status == 200) {
-            var res = JSON.parse(xh.responseText);
-            console.log(res);
-            add_Presets(res);
-          }
-        }
-      };
-      xh.open("GET", "/ConfigLoad?name=presets", true);
-      xh.send(null);
-	}
+  function PresetLoad(){  
+	var xmlHttp = new XMLHttpRequest();
+	xmlHttp.onreadystatechange = function(){
+    if (xmlHttp.readyState == 4){
+      if(xmlHttp.status == 200) {
+    	  let presetsList = document.getElementById("PresetsList");
+  	    while (presetsList.firstChild) {
+  	    	presetsList.removeChild(presetsList.firstChild);
+  	      }
+        var res = JSON.parse(xmlHttp.responseText);
+        console.log(res);
+        add_Presets(res);
+      }
+    }
+  };
+  xmlHttp.open("GET", "/ConfigLoad?name=presets", true);
+  xmlHttp.send(null);
+}
 
 function SinkTime(){
-  var xh = new XMLHttpRequest();
-  xh.onreadystatechange = function(){
-  if(xh.readyState==4&&xmlHttp.status==200){  
-	  console.log("SinkTime ok");
-  }
-  }
+	var xmlHttp = new XMLHttpRequest();
+	xmlHttp.onreadystatechange = function(){
+	  if(xmlHttp.readyState==4&&xmlHttp.status==200){  
+		  console.log("SinkTime ok");
+		  }
+	  }
 	let myJSON = new Object;	
 	var curdate = new Date();
-	myJSON.time=curdate.getTime();
-    var data = JSON.stringify(myJSON);
+	myJSON.time=curdate.getTime()/1000;
+	var data = JSON.stringify(myJSON);
 	xmlHttp.open('PUT',"/ConfigSave?name=status",true); 
 	xmlHttp.setRequestHeader("Content-Type", "application/json");				
 	xmlHttp.send(data);
 	console.log(data);	  
-  }
+}
 
   function StatusLoad(){
-      var xh = new XMLHttpRequest();
-      xh.onreadystatechange = function(){
-        if (xh.readyState == 4){
-          if(xh.status == 200) {
-            var res = JSON.parse(xh.responseText);
-            console.log(res);
-            document.getElementById("air_term").innerHTML=res["air_term"].toFixed(2);
-            document.getElementById("air_humm").innerHTML=res["air_humm"];
-            document.getElementById("floor_term").innerHTML=res["floor_term"].toFixed(2);
-            document.getElementById("time_status").innerHTML=res["time_status"];
-            document.getElementById("desired_temperature").innerHTML=res["desired_temperature"];
-            updateCurrDateTime(res["time"]);
-            document.getElementById("heater_on").innerHTML=res["heater_on"];
-            if(2!=res["time_status"]){
-            	SinkTime();
-            }
-          }
+	  var xmlHttp = new XMLHttpRequest();
+	  xmlHttp.onreadystatechange = function(){
+    if (xmlHttp.readyState == 4){
+      if(xmlHttp.status == 200) {
+        var res = JSON.parse(xmlHttp.responseText);
+        console.log(res);
+        document.getElementById("air_term").innerHTML=res["air_term"].toFixed(2);
+        document.getElementById("air_humm").innerHTML=res["air_humm"];
+        document.getElementById("floor_term").innerHTML=res["floor_term"].toFixed(2);
+        document.getElementById("time_status").innerHTML=res["time_status"];
+        document.getElementById("desired_temperature").innerHTML=res["desired_temperature"];
+        updateCurrDateTime(res["time"]*1000);
+        document.getElementById("heater_on").innerHTML=res["heater_on"];
+        if(2!=res["time_status"]){
+        	SinkTime();
         }
-      };
-      xh.open("GET", "/ConfigLoad?name=status", true);
-      xh.send(null);
+      }
     }
+  };
+  xmlHttp.open("GET", "/ConfigLoad?name=status", true);
+  xmlHttp.send(null);
+  }
     
 function PresetSave(){
-  if(xmlHttp.readyState==0||xmlHttp.readyState==4){
+	var xmlHttp = new XMLHttpRequest();
 	xmlHttp.onreadystatechange=function(){
 	  if(xmlHttp.readyState==4&&xmlHttp.status==200){  
 		  console.log("saved ok");
@@ -99,29 +85,17 @@ function PresetSave(){
 	xmlHttp.setRequestHeader("Content-Type", "application/json");				
 	xmlHttp.send(data);
 	console.log(data);	
-  }
-}
-
-var in_out_mode=0;
-function SetInOutMode(mode,val){
-	let node = document.getElementById("mode_in_out_time_bt");	
-	if(mode==in_out_mode){
-		mode=0;
-	}	
-	in_out_mode=mode;	
-	document.getElementById("mode_in").style.backgroundColor = (1==mode)?colorSelection:document.body.style.backgroundColor;
-	document.getElementById("mode_out").style.backgroundColor = (2==mode)?colorSelection:document.body.style.backgroundColor;
 }
 
 function createInOutMode(node_id){
 	let node = document.getElementById(node_id);
 	while (node.firstChild) {
-    	presetsList.removeChild(presetsList.firstChild);
+		node.removeChild(node.firstChild);
       }
 	var curdate = new Date();	
-	for(let x=0;x!=9;x++){	
+	for(let x=-1;x!=9;x++){	
 		 let button=document.createElement("button")	;	 
-		 if(x){
+		 if(-1!=x){
 			 var tmpdate = new Date(curdate.getFullYear(),curdate.getMonth()
 					 ,curdate.getDate(),curdate.getHours()+x,0,0);
 			 button.innerHTML = tmpdate.getHours()+":00";
@@ -136,7 +110,6 @@ function createInOutMode(node_id){
 	   	 button.setAttribute("onclick", "in_out_time_bt_click(this)");	   	
 	    node.appendChild(button);
 		}
-	SetInOutMode(0,0);
 }
 var selected_InOut=0;
 function in_out_time_bt_click(button){
@@ -150,43 +123,53 @@ function in_out_time_bt_click(button){
 	});
 	selected_InOut=0;	
 	if(button.value!="0"){
-		button.style.backgroundColor = colorSelection;
-		selected_InOut=button;
+		in_out_time_bt_set(button.mode,button.value);
 	}
-//	console.log("bt_click "+shift);	
-//	InOut_Shift=shift;
-//	for(let x=1;x!=9;x++){		 
-//		 document.getElementById("button_in_out_"+x).style.backgroundColor = (x==shift)?colorSelection:document.body.style.backgroundColor;
-//	}
+}
+function in_out_time_bt_set(node_id,time){
+	selected_InOut=0;
+	let node = document.getElementById(node_id);
+	node.childNodes.forEach(function(element){
+		if(element.value<=time
+				&& element.value!=0){
+			element.style.backgroundColor = node_id=="mode_in"?colorSelected:colorNotSelected;
+			selected_InOut=element;	
+			return;
+		}
+	});
 }
 
-
 function MainConfigLoad(){
-    var xh = new XMLHttpRequest();
-    xh.onreadystatechange = function(){
-      if (xh.readyState == 4){
-        if(xh.status == 200) {
-          var res = JSON.parse(xh.responseText);
-          console.log(res);
-          SetInOutMode(res["in_out_mode"],res["in_out_mode_value"]);
-          document.getElementById("term_vacation").value=res["term_vacation"];
-          document.getElementById("term_night").value=res["term_night"];
-          document.getElementById("term_day").value=res["term_day"];
-          document.getElementById("term_max").innerHTML=res["term_max"];
-          document.getElementById("control_is_on").checked=res["isOn"];
-          document.getElementById("isVacationSet").checked=res["isVacationSet"] ;
-          
-//          root["is_err_cooling"] = is_err_cooling_;
-//          root["term_err_cooling"] = term_err_cooling_;
-        }
-      }
-    };
-    xh.open("GET", "/ConfigLoad?name=mainconfig", true);
-    xh.send(null);
-  }
+	var xmlHttp = new XMLHttpRequest();
+	xmlHttp.onreadystatechange=function(){
+	  if(xmlHttp.readyState==4&&xmlHttp.status==200){  
+      var res = JSON.parse(xmlHttp.responseText);
+      console.log(res);
+      document.getElementById("term_vacation").value=res["term_vacation"];
+      document.getElementById("term_night").value=res["term_night"];
+      document.getElementById("term_day").value=res["term_day"];
+      document.getElementById("term_max").innerHTML=res["term_max"];
+      document.getElementById("control_is_on").checked=res["isOn"];
+      document.getElementById("isVacationSet").checked=res["isVacationSet"] ;
+		createInOutMode("mode_in");
+		createInOutMode("mode_out");
+		selected_InOut=0
+		if(res.hasOwnProperty("mode_in")){
+			in_out_time_bt_set("mode_in",res["mode_in"]*1000);
+		}
+		if(res.hasOwnProperty("mode_out")){
+			in_out_time_bt_set("mode_out",res["mode_out"]*1000);
+		}
+		
+    }
+  };
+  xmlHttp.open("GET", "/ConfigLoad?name=mainconfig", true);
+  xmlHttp.send(null);
+ 
+}
 
 function MainConfigSave(){
-if(xmlHttp.readyState==0||xmlHttp.readyState==4){
+	var xmlHttp = new XMLHttpRequest();
 	xmlHttp.onreadystatechange=function(){
 	  if(xmlHttp.readyState==4&&xmlHttp.status==200){  
 		  console.log("saved ok");
@@ -195,15 +178,11 @@ if(xmlHttp.readyState==0||xmlHttp.readyState==4){
 	let myJSON = new Object;	
 	
 	myJSON["isOn"]=document.getElementById("control_is_on").checked;
-	myJSON["heat_mode"]=heat_mode;
 	myJSON["term_vacation"]=document.getElementById("term_vacation").value;
 	myJSON["term_night"]=document.getElementById("term_night").value;
 	myJSON["term_day"]=document.getElementById("term_day").value;
 	if(selected_InOut){
-		myJSON["in_out_mode"]=(selected_InOut.mode=="mode_out")?1:2;			
-		myJSON["in_out_time"]=selected_InOut.value;
-	}else{
-		myJSON["in_out_mode"]=0;
+		myJSON[selected_InOut.mode]=selected_InOut.value/1000;//in sec ardujson limitation		
 	}
 	
 	var data = JSON.stringify(myJSON);
@@ -213,7 +192,6 @@ if(xmlHttp.readyState==0||xmlHttp.readyState==4){
 	xmlHttp.send(data);
 	console.log(data);	
 	MainConfigLoad(); //loopback
-}
 }
       
 function selectionList(parent,valList,initial){	
@@ -316,7 +294,7 @@ function updateCurrDateTime(timestamt){
 		    day: "numeric", hour: "2-digit", minute: "2-digit",hour12: false  
 		};  
 	var date=new Date(timestamt);
-	document.getElementById("time").innerHTML = date.toUTCString([], options);
+	document.getElementById("time").innerHTML = date.toString([], options);
 }
 function htmlObj(html){
 	let el = document.createElement("span");
@@ -347,11 +325,50 @@ function add_Presets(config){
 	}
 }
 
+
+function RegulatorLoad(){
+	var xmlHttp = new XMLHttpRequest();
+	xmlHttp.onreadystatechange=function(){
+	  if(xmlHttp.readyState==4&&xmlHttp.status==200){  
+      var res = JSON.parse(xmlHttp.responseText);
+      console.log(res);
+      document.getElementById("isRegulatorOn").checked=res["mode"];
+      document.getElementById("term_regulator").value=res["setpoint"];
+      document.getElementById("term_hysteresis").value=res["hysteresis"];
+    }
+  };
+  xmlHttp.open("GET", "/ConfigLoad?name=regulator", true);
+  xmlHttp.send(null);
+}
+
+function RegulatorSave(){
+	var xmlHttp = new XMLHttpRequest();
+	xmlHttp.onreadystatechange=function(){
+	  if(xmlHttp.readyState==4&&xmlHttp.status==200){  
+		  console.log("saved ok");
+	  }
+	}
+	let myJSON = new Object;	
+	
+	myJSON["mode"]=document.getElementById("isRegulatorOn").checked;
+	myJSON["setpoint"]=document.getElementById("term_regulator").value;
+	myJSON["hysteresis"]=document.getElementById("term_hysteresis").value;
+	
+	var data = JSON.stringify(myJSON);
+	xmlHttp.open('PUT',"/ConfigSave?name=regulator",true); 
+	xmlHttp.setRequestHeader("Content-Type", "application/json");
+	
+	xmlHttp.send(data);
+	console.log(data);	
+}
+
 function init(){	
 	createInOutMode("mode_in");
 	createInOutMode("mode_out");
+	selected_InOut=0
 	MainConfigLoad();
 	PresetLoad();
 	StatusLoad();
+	RegulatorLoad();
 	setInterval('StatusLoad()', 5000);
 }    	

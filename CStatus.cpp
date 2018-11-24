@@ -15,7 +15,7 @@ extern const char* DEVICE_NAME;
 extern const char* DEVICE_VERSION;
 bool CStatus::deSerialize(const JsonObject& root) {
   if (root.containsKey("time")) {
-    const auto time = root["time"].as<uint32_t>() / 1000;
+    const auto time = root["time"].as<time_t>();
     set_local_time(time);
   }
   return true;
@@ -31,7 +31,7 @@ bool CStatus::serialize(JsonObject& root) const {
   root["adc_"] = adc_;
   root["desired_temperature"] = desired_temperature_;
   root["time_status"] = static_cast<int8_t>(timeStatus());
-  root["time"] = static_cast<uint32_t>(get_local_time()) * 1000; //to ms
+  root["time"] = now(); //to ms
   root["device_name"] = DEVICE_NAME;
   root["device_version"] = DEVICE_VERSION;
   return true;

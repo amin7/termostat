@@ -20,9 +20,9 @@ public:
   const uint8_t RelayPin_;
   mode_t mode_ = relay_off;
   double input_ = 0;
-  double setpoint_ = 0;
+  double setpoint_ = 12;
   bool output_;
-  double threshold_ = 0.5;
+  double hysteresis_ = 0.5;
   uint32_t relaySwitchCount = 0;
   void setRelayOut(bool isHigh);
 

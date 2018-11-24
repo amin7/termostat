@@ -12,8 +12,12 @@ float CMainConfig::getDesiredTemperature() {
   if (false == isOn_) {
     return 0;
   }
-  const auto now = get_local_time();
+
+  const auto time = now();
   if (mode_off != in_out_mode_) {
+    if (time > (in_out_time_ + 59 * 60)) { //till end of hour
+      in_out_mode_ = mode_off;
+      }
     //check period
     switch (in_out_mode_) {
       case mode_night:
@@ -26,15 +30,15 @@ float CMainConfig::getDesiredTemperature() {
   if (isVacationSet_) {
     //check vacation period
   }
-
+  const auto local_time = get_local_time();
     //convert 1-7 (sanday=1) to 0-6 (sanday=6)
-  auto day_of_week = weekday(now) - 2;
+  auto day_of_week = weekday(local_time) - 2;
   if (-1 == day_of_week) {
     day_of_week = 6;
   }
   auto preset = presets_.find(day_of_week);
   if (preset) {
-    if (preset->isInHome(hour(now) - 1)) {
+    if (preset->isInHome(hour(local_time))) {
       return term_day_;
     }
   }
@@ -42,10 +46,15 @@ float CMainConfig::getDesiredTemperature() {
 }
 
 bool CMainConfig::serialize(JsonObject& root) const {
-  root["in_out_mode"] = static_cast<uint8_t>(in_out_mode_);
-  if (mode_off != in_out_mode_) {
-    root["in_out_time"] = static_cast<uint32_t>(in_out_time_) * 1000;
+  switch (in_out_mode_) {
+    case mode_day:
+      root["mode_in"] = in_out_time_;
+      break;
+    case mode_night:
+      root["mode_out"] = in_out_time_;
+      break;
   }
+
   root["term_vacation"] = term_vacation_;
   root["term_night"] = term_night_;
   root["term_day"] = term_day_;
@@ -58,9 +67,14 @@ bool CMainConfig::serialize(JsonObject& root) const {
 }
 
 bool CMainConfig::deSerialize(const JsonObject& root) {
-  in_out_mode_ = static_cast<in_out_mode_t>(root["in_out_mode"].as<uint8_t>());
-  if (mode_off != in_out_mode_) {
-    in_out_time_ = root["in_out_time"].as<uint32_t>() / 1000;
+  in_out_mode_ = mode_off;
+  if (root.containsKey("mode_in")) {
+    in_out_mode_ = mode_day;
+    in_out_time_ = root["mode_in"].as<time_t>();
+  }
+  if (root.containsKey("mode_out")) {
+    in_out_mode_ = mode_night;
+    in_out_time_ = root["mode_out"].as<time_t>();
   }
   term_vacation_ = root["term_vacation"];
   term_night_ = root["term_night"];

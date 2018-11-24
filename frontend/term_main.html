@@ -43,5 +43,13 @@
           <button onclick=PresetSave()>Save</button>
           <button onclick=PresetLoad()>Load</button>
     </fieldset>
+          <fieldset>
+          <legend>Regulator</legend>
+          <input type="checkbox" id="isRegulatorOn">On<br>
+          temperature <input type="number" min=10 max=35 id = "term_regulator"> &#8451;<br>
+          hysteresis <input type="number" min=10 max=35 id = "term_hysteresis"> &#8451;<br>
+          <button onclick=RegulatorSave()>Save</button>
+          <button onclick=RegulatorLoad()>Load</button>
+    </fieldset>
     </body>
 </html>

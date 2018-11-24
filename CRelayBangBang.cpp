@@ -13,11 +13,11 @@ CRelayBangBang::CRelayBangBang(uint8_t RelayPin) :
 void CRelayBangBang::setRelayOut(bool isHigh) {
   if (isHigh != output_) {
     relaySwitchCount++;
+    output_ = isHigh;
+    digitalWrite(RelayPin_, output_);
+    Serial.print("setRelayOut  ");
+    Serial.println(output_);
   }
-  output_ = isHigh;
-  digitalWrite(RelayPin_, output_);
-  Serial.print("setRelayOut  ");
-  Serial.println(output_);
 }
 void CRelayBangBang::setup() {
   pinMode(RelayPin_, OUTPUT);
@@ -45,11 +45,11 @@ void CRelayBangBang::loop() {
   if (relay_off == mode_) {
     return;
   }
-  if (input_ > (setpoint_ + threshold_)) {
+  if (input_ > (setpoint_ + hysteresis_)) {
     setRelayOut(false);
   }
 
-  if (input_ < (setpoint_ - threshold_)) {
+  if (input_ < (setpoint_ - hysteresis_)) {
     setRelayOut(true);
   }
 

@@ -12,8 +12,11 @@ CRegulatorInterface::CRegulatorInterface(CRelayBangBang &RelayPID) :
 }
 bool CRegulatorInterface::deSerialize(const JsonObject& root) {
   retulator_.set_mode(static_cast<CRelayBangBang::mode_t>(root["mode"].as<uint8_t>()));
-  if (root.containsKey("output")) {
-    retulator_.output_ = root["output"];
+  if (root.containsKey("setpoint")) {
+    retulator_.setpoint_ = root["setpoint"];
+  }
+  if (root.containsKey("hysteresis")) {
+    retulator_.hysteresis_ = root["hysteresis"];
   }
 
 }
@@ -23,5 +26,5 @@ bool CRegulatorInterface::serialize(JsonObject& root) const {
   root["input"] = retulator_.input_;
   root["output"] = retulator_.output_;
   root["setpoint"] = retulator_.setpoint_;
-  root["threshold"] = retulator_.threshold_;
+  root["hysteresis"] = retulator_.hysteresis_;
 }
