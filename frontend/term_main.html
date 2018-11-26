@@ -24,14 +24,18 @@
        term_day <input type="number" min=10 max=35 id = "term_day"> &#8451;<br>
        term_max <a id = "term_max"></a> &#8451;<br>
        <br>
-              <fieldset>
+          <fieldset>
           <legend>Scheduler</legend>
-               <div id="mode_in_out">               
+               <div id="mode_in_out">
                 in <div id="mode_in"></div>
                 out <div id="mode_out"></div>
-               </div>            
+               </div>
+               <br>
           <div id="vocation">
-            <input type="checkbox" id="isVacationSet">vocation<br>
+            <input type="checkbox" id="isVacationSet" onclick=vacation_show(this.checked)>vocation<br>
+            <div id="vocation_date">
+                start <input type="date" id="vocation_start"> finish <input type="date" id="vocation_end" >
+            </div>
           </div>
        </fieldset>
        <button onclick=MainConfigSave()>Save</button>

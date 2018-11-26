@@ -160,6 +160,13 @@ function MainConfigLoad(){
 		if(res.hasOwnProperty("mode_out")){
 			in_out_time_bt_set("mode_out",res["mode_out"]*1000);
 		}
+		let VacationSet=document.getElementById("isVacationSet");
+		document.getElementById("vocation_start").valueAsDate=myJSON["vocation_start"]*1000;
+		document.getElementById("vocation_end").valueAsDate=myJSON["vocation_end"]*1000;
+		
+		VacationSet.checked=document.getElementById("vocation_start").valueAsDate||document.getElementById("vocation_end").valueAsDate;
+		
+		vacation_show(VacationSet.checked);
 		
     }
   };
@@ -183,6 +190,13 @@ function MainConfigSave(){
 	myJSON["term_day"]=document.getElementById("term_day").value;
 	if(selected_InOut){
 		myJSON[selected_InOut.mode]=selected_InOut.value/1000;//in sec ardujson limitation		
+	}
+	if(document.getElementById("isVacationSet").checked){		
+		myJSON["vocation_start"]=document.getElementById("vocation_start").valueAsDate/1000;
+		myJSON["vocation_end"]=document.getElementById("vocation_end").valueAsDate/1000;
+	}else{
+		myJSON["vocation_start"]=0;
+		myJSON["vocation_end"]=0;
 	}
 	
 	var data = JSON.stringify(myJSON);
@@ -362,13 +376,23 @@ function RegulatorSave(){
 	console.log(data);	
 }
 
+function vacation_show(bshow) {
+    var x = document.getElementById("vocation_date");
+    if (bshow) {
+        x.style.display = "block";
+    } else {
+        x.style.display = "none";
+    }
+}
+
 function init(){	
+	vacation_show(false);
 	createInOutMode("mode_in");
 	createInOutMode("mode_out");
 	selected_InOut=0
 	MainConfigLoad();
 	PresetLoad();
 	StatusLoad();
-	RegulatorLoad();
+	RegulatorLoad();	
 	setInterval('StatusLoad()', 5000);
 }    	

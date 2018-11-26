@@ -8,6 +8,33 @@
 #include "CMainConfig.h"
 #include "./libs/timeLib.h"
 extern time_t get_local_time();
+bool CMainConfig::isVacation(const time_t &time, float &term) {
+  //check vacation period
+  if (0 == vocation_start_ && 0 == vocation_end_) { //must be set at list one
+    return false;
+  }
+
+  if (0 == vocation_start_) { //from now
+    if (time <= vocation_end_) {
+      term = term_vacation_;
+      return true;
+    }
+    vocation_end_ = 0; //to remova call again
+    return false;
+  }
+
+  if (time < vocation_start_) { //not time yet
+    return false;
+  }
+  if (time <= vocation_end_) {
+    term = term_vacation_;
+    return true;
+  }
+  //time pass
+  vocation_end_ = 0;
+  vocation_start_ = 0;
+  return false;
+}
 float CMainConfig::getDesiredTemperature() {
   if (false == isOn_) {
     return 0;
@@ -26,10 +53,11 @@ float CMainConfig::getDesiredTemperature() {
         return term_day_;
     }
   }
-
-  if (isVacationSet_) {
-    //check vacation period
+  float tmp = 0;
+  if (isVacation(time, tmp)) {
+    return tmp;
   }
+
   const auto local_time = get_local_time();
     //convert 1-7 (sanday=1) to 0-6 (sanday=6)
   auto day_of_week = weekday(local_time) - 2;
@@ -60,9 +88,12 @@ bool CMainConfig::serialize(JsonObject& root) const {
   root["term_day"] = term_day_;
   root["term_max"] = term_max_;
   root["isOn"] = isOn_;
-  root["isVacationSet"] = isVacationSet_;
-  root["is_err_cooling"] = is_err_cooling_;
-  root["term_err_cooling"] = term_err_cooling_;
+
+  root["vocation_start"] = vocation_start_;
+  root["vocation_end"] = vocation_end_;
+
+//  root["is_err_cooling"] = is_err_cooling_;
+//  root["term_err_cooling"] = term_err_cooling_;
   return true;
 }
 
@@ -76,11 +107,14 @@ bool CMainConfig::deSerialize(const JsonObject& root) {
     in_out_mode_ = mode_night;
     in_out_time_ = root["mode_out"].as<time_t>();
   }
+
+  vocation_start_ = root["vocation_start"].as<time_t>();
+  vocation_end_ = root["vocation_end"].as<time_t>();
+
   term_vacation_ = root["term_vacation"];
   term_night_ = root["term_night"];
   term_day_ = root["term_day"];
   isOn_ = root["isOn"];
-  isVacationSet_ = root["isVacationSet"];
   return true;
 }
 

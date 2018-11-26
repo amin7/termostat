@@ -1,7 +1,7 @@
 #ifndef _FRONT_END_
 #define _FRONT_END_
-//converted  date time= 2018-11-24 16:20:01.745337
-//cmd gen: D:\user\hobby\git\termostat\text2code.py -D frontend/
+//converted  date time= 2018-11-26 16:43:44.370019
+//cmd gen: D:\personal\git\termostat\text2code.py -D frontend/
 const char* _frontend_def_preset_json_ PROGMEM ={
 "{\"Presets\":[\n"\
 "{\"weekDay\":31,\"hours\":4063616},\n"\
@@ -76,14 +76,18 @@ const char* _frontend_term_main_html_ PROGMEM ={
        "term_day <input type=\"number\" min=10 max=35 id = \"term_day\"> &#8451;<br>\n"\
        "term_max <a id = \"term_max\"></a> &#8451;<br>\n"\
        "<br>\n"\
-              "<fieldset>\n"\
+          "<fieldset>\n"\
           "<legend>Scheduler</legend>\n"\
                "<div id=\"mode_in_out\">\n"\
                 "in <div id=\"mode_in\"></div>\n"\
                 "out <div id=\"mode_out\"></div>\n"\
                "</div>\n"\
+               "<br>\n"\
           "<div id=\"vocation\">\n"\
-            "<input type=\"checkbox\" id=\"isVacationSet\">vocation<br>\n"\
+            "<input type=\"checkbox\" id=\"isVacationSet\" onclick=vacation_show(this.checked)>vocation<br>\n"\
+            "<div id=\"vocation_date\">\n"\
+                "start <input type=\"date\" id=\"vocation_start\"> finish <input type=\"date\" id=\"vocation_end\" >\n"\
+            "</div>\n"\
           "</div>\n"\
        "</fieldset>\n"\
        "<button onclick=MainConfigSave()>Save</button>\n"\
@@ -269,6 +273,13 @@ const char* _frontend_term_main_js_ PROGMEM ={
         "if(res.hasOwnProperty(\"mode_out\")){\n"\
             "in_out_time_bt_set(\"mode_out\",res[\"mode_out\"]*1000);\n"\
         "}\n"\
+        "let VacationSet=document.getElementById(\"isVacationSet\");\n"\
+        "document.getElementById(\"vocation_start\").valueAsDate=myJSON[\"vocation_start\"]*1000;\n"\
+        "document.getElementById(\"vocation_end\").valueAsDate=myJSON[\"vocation_end\"]*1000;\n"\
+\
+        "VacationSet.checked=document.getElementById(\"vocation_start\").valueAsDate||document.getElementById(\"vocation_end\").valueAsDate;\n"\
+\
+        "vacation_show(VacationSet.checked);\n"\
 \
     "}\n"\
   "};\n"\
@@ -292,6 +303,13 @@ const char* _frontend_term_main_js_ PROGMEM ={
     "myJSON[\"term_day\"]=document.getElementById(\"term_day\").value;\n"\
     "if(selected_InOut){\n"\
         "myJSON[selected_InOut.mode]=selected_InOut.value/1000;//in sec ardujson limitation\n"\
+    "}\n"\
+    "if(document.getElementById(\"isVacationSet\").checked){\n"\
+        "myJSON[\"vocation_start\"]=document.getElementById(\"vocation_start\").valueAsDate/1000;\n"\
+        "myJSON[\"vocation_end\"]=document.getElementById(\"vocation_end\").valueAsDate/1000;\n"\
+    "}else{\n"\
+        "myJSON[\"vocation_start\"]=0;\n"\
+        "myJSON[\"vocation_end\"]=0;\n"\
     "}\n"\
 \
     "var data = JSON.stringify(myJSON);\n"\
@@ -471,7 +489,17 @@ const char* _frontend_term_main_js_ PROGMEM ={
     "console.log(data);\n"\
 "}\n"\
 \
+"function vacation_show(bshow) {\n"\
+    "var x = document.getElementById(\"vocation_date\");\n"\
+    "if (bshow) {\n"\
+        "x.style.display = \"block\";\n"\
+    "} else {\n"\
+        "x.style.display = \"none\";\n"\
+    "}\n"\
+"}\n"\
+\
 "function init(){\n"\
+    "vacation_show(false);\n"\
     "createInOutMode(\"mode_in\");\n"\
     "createInOutMode(\"mode_out\");\n"\
     "selected_InOut=0\n"\
