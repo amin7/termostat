@@ -40,38 +40,43 @@ int32 NTPtime::parceAsEpoch() {
   // subtract seventy years:
   return secsSince1900 - seventyYears;
 }
+void NTPtime::loop() {
+  const long now = millis();
+  if (now < nextSynk) {
+    return;
+  }
+  if (WL_CONNECTED != WiFi.status()) {
+    return;
+  }
+  if (0 == timeoutIP) {
+    timeoutIP = now + ipChangeTimeout;
+  }
 
-bool NTPtime::readValue(time_t &value){
-	if(WL_CONNECTED!=WiFi.status()){
-        Serial.println("no wifi");
-		return 0;
-	}
-
-    if (INADDR_NONE == timeServerIP) {
-        if (false == initServerIP()){
-            Serial.println("initServerIP setting err");
-            return false;
-        }
+  if (INADDR_NONE == timeServerIP || now > timeoutIP) {
+    nextRequest = 0;
+    timeoutIP = 0;
+    if (false == initServerIP()) {
+      Serial.println("initServerIP setting err");
+      nextSynk = now + errTimeout;
+      return;
     }
+  }
 
+  if (now > nextRequest) {
     sendNTPpacket();
-    // wait to see if a reply is available
-    int i = 100;
-    do {
-    if (0 == i) {
-        Serial.println("no answer reset IP");
-        timeServerIP = INADDR_NONE; //rerequest ip
-      return 0;
+    nextRequest = now + resendRequest;
+  }
+  if (udp.parsePacket()) {
+    const auto value = parceAsEpoch();
+    Serial.printf("ntp GMT %02u:%02u:%02u done\n", hour(value), minute(value), second(value));
+    if (nullptr != pCallback) {
+      (pCallback)(value);
     }
-    i--;
-    delay(10);
-
-    } while (0 == udp.parsePacket());
-    // We've received a packet, read the data from it
-    value= parceAsEpoch();
-    Serial.printf("ntp GMT %02u:%02u:%02u done\n", hour(value), minute(value),
-                second(value));
-    return true;
+    nextSynk = now + refreshPeriod;
+    nextRequest = 0;
+    timeoutIP = 0;
+    return;
+  }
 }
 
 int NTPtime::sendNTPpacket() {

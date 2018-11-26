@@ -21,7 +21,6 @@
 #include "WebFaceWiFiConfig.h"
 #include "CFrontendFS.h"
 #include "frontend.h"
-#include "CFilter.h"
 #include "./libs/NTPtime.h"
 #include "./libs/CMQTT.h"
 #include "./libs/unsorted.h"
@@ -29,6 +28,7 @@
 #include "CRelayBangBang.h"
 #include "CRegulatorInterface.h"
 //#define DEBUG
+//#define MQTT_SIMULATION
 
 #if 0
 #define WIFI_SERVER
@@ -62,18 +62,7 @@ void set_local_time(time_t time) {
   setTime(myTZ.toUTC(time));
 }
 
-class CSetClock: public ObserverWrite<time_t> {
-public:
-  virtual void writeValue(time_t value) {
-    
-    Serial.printf("set GMT %02u:%02u:%02u done\n", hour(value), minute(value),
-        second(value));
-    setTime(value);
-  }
-};
-
-NTPtime ntpTime(SYNK_NTP_PERIOD);
-CSetClock setClock;
+NTPtime ntpTime;
 
 ESP8266WebServer server(80);
 WebFaceWiFiConfig WiFiConfig(server);
@@ -93,7 +82,10 @@ CRegulatorInterface PID_tune(regulator);
 void esp_restart() {
   ESP.restart();
 }
-
+void setTime_(const time_t &par) {
+  setTime(par);
+  Serial.println("setTime_");
+}
 void setup() {
   WiFi.persistent(false);
   pinMode(LED_BUILTIN, OUTPUT);
@@ -141,7 +133,7 @@ void setup() {
   Serial.printf("HTTPUpdateServer ready! Open http://%s.local%s in your browser and login with username '%s' and password '%s'\n", DEVICE_NAME, update_path, ota_username, ota_password);
 
   ntpTime.init();
-  ntpTime.addListener(setClock);
+  ntpTime.setCallback(setTime_);
 
   cli_cmd_list_setup();
   Serial.println("Started");
@@ -154,7 +146,9 @@ void mqtt_loop() {
   }
 
   const long now = millis();
+#ifndef MQTT_SIMULATION
   mqtt.loop();
+#endif
   static long nextMsgMQTT = 0;
   if (now < nextMsgMQTT) {
     return;
@@ -172,7 +166,7 @@ void mqtt_loop() {
   data += "&field2=" + String(Config.status_.air_humm_, 1);
   data += "&field3=" + String(Config.status_.floor_term_, 1);
   data += "&field4=" + String(Config.status_.desired_temperature_, 1);
-#ifndef WIFI_SERVER
+#ifndef MQTT_SIMULATION
   mqtt.publish(topic, data);
 #endif
   Serial.print("topic= ");
@@ -231,9 +225,9 @@ void loop() {
   loop_scheduler();
   server.handleClient();
   cmdPoll();
-  CFilterLoop::loops();
   wifi_loop();
   mqtt_loop();
   sensor_loop();
   regulator.loop();
+  ntpTime.loop();
 }
