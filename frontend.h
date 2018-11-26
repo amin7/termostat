@@ -1,7 +1,7 @@
 #ifndef _FRONT_END_
 #define _FRONT_END_
-//converted  date time= 2018-11-26 16:43:44.370019
-//cmd gen: D:\personal\git\termostat\text2code.py -D frontend/
+//converted  date time= 2018-11-26 19:26:28.834039
+//cmd gen: D:\user\hobby\git\termostat\text2code.py -D frontend/
 const char* _frontend_def_preset_json_ PROGMEM ={
 "{\"Presets\":[\n"\
 "{\"weekDay\":31,\"hours\":4063616},\n"\
@@ -251,7 +251,14 @@ const char* _frontend_term_main_js_ PROGMEM ={
         "}\n"\
     "});\n"\
 "}\n"\
-\
+"function setVacationDate(id,date){\n"\
+    "var inp=document.getElementById(id);\n"\
+    "if(date){\n"\
+        "inp.valueAsDate=new Date(date*1000)\n"\
+    "}else{\n"\
+        "inp.value=\"\";\n"\
+    "}\n"\
+"}\n"\
 "function MainConfigLoad(){\n"\
     "var xmlHttp = new XMLHttpRequest();\n"\
     "xmlHttp.onreadystatechange=function(){\n"\
@@ -273,13 +280,14 @@ const char* _frontend_term_main_js_ PROGMEM ={
         "if(res.hasOwnProperty(\"mode_out\")){\n"\
             "in_out_time_bt_set(\"mode_out\",res[\"mode_out\"]*1000);\n"\
         "}\n"\
-        "let VacationSet=document.getElementById(\"isVacationSet\");\n"\
-        "document.getElementById(\"vocation_start\").valueAsDate=myJSON[\"vocation_start\"]*1000;\n"\
-        "document.getElementById(\"vocation_end\").valueAsDate=myJSON[\"vocation_end\"]*1000;\n"\
 \
-        "VacationSet.checked=document.getElementById(\"vocation_start\").valueAsDate||document.getElementById(\"vocation_end\").valueAsDate;\n"\
+        "let vocation_start=res[\"vocation_start\"];\n"\
+        "let vocation_end=res[\"vocation_end\"];\n"\
+        "setVacationDate(\"vocation_start\",vocation_start);\n"\
+        "setVacationDate(\"vocation_end\",vocation_end);\n"\
 \
-        "vacation_show(VacationSet.checked);\n"\
+        "document.getElementById(\"isVacationSet\").checked=vocation_start||vocation_end;\n"\
+        "vacation_show(vocation_start||vocation_end);\n"\
 \
     "}\n"\
   "};\n"\

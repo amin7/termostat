@@ -138,7 +138,14 @@ function in_out_time_bt_set(node_id,time){
 		}
 	});
 }
-
+function setVacationDate(id,date){
+	var inp=document.getElementById(id);
+	if(date){
+		inp.valueAsDate=new Date(date*1000)
+	}else{
+		inp.value="";
+	}
+}
 function MainConfigLoad(){
 	var xmlHttp = new XMLHttpRequest();
 	xmlHttp.onreadystatechange=function(){
@@ -160,13 +167,14 @@ function MainConfigLoad(){
 		if(res.hasOwnProperty("mode_out")){
 			in_out_time_bt_set("mode_out",res["mode_out"]*1000);
 		}
-		let VacationSet=document.getElementById("isVacationSet");
-		document.getElementById("vocation_start").valueAsDate=myJSON["vocation_start"]*1000;
-		document.getElementById("vocation_end").valueAsDate=myJSON["vocation_end"]*1000;
+
+		let vocation_start=res["vocation_start"];
+		let vocation_end=res["vocation_end"];
+		setVacationDate("vocation_start",vocation_start);
+		setVacationDate("vocation_end",vocation_end);
 		
-		VacationSet.checked=document.getElementById("vocation_start").valueAsDate||document.getElementById("vocation_end").valueAsDate;
-		
-		vacation_show(VacationSet.checked);
+		document.getElementById("isVacationSet").checked=vocation_start||vocation_end;		
+		vacation_show(vocation_start||vocation_end);
 		
     }
   };
