@@ -11,13 +11,10 @@
 #include <Wire.h>
 #include <FS.h>
 #include "DHTesp.h"
-#include "unsorted.h"
-//#include "./libs/ESP8266OTA.h"
 #include <ESP8266HTTPUpdateServer.h>
 
 #include <Time.h>
-#include <TimeLib.h>
-#include <Timezone.h>
+#include "./libs/Timezone.h"
 //user libs
 
 #include "CConfigs.h"
@@ -25,13 +22,15 @@
 #include "CFrontendFS.h"
 #include "frontend.h"
 #include "CFilter.h"
-#include "NTPtime.h"
-#include "CMQTT.h"
+#include "./libs/NTPtime.h"
+#include "./libs/CMQTT.h"
+#include "./libs/unsorted.h"
+#include "./libs/TimeLib.h"
 #include "CRelayBangBang.h"
 #include "CRegulatorInterface.h"
 //#define DEBUG
 
-#if 0
+#if 1
 #define WIFI_SERVER
 #include "secret.h_ex"
 #else

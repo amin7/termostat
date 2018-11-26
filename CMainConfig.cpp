@@ -6,7 +6,7 @@
  */
 
 #include "CMainConfig.h"
-#include <timeLib.h>
+#include "./libs/timeLib.h"
 extern time_t get_local_time();
 float CMainConfig::getDesiredTemperature() {
   if (false == isOn_) {
