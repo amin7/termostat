@@ -199,9 +199,12 @@ function MainConfigSave(){
 	if(selected_InOut){
 		myJSON[selected_InOut.mode]=selected_InOut.value/1000;//in sec ardujson limitation		
 	}
-	if(document.getElementById("isVacationSet").checked){		
-		myJSON["vocation_start"]=document.getElementById("vocation_start").valueAsDate/1000;
-		myJSON["vocation_end"]=document.getElementById("vocation_end").valueAsDate/1000;
+	if(document.getElementById("isVacationSet").checked){
+		//gmt->uts convertion
+		let st=document.getElementById("vocation_start").valueAsDate;
+		myJSON["vocation_start"]=(new Date(st.getFullYear(),st.getMonth(),st.getDate())).getTime()/1000;
+		let end=document.getElementById("vocation_end").valueAsDate;
+		myJSON["vocation_end"]=(new Date(end.getFullYear(),end.getMonth(),end.getDate(),23,59,59)).getTime()/1000;
 	}else{
 		myJSON["vocation_start"]=0;
 		myJSON["vocation_end"]=0;
