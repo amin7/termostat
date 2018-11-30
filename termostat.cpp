@@ -4,6 +4,7 @@
 #define  ARDUINOJSON_DEFAULT_NESTING_LIMIT 10
 //libs
 #include <Arduino.h>
+#include <stdint.h>
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
@@ -177,6 +178,7 @@ void mqtt_loop() {
 }
 
 std::array<int, 6> ADC_filter { 0 };
+uint8_t ADC_count = 0; //avarage count
 void sensor_loop() {
   const long now = millis();
   static long nextSensor = 0;
@@ -196,7 +198,10 @@ void sensor_loop() {
 
   std::rotate(ADC_filter.rbegin(), ADC_filter.rbegin() + 1, ADC_filter.rend());
   ADC_filter[0] = analogRead(TermistorPin);
-  const auto averADCvalue = accumulate(ADC_filter.begin(), ADC_filter.end(), 0) / ADC_filter.size();
+  if (ADC_count < ADC_filter.size()) {
+    ADC_count++;
+  }
+  const auto averADCvalue = accumulate(ADC_filter.begin(), ADC_filter.end(), 0) / ADC_count;
 
   Config.status_.adc_ = averADCvalue;
   Config.status_.floor_term_ = Config.termistor_.convert(averADCvalue);
