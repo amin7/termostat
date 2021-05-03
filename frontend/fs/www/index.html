@@ -1,0 +1,125 @@
+<html>
+<head>
+    <title>clock ui</title>
+
+    <script>
+
+    function onIndexLoad(status){
+        $('#id_add_cmd').html(get_icon_svg("plus-sign", "1.3em", "1.2em"));
+        index_on_load()
+    }
+
+    function reboot_request(){
+        if (confirm("Confirm Restart") === true) {
+            var url="/restart";
+            SendGetHttp(url,function(resp){
+                $('#id_restart').html("Restarting...")
+                setTimeout(() => location.reload(true), 1000);
+            },on_ResponceErrorLog);
+        }
+    }
+
+    </script>
+    <script src="js/jquery-3.5.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/knockout-3.5.1.js"></script>
+    <script src="js/icons.js"></script>
+    <script src="js/index.js"></script>
+    <script src="js/http.js"></script>
+    <script src="js/misk.js"></script>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body onload="onIndexLoad()">
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary rounded">
+    <div class="container-fluid">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link active" href="/index.html">Main</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/firmware">firmware</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/wifi.html">select wifi</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/config.html">config</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logs.html">logs</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/about">About</a>
+            </li>
+        </ul>
+
+        <button type="button" class="btn btn-danger" onclick='reboot_request()' id='id_restart'>Restart</button>
+    </div>
+</nav>
+<!--
+-->
+<div class="Card">
+    <div class="card-header"> Info</div>
+    <div class="card-body">
+        <p data-bind="text: date_time"></p>
+        <p>
+            <div  style="display: inline-block" data-bind="html: heaterIcon"></div> 
+            Set: <strong data-bind="text: temperature_flour_cur"></strong>
+            &#8451, Flour: <strong data-bind="text: temperature_flour_set"></strong>   
+            &#8451, Air: <strong data-bind="text: temperature_air"></strong>
+            &#8451, Humidity: <strong data-bind="text: temperature_humidity"></strong>% 
+        </p>
+        <p>
+            Mode: <strong data-bind="text: mode"></strong>
+        </p>     
+    </div>
+</div>
+<!--
+-->
+<div class="Card">
+    <div class="card-header"> Config
+        <div class="float-end">
+            <button type="button" class="btn btn-outline-primary" data-bind="enable: isConfigChanged()" onclick="preset_save()">Save</button>
+            <button type="button" class="btn btn-outline-primary" data-bind="enable: !isConfigChanged()" onclick="preset_cancel()">Cancel</button>
+        </div>
+    </div>
+    <div class="card-body">            
+        <div class="input-group">
+          <span class="input-group-text">Day</span>
+          <input type="number" min=5 max=40 step="0.5" class="form-control" data-bind="value: temperature_valDay">
+          <span class="input-group-text">&#8451</span>
+          <button class="btn btn-outline-secondary" type="button" data-bind="enable: !isConfigChanged()">Set</button>
+        </div>
+        <div class="input-group">
+          <span class="input-group-text">Night</span>
+          <input type="number" min=5 max=40 step="0.5" class="form-control" data-bind="value: temperature_valNight">
+          <span class="input-group-text">&#8451</span>
+          <button class="btn btn-outline-secondary" type="button" data-bind="enable: !isConfigChanged()">Set</button>
+        </div>
+        <div class="input-group">
+          <span class="input-group-text">Vacation</span>
+          <input type="number" min=5 max=40 step="0.5" class="form-control" data-bind="value: temperature_valVacation">
+          <span class="input-group-text">&#8451</span>
+          <button class="btn btn-outline-secondary" type="button" data-bind="enable: !isConfigChanged()">Set</button>
+        </div>
+
+        <div id="Presets" >
+            <h2>Presets</h2>   
+            <button type="button" id='id_add_cmd'  class="btn btn-outline-primary" onclick='preset_edit(-1)'></button>         
+            <hr>
+            <div>
+              <button onclick=add_byWeekday()>by Weekday</button>
+              <button >Out till</button>
+              <button >today</button>            
+            </div>
+            <ul id=PresetsList> </ul>
+        </div>
+        <button onclick=saveSchedule()>Save</button>
+        <button >Load</button>   
+
+        </div>
+</div>
+<!-- -->
+</body>
+</html>

@@ -1,6 +1,0 @@
-<?xml version='1.0'?>
-<xml>
-<wifi SSID= 'test1' RSSI='-11' encryptionType= '1'/>
-<wifi SSID= 'test2' RSSI='-71' encryptionType= '1'/>
-<wifi SSID= 'test3' RSSI='-100' encryptionType= '7'/> 
-</xml>
