@@ -1,15 +1,6 @@
 let dayOfWeekStr=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
 
-xmlHttp=createXmlHttpObject();
 
-  function createXmlHttpObject(){
-    if(window.XMLHttpRequest){
-      xmlHttp=new XMLHttpRequest();
-    }else{
-      xmlHttp=new ActiveXObject('Microsoft.XMLHTTP');
-    }
-    return xmlHttp;
-  }
 function saveSchedule(){
   if(xmlHttp.readyState==0||xmlHttp.readyState==4){
 	    xmlHttp.onreadystatechange=function(){
@@ -45,6 +36,8 @@ function selectionList(parent,valList){
     parent.appendChild(myNode);
     if(myNode==null)
     	return;
+    myNode.setAttribute("class","btn-group")
+    myNode.setAttribute("role","group")
     function dispaySelection(selBeg,selEnd,isSelected){	        	
     	childNodes=myNode.childNodes;
         i = childNodes.length;
@@ -106,12 +99,14 @@ function selectionList(parent,valList){
     
     var obj = this;
    	for(var i=0;i<valList.length;i++){
-   		 this.Value.push(false);
-       	 let button=document.createElement("button")
-       	 button.innerHTML = valList[i];
-       	 button.setAttribute("name", i);
-       	 button.setAttribute("class", "button");
-       	 button.setAttribute("id", "button_schedule_hour");
+		this.Value.push(false);
+		let button=document.createElement("button")
+		button.innerHTML = valList[i];
+		button.setAttribute("name", i);
+		button.setAttribute("type", "button");
+		button.setAttribute("class", "btn btn-secondary");
+
+  //    	 button.setAttribute("id", "button_schedule_hour");
        	
        	 button.addEventListener("mousedown", function(){ obj.keyDown(button); });
          button.addEventListener("mouseenter", function(){ obj.moveState(button);});
@@ -120,14 +115,7 @@ function selectionList(parent,valList){
    	}		   	 		   		
    	window.addEventListener('mouseup', function(event){obj.keyUp();});   	
 }
-function updateCurrDateTime(){
-	var options = {  
-		    weekday: "long", year: "numeric", month: "short",  
-		    day: "numeric", hour: "2-digit", minute: "2-digit",hour12: false  
-		};  
-	var date=new Date();
-	document.getElementById("date").innerHTML = date.toLocaleTimeString([], options);
-}
+
 function htmlObj(html){
 	let el = document.createElement("span");
 	el.innerHTML = html;
@@ -193,10 +181,3 @@ function listSerialize(){
 	
 	
 }
-
-function init(){
-	updateCurrDateTime();
-	setInterval('updateCurrDateTime()', 1000);	
-	add_byWeekday();//for test
-	
-}    	

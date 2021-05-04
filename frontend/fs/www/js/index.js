@@ -12,14 +12,41 @@ var termInfo = {
     isConfigChanged: ko.observable(false)
 };
 
+function configChanged(){
+    termInfo.isConfigChanged(true);
+}
+
 function index_on_load(){
     ko.applyBindings(termInfo);
-    SendGetHttp("/about", index_answer_about,on_ResponceErrorLog);
-    SendGetHttp("/status", index_answer_state,on_ResponceErrorLog);
     termInfo.temperature_flour_cur(25.4);
     termInfo.temperature_flour_set(25);
     termInfo.heaterIcon(get_icon_svg("arrow-up", "1.3em", "1.2em"))
+
+
+    termInfo.temperature_valDay.subscribe(function(newValue) {
+        configChanged();
+    });
+    termInfo.temperature_valNight.subscribe(function(newValue) {
+        configChanged();
+    });
+    termInfo.temperature_valVacation.subscribe(function(newValue) {
+        configChanged();
+    });
+
+    SendGetHttp("/about", index_answer_about,on_ResponceErrorLog);
+    SendGetHttp("/status", index_answer_state,on_ResponceErrorLog);
+    config_load();
+}
+
+function config_save(){
+    termInfo.isConfigChanged(false);
+}
+
+function config_load(){
     termInfo.temperature_valDay(25);
+    termInfo.temperature_valNight(18);
+    termInfo.temperature_valVacation(12);
+    termInfo.isConfigChanged(false);
 }
 
 function index_answer_about(response_text) {

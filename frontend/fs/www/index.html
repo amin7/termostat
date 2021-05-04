@@ -7,6 +7,7 @@
     function onIndexLoad(status){
         $('#id_add_cmd').html(get_icon_svg("plus-sign", "1.3em", "1.2em"));
         index_on_load()
+        add_byWeekday();
     }
 
     function reboot_request(){
@@ -27,6 +28,7 @@
     <script src="js/index.js"></script>
     <script src="js/http.js"></script>
     <script src="js/misk.js"></script>
+    <script src="js/schedule.js"></script>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
 </head>
@@ -78,10 +80,27 @@
 <!--
 -->
 <div class="Card">
+    <div class="card-header"> Control</div>
+    <div class="card-body">
+        <button class="btn btn-outline-secondary" type="button" >Set in Home</button>
+        <button class="btn btn-outline-secondary" type="button" >Set out home</button>
+        <button type="button" class="btn btn-outline-primary" onclick='preset_edit(-1)'>set according schedule</button>   
+        <p>
+            Vacation: <strong data-bind="text: mode"></strong>
+        </p>   
+        <button class="btn btn-outline-secondary" type="button" >Set Vacation</button>
+        <button class="btn btn-outline-secondary" type="button" >clear Vacation</button>
+
+   
+    </div>
+</div>
+<!--
+-->
+<div class="Card">
     <div class="card-header"> Config
         <div class="float-end">
-            <button type="button" class="btn btn-outline-primary" data-bind="enable: isConfigChanged()" onclick="preset_save()">Save</button>
-            <button type="button" class="btn btn-outline-primary" data-bind="enable: !isConfigChanged()" onclick="preset_cancel()">Cancel</button>
+            <button type="button" class="btn btn-outline-primary" data-bind="enable: isConfigChanged()" onclick="config_save()">Save</button>
+            <button type="button" class="btn btn-outline-primary" data-bind="enable: isConfigChanged()" onclick="config_load()">Cancel</button>
         </div>
     </div>
     <div class="card-body">            
@@ -89,36 +108,26 @@
           <span class="input-group-text">Day</span>
           <input type="number" min=5 max=40 step="0.5" class="form-control" data-bind="value: temperature_valDay">
           <span class="input-group-text">&#8451</span>
-          <button class="btn btn-outline-secondary" type="button" data-bind="enable: !isConfigChanged()">Set</button>
         </div>
         <div class="input-group">
           <span class="input-group-text">Night</span>
           <input type="number" min=5 max=40 step="0.5" class="form-control" data-bind="value: temperature_valNight">
           <span class="input-group-text">&#8451</span>
-          <button class="btn btn-outline-secondary" type="button" data-bind="enable: !isConfigChanged()">Set</button>
+
         </div>
         <div class="input-group">
           <span class="input-group-text">Vacation</span>
           <input type="number" min=5 max=40 step="0.5" class="form-control" data-bind="value: temperature_valVacation">
           <span class="input-group-text">&#8451</span>
-          <button class="btn btn-outline-secondary" type="button" data-bind="enable: !isConfigChanged()">Set</button>
         </div>
 
         <div id="Presets" >
             <h2>Presets</h2>   
-            <button type="button" id='id_add_cmd'  class="btn btn-outline-primary" onclick='preset_edit(-1)'></button>         
+            <button type="button" id='id_add_cmd'  class="btn btn-outline-primary" onclick='add_byWeekday()'></button>    
             <hr>
-            <div>
-              <button onclick=add_byWeekday()>by Weekday</button>
-              <button >Out till</button>
-              <button >today</button>            
-            </div>
             <ul id=PresetsList> </ul>
         </div>
-        <button onclick=saveSchedule()>Save</button>
-        <button >Load</button>   
-
-        </div>
+    </div>
 </div>
 <!-- -->
 </body>
