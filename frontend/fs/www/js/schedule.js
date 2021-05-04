@@ -38,6 +38,7 @@ function selectionList(parent,valList){
     	return;
     myNode.setAttribute("class","btn-group")
     myNode.setAttribute("role","group")
+
     function dispaySelection(selBeg,selEnd,isSelected){	        	
     	childNodes=myNode.childNodes;
         i = childNodes.length;
@@ -92,7 +93,7 @@ function selectionList(parent,valList){
 			 if(selBeg<=selEnd)
 			   this.doSelection(selBeg,selEnd,isSelected);
 			 else
-				 this.doSelection(selEnd,selBeg,isSelected);
+				this.doSelection(selEnd,selBeg,isSelected);
 		 }
 		 isPressed=false;
     };

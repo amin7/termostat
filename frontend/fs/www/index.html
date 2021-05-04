@@ -64,16 +64,16 @@
 <div class="Card">
     <div class="card-header"> Info</div>
     <div class="card-body">
-        <p data-bind="text: date_time"></p>
+        <p data-bind="text: info.date_time"></p>
         <p>
-            <div  style="display: inline-block" data-bind="html: heaterIcon"></div> 
-            Set: <strong data-bind="text: temperature_flour_cur"></strong>
-            &#8451, Flour: <strong data-bind="text: temperature_flour_set"></strong>   
-            &#8451, Air: <strong data-bind="text: temperature_air"></strong>
-            &#8451, Humidity: <strong data-bind="text: temperature_humidity"></strong>% 
+            <div  style="display: inline-block" data-bind="html: info.temperature.heaterIcon"></div> 
+            Set: <strong data-bind="text: info.temperature.flour_cur"></strong>
+            &#8451, Flour: <strong data-bind="text: info.temperature.flour_set"></strong>   
+            &#8451, Air: <strong data-bind="text: info.temperature.air"></strong>
+            &#8451, Humidity: <strong data-bind="text: info.humidity"></strong>% 
         </p>
         <p>
-            Mode: <strong data-bind="text: mode"></strong>
+            Mode: <strong data-bind="text: info.mode"></strong>
         </p>     
     </div>
 </div>
@@ -82,51 +82,59 @@
 <div class="Card">
     <div class="card-header"> Control</div>
     <div class="card-body">
-        <button class="btn btn-outline-secondary" type="button" >Set in Home</button>
-        <button class="btn btn-outline-secondary" type="button" >Set out home</button>
-        <button type="button" class="btn btn-outline-primary" onclick='preset_edit(-1)'>set according schedule</button>   
-        <p>
-            Vacation: <strong data-bind="text: mode"></strong>
-        </p>   
-        <button class="btn btn-outline-secondary" type="button" >Set Vacation</button>
-        <button class="btn btn-outline-secondary" type="button" >clear Vacation</button>
-
-   
+        <div class="input-group">
+            <span class="input-group-text">Notification in Home</span>
+            <button type="button" class="btn btn-primary" onclick="notify_home(1)">1</button>
+            <button type="button" class="btn btn-primary" onclick="notify_home(2)">2</button>
+            <button type="button" class="btn btn-primary" onclick="notify_home(3)">3</button>
+            <button type="button" class="btn btn-primary" onclick="notify_home(4)">4</button>
+            <button type="button" class="btn btn-primary" onclick="notify_home(5)">5</button>
+            <button type="button" class="btn btn-primary" onclick="notify_home(6)">6</button>
+        </div>
+        <div class="input-group">
+            <span class="input-group-text">Notification Away</span>
+            <button type="button" class="btn btn-warning" onclick="notify_away(1)">1</button>
+            <button type="button" class="btn btn-warning" onclick="notify_away(2)">2</button>
+            <button type="button" class="btn btn-warning" onclick="notify_away(3)">3</button>
+            <button type="button" class="btn btn-warning" onclick="notify_away(4)">4</button>
+            <button type="button" class="btn btn-warning" onclick="notify_away(5)">5</button>
+            <button type="button" class="btn btn-warning" onclick="notify_away(6)">6</button>
+        </div> 
+        <div class="input-group">
+            <div class="input-group-text">
+                <input class="form-check-input" type="checkbox" data-bind="checked: vacation.isActive">
+            </div>
+            <span class="input-group-text">Vacation, from</span>
+            <input type="date" class="form-control" data-bind="enable: vacation.isActive(), value: vacation.from">
+            <span class="input-group-text">to</span>
+            <input type="date" class="form-control" data-bind="enable: vacation.isActive(), value: vacation.to">
+            <span class="input-group-text">temperature</span>
+            <input type="number" min=5 max=40 step="0.5" class="form-control" data-bind="enable: vacation.isActive(), value: vacation.temperature">
+            <span class="input-group-text">&#8451</span>   
+            <button type="button" class="btn btn-primary" onclick="vacation_set()">Set</button>
+        </div>
     </div>
 </div>
 <!--
 -->
 <div class="Card">
-    <div class="card-header"> Config
+    <div class="card-header"> Presets
         <div class="float-end">
-            <button type="button" class="btn btn-outline-primary" data-bind="enable: isConfigChanged()" onclick="config_save()">Save</button>
-            <button type="button" class="btn btn-outline-primary" data-bind="enable: isConfigChanged()" onclick="config_load()">Cancel</button>
+            <button type="button" class="btn btn-outline-primary" data-bind="enable: config.isChanged()" onclick="config_save()">Save</button>
+            <button type="button" class="btn btn-outline-primary" data-bind="enable: config.isChanged()" onclick="config_load()">Cancel</button>
         </div>
     </div>
     <div class="card-body">            
         <div class="input-group">
           <span class="input-group-text">Day</span>
-          <input type="number" min=5 max=40 step="0.5" class="form-control" data-bind="value: temperature_valDay">
+          <input type="number" min=5 max=40 step="0.5" class="form-control" data-bind="value: config.temperature.Day">
           <span class="input-group-text">&#8451</span>
-        </div>
-        <div class="input-group">
           <span class="input-group-text">Night</span>
-          <input type="number" min=5 max=40 step="0.5" class="form-control" data-bind="value: temperature_valNight">
-          <span class="input-group-text">&#8451</span>
-
-        </div>
-        <div class="input-group">
-          <span class="input-group-text">Vacation</span>
-          <input type="number" min=5 max=40 step="0.5" class="form-control" data-bind="value: temperature_valVacation">
+          <input type="number" min=5 max=40 step="0.5" class="form-control" data-bind="value: config.temperature.Night">
           <span class="input-group-text">&#8451</span>
         </div>
-
-        <div id="Presets" >
-            <h2>Presets</h2>   
-            <button type="button" id='id_add_cmd'  class="btn btn-outline-primary" onclick='add_byWeekday()'></button>    
-            <hr>
-            <ul id=PresetsList> </ul>
-        </div>
+        <button type="button" id='id_add_cmd'  class="btn btn-outline-primary" onclick='add_byWeekday()'></button>    
+        <ul id=PresetsList> </ul>
     </div>
 </div>
 <!-- -->
