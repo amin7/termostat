@@ -17,7 +17,7 @@ int CADC_filter::getValue() {
             m_count++;
         }
     }
-    return std::accumulate(m_filter.begin(), m_filter.end(), 0) / m_count;
+    return m_count ? (std::accumulate(m_filter.begin(), m_filter.end(), 0) / m_count) : 0;
 
 }
 

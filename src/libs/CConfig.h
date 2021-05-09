@@ -85,6 +85,15 @@ protected:
     const char* getCSTR(const char *key) const {
         return m_config[key].template as<const char*>();
     }
+
+    bool loadWE(const char *fileName) {
+        if (!load(fileName)) {
+            //write file
+            return write(fileName);
+        }
+        return true;
+    }
+
     virtual ~CConfig() {
     }
 };

@@ -1,5 +1,5 @@
 #include "termostat.h"
-
+#include "settings_sub.h"
 using namespace std;
 
 const char *update_path = "/firmware";
@@ -26,8 +26,7 @@ ESP8266WebServer serverWeb(SERVER_PORT_WEB);
 CMQTT mqtt;
 ESP8266HTTPUpdateServer otaUpdater;
 CWifiStateSignal wifiStateSignal;
-auto config = CConfig<512>();
-auto config_termostat = CConfig<512>();
+
 CADC_filter ADC_filter;
 
 te_ret get_about(ostream &out) {
@@ -158,9 +157,9 @@ void setup_WIFIConnect() {
 
 void setup_signals() {
     DBG_FUNK();
-    ledCmdSignal.onSignal([&](const uint16_t val) {
-        mqtt_send();
-    });
+//    ledCmdSignal.onSignal([&](const uint16_t val) {
+//        mqtt_send();
+//    });
 
     timeKeeper.onSignal([](const time_t &time) {
 //todo schedule
@@ -196,30 +195,10 @@ void setup_mqtt() {
 }
 
 void setup_config() {
-    config.getConfig().clear();
-    config.getConfig()["DEVICE_NAME"] = DEVICE_NAME;
-    config.getConfig()["MQTT_SERVER"] = "";
-    config.getConfig()["MQTT_PORT"] = 0;
-    config.getConfig()["MQTT_PERIOD"] = 60 * 1000;
-    config.getConfig()["OTA_USERNAME"] = "";
-    config.getConfig()["OTA_PASSWORD"] = "";
-    config.getConfig()["WIFI_CONNECT_TIMEOUT"] = 20000;
-
-    if (!config.load(SYSTEM_CONFIG_FILE)) {
-        //write file
-        config.write(SYSTEM_CONFIG_FILE);
-    }
+    settings_config("/www/config/config.json");
     pDeviceName = config.getCSTR("DEVICE_NAME");
-}
-
-void setup_config_termostat() {
-    config_termostat.getConfig().clear();
-    config_termostat.getConfig()["HISTERESIS"] = 0.50;
-
-    if (!config.load(TERMOSTAT_CONFIG_FILE)) {
-        //write file
-        config.write(TERMOSTAT_CONFIG_FILE);
-    }
+    settings_termostat("/www/config/termostat.json");
+    settings_weekday("/www/config/termostat.json");
 }
 
 void setup() {
@@ -232,7 +211,6 @@ void setup() {
     hw_info(DBG_OUT);
     LittleFS.begin();
     setup_config();
-    setup_config_termostat();
 
     MDNS.addService("http", "tcp", SERVER_PORT_WEB);
     MDNS.begin(pDeviceName);
