@@ -1,102 +1,288 @@
-//https://github.com/google/googletest.git
-/***
- * Screen
- * U8G2_SH1106_128X64_NONAME_F_HW_I2C
- * SCL - D1
- * SDA - D2
- */
-#include <Arduino.h>
-#include <ESP8266WiFi.h>
-#include <WiFiClient.h>
-#include <ESP8266WebServer.h>
-#include <ESP8266mDNS.h>
-#include <Wire.h>
-#include <FS.h>
+#include "termostat.h"
 
-#include "CMainConfig.h"
-#include "WebFaceWiFiConfig.h"
-#include "frontend.h"
+using namespace std;
 
-const char *ssid = "ITPwifi";
-const char *password = "_RESTRICTED3db@ea";
-ESP8266WebServer server(80);
-WebFaceWiFiConfig WiFiConfig(server);
-CMainConfig mainConfig(server);
+const char *update_path = "/firmware";
+bool is_safe_mode = false;
+constexpr auto DEF_AP_PWD = "12345678";
 
-void setup() {
-    WiFi.persistent(false);
-    pinMode(LED_BUILTIN, OUTPUT);
-    Serial.begin(115200);
-    delay(100);
-    Serial.println("\n\nBOOTING ESP8266 ...");
-#ifdef _DISPLAY_
-    u8g2.begin();
-    u8g2.clearBuffer();                  // clear the internal memory
-    u8g2.setFont(u8g2_font_ncenB08_tr);   // choose a suitable font
-    u8g2.drawStr(0,10,"termostat booting");    // write something to the internal memory
-    u8g2.drawStr(0,30,"termostat booting");
-    u8g2.drawFrame(0, 0, 63, 27);
-    u8g2.sendBuffer();                    // transfer internal memory to the display
-#endif
-#if false //cliend
-  WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED) delay(500);
-  WiFi.mode(WIFI_STA);
+Timezone myTZ((TimeChangeRule ) { "DST", Last, Sun, Mar, 3, +3 * 60 },
+        (TimeChangeRule ) { "STD", Last, Sun, Oct, 4, +2 * 60 });
 
-    Serial.print("Connected to ");
-    Serial.println(ssid);
-    Serial.print("Station IP address: ");
-    Serial.println(WiFi.localIP());
-#else
-    Serial.print("Configuring access point...");
-    /* You can remove the password parameter if you want the AP to be open. */
-    WiFi.mode(WIFI_AP);
-    WiFi.softAP("test", "esp12345");
+NTPtime ntpTime;
+void mqtt_send();
 
-    IPAddress myIP = WiFi.softAPIP();
-    Serial.print("AP IP address: ");
-    Serial.println(myIP);
-#endif
+const char *pDeviceName = nullptr;
 
-//  server.on("/wifi", std::bind(&WiFiManager::handleWifi, &wiFiManager, true));
-    //server.on("/", std::bind(&WiFiManager::handleRoot, &wiFiManager));
-    //server.on("/",          handleWebsite);
-//  server.on("/xml",       handleXML);
-//  server.on("/setESPval", handleESPval);
+class CTimeKeeper: public SignalChange<time_t> {
+    time_t getValue() {
+        return myTZ.toLocal(now());
+    }
+} timeKeeper;
 
-    CFrontendFS::add(server, "/thtml1.html", ct_html, _frontend_thtml1_html_);
-    CFrontendFS::add(server, "/term_main.js", ct_js, _frontend_term_main_js_);
-    CFrontendFS::add(server, "/term_main.css", ct_css, _frontend_term_main_css_);
-    CFrontendFS::add(server, "/", ct_html, _frontend_term_main_html_);
-    CFrontendFS::add(server, "/WiFiConfigEntry.html", ct_html, _frontend_WiFiConfigEntry_html_);
-    server.onNotFound([] {
-        Serial.println("Error no handler");
-        Serial.println(server.uri());
+DHTesp dht;
+ADC_MODE(ADC_TOUT);
+ESP8266WebServer serverWeb(SERVER_PORT_WEB);
+CMQTT mqtt;
+ESP8266HTTPUpdateServer otaUpdater;
+CWifiStateSignal wifiStateSignal;
+auto config = CConfig<512>();
+auto config_termostat = CConfig<512>();
+CADC_filter ADC_filter;
+
+te_ret get_about(ostream &out) {
+    out << "{";
+    out << "\"firmware\":\"" << DEVICE_NAME << __DATE__ << " " << __TIME__ << "\"";
+    out << ",\"deviceName\":\"" << pDeviceName << "\"";
+    out << ",\"resetInfo\":" << system_get_rst_info()->reason;
+    out << "}";
+    return er_ok;
+}
+
+te_ret get_status(ostream &out) {
+    const auto local = timeKeeper.getSavedValue();
+    out << "{\"timeStatus\":" << timeStatus();
+    out << ",\"time\":\"";
+    toTime(out, local);
+    out << " ";
+    toDate(out, local);
+    out << "\"";
+    out << ",\"temperature\":";
+    toJson(out, dht.getTemperature());
+    out << ",\"humidity\":";
+    toJson(out, dht.getHumidity());
+    out << ",\"mode\":" << "\"notset\"";
+    out << ",\"mqtt\":" << mqtt.isConnected();
+    out << "}";
+    return er_ok;
+}
+
+void setup_WebPages() {
+    DBG_FUNK();
+    otaUpdater.setup(&serverWeb, update_path, config.getCSTR("OTA_USERNAME"), config.getCSTR("OTA_PASSWORD"));
+
+    serverWeb.on("/restart", []() {
+        webRetResult(serverWeb, er_ok);
+        delay(1000);
+        ESP.restart();
     });
 
-    bool result = SPIFFS.begin();
-    Serial.print("SPIFFS opened: ");
-    Serial.println(result);
-//	if(result)
-    //	mainConfig.begin();
-    Serial.println(mainConfig);
-    FSInfo fsInfo;
-    SPIFFS.info(fsInfo);
-    Serial.print("totalBytes=");
-    Serial.println(fsInfo.totalBytes);
-    Serial.print("usedBytes=");
-    Serial.println(fsInfo.usedBytes);
-    Serial.print("blockSize=");
-    Serial.println(fsInfo.blockSize);
-    Serial.print("pageSize=");
-    Serial.println(fsInfo.pageSize);
-    Serial.print("maxOpenFiles=");
-    Serial.println(fsInfo.maxOpenFiles);
-    Serial.print("maxPathLength=");
-    Serial.println(fsInfo.maxPathLength);
-    server.begin();
+    serverWeb.on("/about", [] {
+        wifiHandle_send_content_json(serverWeb, get_about);
+    });
+
+    serverWeb.on("/status", [] {
+        wifiHandle_send_content_json(serverWeb, get_status);
+    });
+
+    serverWeb.on("/filesave", []() {
+        DBG_FUNK();
+        if (!serverWeb.hasArg("path") || !serverWeb.hasArg("payload")) {
+            webRetResult(serverWeb, er_no_parameters);
+            return;
+        }
+        const auto path = string("/www/") + serverWeb.arg("path").c_str();
+        cout << path << endl;
+        auto file = LittleFS.open(path.c_str(), "w");
+        if (!file) {
+            webRetResult(serverWeb, er_createFile);
+            return;
+        }
+        if (!file.print(serverWeb.arg("payload"))) {
+            webRetResult(serverWeb, er_FileIO);
+            return;
+        }
+        file.close();
+        webRetResult(serverWeb, er_ok);
+    });
+
+    serverWeb.on("/scanwifi", HTTP_ANY,
+            [&]() {
+                wifiHandle_sendlist(serverWeb);
+            });
+    serverWeb.on("/connectwifi", HTTP_ANY,
+            [&]() {
+                wifiHandle_connect(serverWeb);
+            });
+    serverWeb.on("/command", [&]() {
+        if (!serverWeb.hasArg("handler")) {
+            webRetResult(serverWeb, er_no_parameters);
+            return;
+        }
+        const auto handler = serverWeb.arg("handler").c_str();
+        int val = 0;
+        if (serverWeb.hasArg("val")) {
+            val = serverWeb.arg("val").toInt();
+        }
+        //  webRetResult(serverWeb, ledCmdSignal.onCmd(handler, val) ? er_ok : er_errorResult);
+    });
+
+    serverWeb.on("/getlogs", HTTP_ANY,
+            [&]() {
+                serverWeb.send(200, "text/plain", log_buffer.c_str());
+                log_buffer = "";
+            });
+
+    serverWeb.on("/set_time", [&]() {
+        DBG_FUNK();
+        //todo
+    });
+
+    serverWeb.serveStatic("/", LittleFS, "/www/");
+
+    serverWeb.onNotFound([] {
+        Serial.println("Error no handler");
+        Serial.println(serverWeb.uri());
+        webRetResult(serverWeb, er_fileNotFound);
+    });
+    serverWeb.begin();
+}
+
+void setup_WIFIConnect() {
+    DBG_FUNK();
+    WiFi.begin();
+    wifiStateSignal.onSignal([](const wl_status_t &status) {
+        wifi_status(cout);
+    }
+    );
+    wifiStateSignal.begin();
+    if (is_safe_mode) {
+        WiFi.persistent(false);
+        WiFi.mode(WIFI_AP);
+        WiFi.softAP(pDeviceName, DEF_AP_PWD);
+        DBG_OUT << "safemode AP " << pDeviceName << ",pwd: " << DEF_AP_PWD << ",ip:" << WiFi.softAPIP().toString() << std::endl;
+    } else if (WIFI_STA == WiFi.getMode()) {
+        DBG_OUT << "connecting <" << WiFi.SSID() << "> " << endl;
+    }
+}
+
+void setup_signals() {
+    DBG_FUNK();
+    ledCmdSignal.onSignal([&](const uint16_t val) {
+        mqtt_send();
+    });
+
+    timeKeeper.onSignal([](const time_t &time) {
+//todo schedule
+    });
+    timeKeeper.begin();
+}
+
+void setup_mqtt() {
+    DBG_FUNK();
+    mqtt.setup(config.getCSTR("MQTT_SERVER"), config.getInt("MQTT_PORT"), pDeviceName);
+    string topic = "cmd/";
+    topic += pDeviceName;
+
+    mqtt.callback(topic, [](char *topic, byte *payload, unsigned int length) {
+        DBG_OUT << "MQTT>>[" << topic << "]:";
+        auto tt = reinterpret_cast<const char*>(payload);
+        auto i = length;
+        while (i--) {
+            DBG_OUT << *tt;
+            tt++;
+        };
+        DBG_OUT << endl;
+        StaticJsonDocument<512> json_cmd;
+        DeserializationError error = deserializeJson(json_cmd, payload, length);
+        if (error) {
+            DBG_OUT << "Failed to read file, using default configuration" << endl;
+        } else {
+            if (json_cmd.containsKey("time")) {
+                //todo set time
+            }
+        }
+    });
+}
+
+void setup_config() {
+    config.getConfig().clear();
+    config.getConfig()["DEVICE_NAME"] = DEVICE_NAME;
+    config.getConfig()["MQTT_SERVER"] = "";
+    config.getConfig()["MQTT_PORT"] = 0;
+    config.getConfig()["MQTT_PERIOD"] = 60 * 1000;
+    config.getConfig()["OTA_USERNAME"] = "";
+    config.getConfig()["OTA_PASSWORD"] = "";
+    config.getConfig()["WIFI_CONNECT_TIMEOUT"] = 20000;
+
+    if (!config.load(SYSTEM_CONFIG_FILE)) {
+        //write file
+        config.write(SYSTEM_CONFIG_FILE);
+    }
+    pDeviceName = config.getCSTR("DEVICE_NAME");
+}
+
+void setup_config_termostat() {
+    config_termostat.getConfig().clear();
+    config_termostat.getConfig()["HISTERESIS"] = 0.50;
+
+    if (!config.load(TERMOSTAT_CONFIG_FILE)) {
+        //write file
+        config.write(TERMOSTAT_CONFIG_FILE);
+    }
+}
+
+void setup() {
+    is_safe_mode = false; //isSafeMode(GPIO_PIN_WALL_SWITCH, 3000);
+
+    Serial.begin(SERIAL_BAUND);
+    logs_begin();
+    DBG_FUNK();
+    DBG_OUT << "is_safe_mode=" << is_safe_mode << endl;
+    hw_info(DBG_OUT);
+    LittleFS.begin();
+    setup_config();
+    setup_config_termostat();
+
+    MDNS.addService("http", "tcp", SERVER_PORT_WEB);
+    MDNS.begin(pDeviceName);
+    setup_WebPages();
+    setup_signals();
+
+    LittleFS_info(DBG_OUT);
+    setup_mqtt();
+
+    ntpTime.init();
+//------------------
+    dht.setup(DHTPin, DHTesp::DHT22);
+    setup_WIFIConnect();
+    DBG_OUT << "Setup done" << endl;
+}
+
+static unsigned long nextMsgMQTT = 0;
+
+void mqtt_send() {
+    if (mqtt.isConnected()) {
+        nextMsgMQTT = millis() + config.getULong("MQTT_PERIOD");
+        string topic = "stat/";
+        topic += pDeviceName;
+        ostringstream payload;
+        get_status(payload);
+        DBG_OUT << "MQTT<<[" << topic << "]:" << payload.str() << endl;
+        mqtt.publish(topic, payload.str());
+    } else {
+        nextMsgMQTT = 0; //force to send after connection
+    }
+}
+
+void mqtt_loop() {
+    if (WL_CONNECTED != WiFi.status()) {
+        return;
+    }
+    mqtt.loop();
+
+    if (millis() >= nextMsgMQTT) { //send
+        mqtt_send();
+    }
+
 }
 
 void loop() {
-    server.handleClient();
+    wifiStateSignal.loop();
+    mqtt_loop();
+    ntpTime.loop();
+    ADC_filter.loop();
+    timeKeeper.loop();
+    serverWeb.handleClient();
 }
+
