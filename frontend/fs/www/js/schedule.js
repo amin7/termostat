@@ -56,7 +56,7 @@ function selectionList(parent,valList){
             }
         }
     }	    
-   	 this.doSelection= function(selBeg,selEnd,isSelected){	 		 	
+   	this.doSelection= function(selBeg,selEnd,isSelected){	 		 	
      	childNodes=myNode.childNodes
          i = childNodes.length;                    
          while (i--) {    

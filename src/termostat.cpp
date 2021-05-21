@@ -27,7 +27,7 @@ CMQTT mqtt;
 ESP8266HTTPUpdateServer otaUpdater;
 CWifiStateSignal wifiStateSignal;
 
-CADC_filter ADC_filter;
+CADC_filter ADC_filter(TermistorPin);
 
 te_ret get_about(ostream &out) {
     out << "{";
@@ -198,7 +198,7 @@ void setup_config() {
     settings_config("/www/config/config.json");
     pDeviceName = config.getCSTR("DEVICE_NAME");
     settings_termostat("/www/config/termostat.json");
-    settings_weekday("/www/config/termostat.json");
+    settings_weekday("/www/config/weekday.json");
 }
 
 void setup() {

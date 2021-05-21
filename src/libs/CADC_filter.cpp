@@ -7,12 +7,22 @@
 #include <ESP8266WiFi.h>
 #include "CADC_filter.h"
 
+#include "logs.h"
+
+void CADC_filter::setup() {
+    pinMode(m_Pin, INPUT);
+}
+
 int CADC_filter::getValue() {
     const auto now = millis();
     if (now >= m_nextRead) {
         m_nextRead = now + m_refreshPeriod;
         std::rotate(m_filter.rbegin(), m_filter.rbegin() + 1, m_filter.rend());
-        m_filter[0] = analogRead(A0);
+        auto val = analogRead(m_Pin);
+        if (1 < m_Tolerance) {
+            val = (val / m_Tolerance) * m_Tolerance; //rounding
+        }
+        m_filter[0] = val;
         if (m_count < m_filter.size()) {
             m_count++;
         }

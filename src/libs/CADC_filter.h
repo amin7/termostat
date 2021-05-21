@@ -18,10 +18,17 @@
 
 class CADC_filter: public SignalChange<int> {
     std::array<int, 10> m_filter;
-    uint8_t m_count = 0; //avarage count
+    uint8_t m_count = 0; //average count
     static constexpr int m_refreshPeriod = 100; // ms
     unsigned long m_nextRead = 0;
+    const int m_Pin;
+    const int m_Tolerance = 10;
     public:
+    CADC_filter(const int &_Pin) :
+            m_Pin(_Pin) {
+    }
+    ;
+    void setup();
     int getValue();
 };
 

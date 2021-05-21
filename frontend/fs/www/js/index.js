@@ -49,6 +49,7 @@ function index_on_load(){
     SendGetHttp("/about", index_answer_about,on_ResponceErrorLog);
     SendGetHttp("/status", index_answer_state,on_ResponceErrorLog);
     config_load();
+    weekday_on_load();
 }
 
 function config_save(){
@@ -83,5 +84,17 @@ function index_answer_state(response_text) {
 
 function vacation_set(){
     console.log(termInfo.vacation.isActive(),termInfo.vacation.from(),termInfo.vacation.to(),termInfo.vacation.temperature());
+}
 
+function weekday_on_load(){
+    SendGetHttp("/config/weekday.json", weekday_on_answer,on_ResponceErrorLog);
+}
+
+function weekday_on_answer(response_text) {
+    try { 
+        var response = JSON.parse(response_text);
+        console.log(response);
+    } catch (e) {
+        console.error("Parsing error:", e);
+    }
 }
