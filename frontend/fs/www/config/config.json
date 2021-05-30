@@ -1,7 +1,7 @@
 {
-  "DEVICE_NAME": "CLOCK",
-  "MQTT_SERVER": "",
-  "MQTT_PORT": 0,
+  "DEVICE_NAME": "termostat",
+  "MQTT_SERVER": "192.168.1.2",
+  "MQTT_PORT": 1883,
   "MQTT_PERIOD": 30000,
   "OTA_USERNAME": "",
   "OTA_PASSWORD": "",

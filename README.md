@@ -13,3 +13,8 @@ python3 testweb.py
 #DHT 1 vcc (5V) 2 data (D4) 3 nc 4 GND (G)
 
 #relay d6
+
+https://github.com/olemin7/esp_libs
+git@github.com:olemin7/LeifHomieLib.git
+https://homieiot.github.io/
+

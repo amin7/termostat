@@ -25,39 +25,41 @@
 								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.239157887" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/include"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/src"/>
+									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/lib/LeifHomieLib/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266mDNS/src"/>
+									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266HTTPUpdateServer/src"/>
+									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/lib/esp_libs"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WebServer/src"/>
+									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266SdFat/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WiFi/src"/>
+									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/LittleFS/src"/>
+									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/PubSubClient/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/Time"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/ArduinoJson/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/IRremoteESP8266/src"/>
-									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/PubSubClient/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/DHT sensor library for ESPx"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/Adafruit GFX Library"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/Adafruit BusIO"/>
+									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/SPI"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/Wire"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/tools/sdk/include"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/tools/sdk/libc/xtensa-lx106-elf/include"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/cores/esp8266"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/tools/sdk/lwip2/include"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/variants/d1_mini"/>
-									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/SPI"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ArduinoOTA"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/DNSServer/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/EEPROM"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266AVRISP/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266HTTPClient/src"/>
-									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266HTTPUpdateServer/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266LLMNR"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266NetBIOS"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266SSDP"/>
-									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266SdFat/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WiFiMesh/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266httpUpdate/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/Ethernet/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/GDBStub/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/Hash/src"/>
-									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/LittleFS/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/SD/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/SDFS/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/SPISlave/src"/>
@@ -73,6 +75,7 @@
 									<listOptionValue builtIn="false" value="ESP8266"/>
 									<listOptionValue builtIn="false" value="ARDUINO_ARCH_ESP8266"/>
 									<listOptionValue builtIn="false" value="ARDUINO_ESP8266_WEMOS_D1MINI"/>
+									<listOptionValue builtIn="false" value="USE_ARDUINOMQTT"/>
 									<listOptionValue builtIn="false" value="F_CPU=160000000L"/>
 									<listOptionValue builtIn="false" value="__ets__"/>
 									<listOptionValue builtIn="false" value="ICACHE_FLASH"/>
@@ -92,39 +95,41 @@
 								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.1096940598" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/include"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/src"/>
+									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/lib/LeifHomieLib/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266mDNS/src"/>
+									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266HTTPUpdateServer/src"/>
+									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/lib/esp_libs"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WebServer/src"/>
+									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266SdFat/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WiFi/src"/>
+									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/LittleFS/src"/>
+									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/PubSubClient/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/Time"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/ArduinoJson/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/IRremoteESP8266/src"/>
-									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/PubSubClient/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/DHT sensor library for ESPx"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/Adafruit GFX Library"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/Adafruit BusIO"/>
+									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/SPI"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/Wire"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/tools/sdk/include"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/tools/sdk/libc/xtensa-lx106-elf/include"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/cores/esp8266"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/tools/sdk/lwip2/include"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/variants/d1_mini"/>
-									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/SPI"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ArduinoOTA"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/DNSServer/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/EEPROM"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266AVRISP/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266HTTPClient/src"/>
-									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266HTTPUpdateServer/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266LLMNR"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266NetBIOS"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266SSDP"/>
-									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266SdFat/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WiFiMesh/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266httpUpdate/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/Ethernet/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/GDBStub/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/Hash/src"/>
-									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/LittleFS/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/SD/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/SDFS/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/SPISlave/src"/>
@@ -140,6 +145,7 @@
 									<listOptionValue builtIn="false" value="ESP8266"/>
 									<listOptionValue builtIn="false" value="ARDUINO_ARCH_ESP8266"/>
 									<listOptionValue builtIn="false" value="ARDUINO_ESP8266_WEMOS_D1MINI"/>
+									<listOptionValue builtIn="false" value="USE_ARDUINOMQTT"/>
 									<listOptionValue builtIn="false" value="F_CPU=160000000L"/>
 									<listOptionValue builtIn="false" value="__ets__"/>
 									<listOptionValue builtIn="false" value="ICACHE_FLASH"/>
@@ -159,39 +165,41 @@
 								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.41298875" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/include"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/src"/>
+									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/lib/LeifHomieLib/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266mDNS/src"/>
+									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266HTTPUpdateServer/src"/>
+									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/lib/esp_libs"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WebServer/src"/>
+									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266SdFat/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WiFi/src"/>
+									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/LittleFS/src"/>
+									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/PubSubClient/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/Time"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/ArduinoJson/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/IRremoteESP8266/src"/>
-									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/PubSubClient/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/DHT sensor library for ESPx"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/Adafruit GFX Library"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/Adafruit BusIO"/>
+									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/SPI"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/Wire"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/tools/sdk/include"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/tools/sdk/libc/xtensa-lx106-elf/include"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/cores/esp8266"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/tools/sdk/lwip2/include"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/variants/d1_mini"/>
-									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/SPI"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ArduinoOTA"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/DNSServer/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/EEPROM"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266AVRISP/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266HTTPClient/src"/>
-									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266HTTPUpdateServer/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266LLMNR"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266NetBIOS"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266SSDP"/>
-									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266SdFat/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WiFiMesh/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266httpUpdate/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/Ethernet/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/GDBStub/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/Hash/src"/>
-									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/LittleFS/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/SD/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/SDFS/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/SPISlave/src"/>
@@ -207,6 +215,7 @@
 									<listOptionValue builtIn="false" value="ESP8266"/>
 									<listOptionValue builtIn="false" value="ARDUINO_ARCH_ESP8266"/>
 									<listOptionValue builtIn="false" value="ARDUINO_ESP8266_WEMOS_D1MINI"/>
+									<listOptionValue builtIn="false" value="USE_ARDUINOMQTT"/>
 									<listOptionValue builtIn="false" value="F_CPU=160000000L"/>
 									<listOptionValue builtIn="false" value="__ets__"/>
 									<listOptionValue builtIn="false" value="ICACHE_FLASH"/>
@@ -252,39 +261,41 @@
 								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.794801023" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" valueType="includePath">
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/include"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/src"/>
+									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/lib/LeifHomieLib/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266mDNS/src"/>
+									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266HTTPUpdateServer/src"/>
+									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/lib/esp_libs"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WebServer/src"/>
+									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266SdFat/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WiFi/src"/>
+									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/LittleFS/src"/>
+									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/PubSubClient/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/Time"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/ArduinoJson/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/IRremoteESP8266/src"/>
-									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/PubSubClient/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/DHT sensor library for ESPx"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/Adafruit GFX Library"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/Adafruit BusIO"/>
+									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/SPI"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/Wire"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/tools/sdk/include"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/tools/sdk/libc/xtensa-lx106-elf/include"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/cores/esp8266"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/tools/sdk/lwip2/include"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/variants/d1_mini"/>
-									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/SPI"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ArduinoOTA"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/DNSServer/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/EEPROM"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266AVRISP/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266HTTPClient/src"/>
-									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266HTTPUpdateServer/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266LLMNR"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266NetBIOS"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266SSDP"/>
-									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266SdFat/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WiFiMesh/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266httpUpdate/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/Ethernet/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/GDBStub/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/Hash/src"/>
-									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/LittleFS/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/SD/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/SDFS/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/SPISlave/src"/>
@@ -300,6 +311,7 @@
 									<listOptionValue builtIn="false" value="ESP8266"/>
 									<listOptionValue builtIn="false" value="ARDUINO_ARCH_ESP8266"/>
 									<listOptionValue builtIn="false" value="ARDUINO_ESP8266_WEMOS_D1MINI"/>
+									<listOptionValue builtIn="false" value="USE_ARDUINOMQTT"/>
 									<listOptionValue builtIn="false" value="F_CPU=160000000L"/>
 									<listOptionValue builtIn="false" value="__ets__"/>
 									<listOptionValue builtIn="false" value="ICACHE_FLASH"/>
@@ -319,39 +331,41 @@
 								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.650084869" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/include"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/src"/>
+									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/lib/LeifHomieLib/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266mDNS/src"/>
+									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266HTTPUpdateServer/src"/>
+									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/lib/esp_libs"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WebServer/src"/>
+									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266SdFat/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WiFi/src"/>
+									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/LittleFS/src"/>
+									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/PubSubClient/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/Time"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/ArduinoJson/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/IRremoteESP8266/src"/>
-									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/PubSubClient/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/DHT sensor library for ESPx"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/Adafruit GFX Library"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/Adafruit BusIO"/>
+									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/SPI"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/Wire"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/tools/sdk/include"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/tools/sdk/libc/xtensa-lx106-elf/include"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/cores/esp8266"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/tools/sdk/lwip2/include"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/variants/d1_mini"/>
-									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/SPI"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ArduinoOTA"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/DNSServer/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/EEPROM"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266AVRISP/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266HTTPClient/src"/>
-									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266HTTPUpdateServer/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266LLMNR"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266NetBIOS"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266SSDP"/>
-									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266SdFat/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WiFiMesh/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266httpUpdate/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/Ethernet/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/GDBStub/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/Hash/src"/>
-									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/LittleFS/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/SD/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/SDFS/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/SPISlave/src"/>
@@ -367,6 +381,7 @@
 									<listOptionValue builtIn="false" value="ESP8266"/>
 									<listOptionValue builtIn="false" value="ARDUINO_ARCH_ESP8266"/>
 									<listOptionValue builtIn="false" value="ARDUINO_ESP8266_WEMOS_D1MINI"/>
+									<listOptionValue builtIn="false" value="USE_ARDUINOMQTT"/>
 									<listOptionValue builtIn="false" value="F_CPU=160000000L"/>
 									<listOptionValue builtIn="false" value="__ets__"/>
 									<listOptionValue builtIn="false" value="ICACHE_FLASH"/>
@@ -386,39 +401,41 @@
 								<option id="org.eclipse.cdt.build.core.settings.holder.incpaths.1246337321" name="Include Paths" superClass="org.eclipse.cdt.build.core.settings.holder.incpaths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/include"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/src"/>
+									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/lib/LeifHomieLib/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266mDNS/src"/>
+									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266HTTPUpdateServer/src"/>
+									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/lib/esp_libs"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WebServer/src"/>
+									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266SdFat/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WiFi/src"/>
+									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/LittleFS/src"/>
+									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/PubSubClient/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/Time"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/ArduinoJson/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/IRremoteESP8266/src"/>
-									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/PubSubClient/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/DHT sensor library for ESPx"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/Adafruit GFX Library"/>
 									<listOptionValue builtIn="false" value="${HOME}/personal/repo/termostat/.pio/libdeps/d1_mini/Adafruit BusIO"/>
+									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/SPI"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/Wire"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/tools/sdk/include"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/tools/sdk/libc/xtensa-lx106-elf/include"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/cores/esp8266"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/tools/sdk/lwip2/include"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/variants/d1_mini"/>
-									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/SPI"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ArduinoOTA"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/DNSServer/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/EEPROM"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266AVRISP/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266HTTPClient/src"/>
-									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266HTTPUpdateServer/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266LLMNR"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266NetBIOS"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266SSDP"/>
-									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266SdFat/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WiFiMesh/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266httpUpdate/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/Ethernet/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/GDBStub/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/Hash/src"/>
-									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/LittleFS/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/SD/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/SDFS/src"/>
 									<listOptionValue builtIn="false" value="${HOME}/.platformio/packages/framework-arduinoespressif8266/libraries/SPISlave/src"/>
@@ -434,6 +451,7 @@
 									<listOptionValue builtIn="false" value="ESP8266"/>
 									<listOptionValue builtIn="false" value="ARDUINO_ARCH_ESP8266"/>
 									<listOptionValue builtIn="false" value="ARDUINO_ESP8266_WEMOS_D1MINI"/>
+									<listOptionValue builtIn="false" value="USE_ARDUINOMQTT"/>
 									<listOptionValue builtIn="false" value="F_CPU=160000000L"/>
 									<listOptionValue builtIn="false" value="__ets__"/>
 									<listOptionValue builtIn="false" value="ICACHE_FLASH"/>

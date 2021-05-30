@@ -13,6 +13,7 @@
 #include <ESP8266mDNS.h>
 #include <ESP8266HTTPUpdateServer.h>
 #include <LittleFS.h>
+#include <LeifHomieLib.h>
 
 #include <Wire.h> // must be included here so that Arduino library object file references work
 #include <pgmspace.h>
@@ -22,17 +23,16 @@
 #include <string>
 #include <ctime>
 
-#include <libs/NTPtime.h>
+#include <NTPtime.h>
 
-#include "DHTesp.h"
+#include <DHTesp.h>
 
-#include "./libs/CMQTT.h"
-#include <libs/misk.h>
-#include <libs/wifiHandle.h>
+#include <misk.h>
+#include <wifiHandle.h>
 #include <TimeLib.h>
-#include <libs/Timezone.h>
-#include <libs/logs.h>
-#include <libs/CADC_filter.h>
+#include <Timezone.h>
+#include <logs.h>
+#include <CADC_filter.h>
 
 #define SERIAL_BAUND 115200
 constexpr auto DEVICE_NAME = "TERMOSTAT";

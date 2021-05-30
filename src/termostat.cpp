@@ -10,20 +10,24 @@ Timezone myTZ((TimeChangeRule ) { "DST", Last, Sun, Mar, 3, +3 * 60 },
         (TimeChangeRule ) { "STD", Last, Sun, Oct, 4, +2 * 60 });
 
 NTPtime ntpTime;
-void mqtt_send();
+
+HomieDevice homie;
 
 const char *pDeviceName = nullptr;
 
-class CTimeKeeper: public SignalChange<time_t> {
-    time_t getValue() {
-        return myTZ.toLocal(now());
+class CTimeKeeper: public SignalLoop<time_t> {
+    bool getValue(time_t &val) {
+        if (timeStatus() == timeNotSet) {
+            return false;
+        }
+        val = myTZ.toLocal(now());
+        return true;
     }
 } timeKeeper;
 
 DHTesp dht;
 ADC_MODE(ADC_TOUT);
 ESP8266WebServer serverWeb(SERVER_PORT_WEB);
-CMQTT mqtt;
 ESP8266HTTPUpdateServer otaUpdater;
 CWifiStateSignal wifiStateSignal;
 
@@ -39,7 +43,7 @@ te_ret get_about(ostream &out) {
 }
 
 te_ret get_status(ostream &out) {
-    const auto local = timeKeeper.getSavedValue();
+    const auto local = timeKeeper.getPreValue();
     out << "{\"timeStatus\":" << timeStatus();
     out << ",\"time\":\"";
     toTime(out, local);
@@ -51,7 +55,7 @@ te_ret get_status(ostream &out) {
     out << ",\"humidity\":";
     toJson(out, dht.getHumidity());
     out << ",\"mode\":" << "\"notset\"";
-    out << ",\"mqtt\":" << mqtt.isConnected();
+    out << ",\"mqtt\":" << homie.IsConnected();
     out << "}";
     return er_ok;
 }
@@ -140,11 +144,10 @@ void setup_WebPages() {
 void setup_WIFIConnect() {
     DBG_FUNK();
     WiFi.begin();
-    wifiStateSignal.onSignal([](const wl_status_t &status) {
+    wifiStateSignal.onChange([](const wl_status_t &status) {
         wifi_status(cout);
     }
     );
-    wifiStateSignal.begin();
     if (is_safe_mode) {
         WiFi.persistent(false);
         WiFi.mode(WIFI_AP);
@@ -164,34 +167,76 @@ void setup_signals() {
     timeKeeper.onSignal([](const time_t &time) {
 //todo schedule
     });
-    timeKeeper.begin();
 }
 
-void setup_mqtt() {
-    DBG_FUNK();
-    mqtt.setup(config.getCSTR("MQTT_SERVER"), config.getInt("MQTT_PORT"), pDeviceName);
-    string topic = "cmd/";
-    topic += pDeviceName;
+// We'll need a place to save pointers to our created properties so that we can access them again later.
+HomieProperty *pTemperatureAir = NULL;
+HomieProperty *pHumidity = NULL;
+HomieProperty *pTemperatureFloor = NULL;
+HomieProperty *pTemperatureFloorDesired = NULL;
 
-    mqtt.callback(topic, [](char *topic, byte *payload, unsigned int length) {
-        DBG_OUT << "MQTT>>[" << topic << "]:";
-        auto tt = reinterpret_cast<const char*>(payload);
-        auto i = length;
-        while (i--) {
-            DBG_OUT << *tt;
-            tt++;
-        };
-        DBG_OUT << endl;
-        StaticJsonDocument<512> json_cmd;
-        DeserializationError error = deserializeJson(json_cmd, payload, length);
-        if (error) {
-            DBG_OUT << "Failed to read file, using default configuration" << endl;
-        } else {
-            if (json_cmd.containsKey("time")) {
-                //todo set time
-            }
-        }
+void setup_homie() {
+    DBG_FUNK();
+    homie.strFriendlyName = pDeviceName;
+    homie.strID = pDeviceName;
+    homie.strID.toLowerCase();
+
+    homie.strMqttServerIP = config.getCSTR("MQTT_SERVER");
+    homie.MqttServerPort = config.getInt("MQTT_PORT");
+    homie.strMqttUserName = "";
+    homie.strMqttPassword = "";
+
+    HomieLibRegisterDebugPrintCallback([](const char *szText) {
+        DBG_OUT << szText << std::endl;
     });
+
+    HomieNode *pNode = homie.NewNode();
+
+    pNode->strID = "properties";
+    pNode->strFriendlyName = "Properties";
+
+    pTemperatureAir = pNode->NewProperty();
+    pTemperatureAir->strFriendlyName = "Temperature Air";
+    pTemperatureAir->strID = "temperature_air";
+    pTemperatureAir->datatype = homieFloat;
+    pTemperatureAir->SetUnit("°C");
+    pTemperatureAir->SetRetained(true);
+    pTemperatureAir->SetSettable(false);
+
+    pHumidity = pNode->NewProperty();
+    pHumidity->strFriendlyName = "Humidity Air";
+    pHumidity->strID = "humidity_air";
+    pHumidity->datatype = homieFloat;
+    pHumidity->SetUnit("%");
+    pHumidity->SetRetained(true);
+    pHumidity->SetSettable(false);
+
+    pTemperatureFloor = pNode->NewProperty();
+    pTemperatureFloor->strFriendlyName = "Temperature Floor";
+    pTemperatureFloor->strID = "temperature_flor";
+    pTemperatureFloor->datatype = homieFloat;
+    pTemperatureFloor->SetUnit("°C");
+    pTemperatureFloor->SetRetained(true);
+    pTemperatureFloor->SetSettable(false);
+
+    pTemperatureFloorDesired = pNode->NewProperty();
+    pTemperatureFloorDesired->strFriendlyName = "Temperature Desired";
+    pTemperatureFloorDesired->strID = "temperature_flor_desired";
+    pTemperatureFloorDesired->datatype = homieFloat;
+    pTemperatureFloorDesired->SetUnit("°C");
+    pTemperatureFloorDesired->SetRetained(true);
+    pTemperatureFloorDesired->SetSettable(true);
+    pTemperatureFloorDesired->SetValue("18.3");
+    pTemperatureFloorDesired->strFormat = "10:40";
+
+    pTemperatureFloorDesired->AddCallback([](HomieProperty *pSource) {
+        //this property is settable. We'll print it into the console whenever it's updated.
+        //you can set it from MQTT Explorer by publishing a number between 0-100 to homie/examplehomiedev/nodeid1/dimmer
+        //but remember to check the *retain* box.
+        DBG_OUT << pSource->strFriendlyName.c_str() << "%is now " << pSource->GetValue().c_str() << std::endl;
+    });
+
+    homie.Init();
 }
 
 void setup_config() {
@@ -218,7 +263,7 @@ void setup() {
     setup_signals();
 
     LittleFS_info(DBG_OUT);
-    setup_mqtt();
+    setup_homie();
 
     ntpTime.init();
 //------------------
@@ -227,37 +272,9 @@ void setup() {
     DBG_OUT << "Setup done" << endl;
 }
 
-static unsigned long nextMsgMQTT = 0;
-
-void mqtt_send() {
-    if (mqtt.isConnected()) {
-        nextMsgMQTT = millis() + config.getULong("MQTT_PERIOD");
-        string topic = "stat/";
-        topic += pDeviceName;
-        ostringstream payload;
-        get_status(payload);
-        DBG_OUT << "MQTT<<[" << topic << "]:" << payload.str() << endl;
-        mqtt.publish(topic, payload.str());
-    } else {
-        nextMsgMQTT = 0; //force to send after connection
-    }
-}
-
-void mqtt_loop() {
-    if (WL_CONNECTED != WiFi.status()) {
-        return;
-    }
-    mqtt.loop();
-
-    if (millis() >= nextMsgMQTT) { //send
-        mqtt_send();
-    }
-
-}
-
 void loop() {
     wifiStateSignal.loop();
-    mqtt_loop();
+    homie.Loop();
     ntpTime.loop();
     ADC_filter.loop();
     timeKeeper.loop();
