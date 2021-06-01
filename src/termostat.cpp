@@ -197,7 +197,7 @@ void setup_homie() {
 
     pTemperatureAir = pNode->NewProperty();
     pTemperatureAir->strFriendlyName = "Temperature Air";
-    pTemperatureAir->strID = "temperature_air";
+    pTemperatureAir->strID = "temperatureair";
     pTemperatureAir->datatype = homieFloat;
     pTemperatureAir->SetUnit("°C");
     pTemperatureAir->SetRetained(true);
@@ -205,7 +205,7 @@ void setup_homie() {
 
     pHumidity = pNode->NewProperty();
     pHumidity->strFriendlyName = "Humidity Air";
-    pHumidity->strID = "humidity_air";
+    pHumidity->strID = "humidityair";
     pHumidity->datatype = homieFloat;
     pHumidity->SetUnit("%");
     pHumidity->SetRetained(true);
@@ -213,7 +213,7 @@ void setup_homie() {
 
     pTemperatureFloor = pNode->NewProperty();
     pTemperatureFloor->strFriendlyName = "Temperature Floor";
-    pTemperatureFloor->strID = "temperature_flor";
+    pTemperatureFloor->strID = "temperatureflor";
     pTemperatureFloor->datatype = homieFloat;
     pTemperatureFloor->SetUnit("°C");
     pTemperatureFloor->SetRetained(true);
@@ -221,7 +221,7 @@ void setup_homie() {
 
     pTemperatureFloorDesired = pNode->NewProperty();
     pTemperatureFloorDesired->strFriendlyName = "Temperature Desired";
-    pTemperatureFloorDesired->strID = "temperature_flor_desired";
+    pTemperatureFloorDesired->strID = "temperatureflordesired";
     pTemperatureFloorDesired->datatype = homieFloat;
     pTemperatureFloorDesired->SetUnit("°C");
     pTemperatureFloorDesired->SetRetained(true);
